@@ -1,31 +1,16 @@
 require("dotenv").config();
+const { waitUntil, TimeoutError } = require("async-wait-until");
 
 const express = require("express");
 const app = express();
 const port = 8080;
 const path = require("path");
-const passport = require("passport");
 const flash = require("express-flash");
 const session = require("express-session");
 
+const loginmodel = require("./models/loginmodel");
+
 const bcrypt = require("bcrypt");
-
-const initializePassport = require("./passport-config");
-initializePassport(
-	passport,
-	(username) => users.find((user) => user.username === username),
-	(id) => users.find((user) => user.id === id)
-);
-
-async function fillUsers(req, res) {
-	users.push({
-		id: Date.now().toString(),
-		username: "Joris",
-		password: "$2b$10$WlW5qzJwnSCY/kdPI1pVLegO24lUJuIlbijkli9QVdDbNrfnN8oFW",
-	});
-}
-
-const users = [];
 
 app.set("view-engine", "ejs");
 app.set("views", path.join(__dirname, "./views"));
@@ -39,28 +24,55 @@ app.use(
 		saveUninitialized: false,
 	})
 );
-app.use(passport.initialize());
-app.use(passport.session());
 
-app.get("/", (req, res) => {
-	console.log(req.user);
-	res.render("index.ejs", { name: req.user.username });
+app.get("/", isUserAuthenticated, (req, res) => {
+	console.log("user", req.session.user);
+	res.render("index.ejs", {
+		name: req.session.user.u_name ? req.session.user.u_name : "Stranger",
+	});
 });
 
 app.get("/login", async (req, res) => {
-	await fillUsers(req, res);
 	res.render("login.ejs");
 });
 
-app.post(
-	"/login",
-	passport.authenticate("local", {
-		successRedirect: "/",
-		failureRedirect: "/login",
-		failureFlash: true,
-	})
-);
+app.get("/logout", (req, res) => {
+	req.session.destroy();
+	res.redirect("/login");
+});
+
+/**
+ * TODO: Set timeout for 3 missed logins
+ */
+app.post("/login", async (req, res) => {
+	let authenticatedUser = await authenticateUser(req);
+	console.log("authenticatedUser", authenticatedUser);
+	req.session.user = authenticatedUser;
+	let redirectPath = "/login";
+	if (authenticatedUser) {
+		redirectPath = "/";
+	}
+	res.redirect(redirectPath);
+});
 
 app.listen(port, () => {
 	console.log(`Example app listening on port http://localhost:${port}`);
 });
+
+async function authenticateUser(req) {
+	try {
+		let authenticatedUser = await loginmodel.verifyUser(req);
+		return authenticatedUser;
+	} catch (error) {
+		console.log("authenticateUser error", error);
+	}
+}
+
+function isUserAuthenticated(req, res, next) {
+	console.log("on session", req.session.user);
+	if (req.session.user) {
+		next();
+	} else {
+		res.redirect("/login");
+	}
+}
