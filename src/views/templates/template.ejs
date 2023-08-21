@@ -1,0 +1,128 @@
+<% let pathCorrection = ""; %> <% if(locals.pathCorrection){ %> <%
+pathCorrection = locals.pathCorrection; %> <% } %>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title><%= (locals.title)?title:'Elmwood Admin Dashboard' %></title>
+		<link
+			rel="shortcut icon"
+			href="<%= pathCorrection %>./assets/img/favicon.png"
+			type="image/x-icon"
+		/>
+		<link
+			rel="stylesheet"
+			href="<%= pathCorrection %>./assets/css/bootstrap-update.css"
+		/>
+		<link
+			rel="stylesheet"
+			href="<%= pathCorrection %>./assets/css/bootstrap-update.css.map"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+		/>
+		<link
+			rel="stylesheet"
+			href="<%= pathCorrection %>./assets/css/style.css"
+		/>
+		<script
+			type="text/javascript"
+			src="<%= pathCorrection %>./assets/js/bootstrap.bundle.min.js"
+		></script>
+		<script
+			type="text/javascript"
+			src="https://code.jquery.com/jquery-1.11.3.js"
+		></script>
+
+		<% if(locals.calendar){ %>
+		<!-- CALENDAR scripts -->
+		<script src="/assets/js/calendar.js"></script>
+		<script
+			src="/assets/js/calendar_script.js"
+			type="module"
+		></script>
+		<!-- End CALENDAR scripts -->
+		<% } %>
+		<script
+			type="text/javascript"
+			src="<%= pathCorrection %>./assets/js/script.js"
+		></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<div id="wrapper">
+				<!-- Sidebar -->
+				<% if(locals.sidebar && locals.sidebar === true){ %>
+				<%-include('../particles/sidebar.ejs') %> <% } %>
+				<!-- End of Sidebar -->
+
+				<div
+					id="content-wrapper"
+					class="d-flex flex-column"
+				>
+					<!-- Navbar -->
+					<% if(locals.sidebar && locals.sidebar === true){ %>
+					<%-include('../particles/navbar.ejs') %> <% } %>
+					<!-- End of Navbar -->
+
+					<!-- Main Content -->
+					<div id="content col-md-9">
+						<div class="container-fluid">
+							<div class="row">
+								<% if(locals.sidebar && locals.sidebar === true){ %>
+								<h1><%= title %></h1>
+								<% } %> <% let path = '../pages/'+page %>
+								<%-include(path) %>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--  end #wrapper -->
+		</div>
+		<div
+			id="theModal"
+			class="modal"
+		>
+			<div class="modal-dialog modal-dialog-centered modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">New Appointment</h5>
+						<button
+							type="button"
+							class="btn-close"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
+					</div>
+					<div class="modal-body">
+						<p>Modal body text goes here.</p>
+					</div>
+					<div class="modal-footer">
+						<div class="selected-date-string"></div>
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-bs-dismiss="modal"
+						>
+							Close
+						</button>
+						<button
+							type="button"
+							class="btn btn-primary"
+							id="submit-new-appointment"
+						>
+							Save changes
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

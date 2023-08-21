@@ -1,0 +1,38 @@
+<% if(locals.therapist) { %> <% const tp = therapist[0]; %>
+<div class="row t-row d-flex justify-content-between">
+	<h3 class="col-6">
+		<span
+			class="colour-circle"
+			style="
+				display: inline-block;
+				margin: 10px;
+				background-color: <%= tp.t_colour %>;
+			"
+		>
+			&nbsp;</span
+		><%= tp.t_first_name %> <%= tp.t_surname %>
+	</h3>
+	<h3 class="col-3 edit-icon">
+		<a href="/therapist/<%= tp.t_ID %>/edit"><i class="bi bi-pencil"></i></a>
+	</h3>
+</div>
+
+<div class="row t-row d-flex justify-content-between">
+	<h3>Qualifications</h3> 
+    <ul><% if(locals.qualifications){ %> 
+        <%  for(let i=0; i<qualifications.length; i++){ %>
+        <li> <%= qualifications[i].q_qualification %> : <%= (qualifications[i].q_fully_qualified == 1)?'Fully Qualified':'' %> </li>
+    <% } %>
+    </ul>
+    <% } %>
+</div>
+
+<div class="row t-row d-flex justify-content-between">
+	<h3>Fees &amp; Contract types</h3>
+</div>
+
+<div class="row t-row d-flex justify-content-between"><h3>Files</h3></div>
+
+<div class="row t-row d-flex justify-content-between"><h3>Notes</h3></div>
+
+<% } %>
