@@ -84,6 +84,9 @@ pathCorrection = locals.pathCorrection; %> <% } %>
 					</div>
 				</div>
 			</div>
+			<% if(locals.sidebar && locals.sidebar === true){ %>
+			<%-include('../particles/footer.ejs') %> <% } %>
+
 			<!--  end #wrapper -->
 		</div>
 		<div

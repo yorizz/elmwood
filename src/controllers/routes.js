@@ -1,5 +1,7 @@
 const path = require("path");
+const fs = require("fs");
 const express = require("express");
+
 const router = express.Router();
 const { checkInput, validationResult } = require("express-validator");
 const loginmodel = require("../models/loginmodel");
@@ -144,6 +146,31 @@ router.get("/allclients", isUserAuthenticated, async (req, res) => {
 	}
 });
 
+router.get("/client/:id", isUserAuthenticated, async (req, res) => {
+	try {
+		let therapist = {};
+
+		if (!isNaN(parseInt(req.params.id))) {
+			t_client = await clientmodel.getClient(req.params.id);
+
+			console.log("client", t_client);
+		}
+
+		res.render("templates/template.ejs", {
+			name: "Client",
+			page: "client.ejs",
+			title: "Client",
+			sidebar: true,
+			pathCorrection: "../",
+			t_client: t_client,
+			// files: client.client_files,
+			// notes: client.client_notes,
+		});
+	} catch (error) {
+		console.log("unknown client error", error);
+	}
+});
+
 router.get("/alltherapists", isUserAuthenticated, async (req, res) => {
 	try {
 		let allTherapists = await therapistmodel.getAllTherapists();
@@ -168,24 +195,24 @@ router.get("/therapist/:id", isUserAuthenticated, async (req, res) => {
 		console.log(path.join(__dirname, "../public"));
 
 		if (!isNaN(parseInt(req.params.id))) {
-			console.log("Found values!");
 			therapist = await therapistmodel.getTherapist(req.params.id);
 
 			console.log("therapist", therapist.therapist);
 			console.log("qualifications", therapist.therapist_qualifications);
+			console.log("files", therapist.therapist_files);
 		}
 
 		res.render("templates/template.ejs", {
 			name: "Therapist",
 			page: "therapist.ejs",
-			title:
-				therapist.therapist[0].t_first_name +
-				" " +
-				therapist.therapist[0].t_surname,
+			title: "Therapist",
 			sidebar: true,
 			therapist: therapist.therapist,
 			qualifications: therapist.therapist_qualifications,
+			contracts: therapist.therapist_contracts,
 			pathCorrection: "../",
+			files: therapist.therapist_files,
+			notes: therapist.therapist_notes,
 		});
 	} catch (error) {
 		console.log("unknown therapist error", error);
@@ -209,6 +236,25 @@ router.post("/login", async (req, res) => {
 		};
 	}
 	res.redirect(redirectPath);
+});
+
+router.get("/file/:type/:owner/:filename", (req, res) => {
+	console.log("baseurl", req.baseUrl);
+
+	res.download(
+		__dirname +
+			"../../../public/uploads/" +
+			req.params.type +
+			"/" +
+			req.params.owner +
+			"/" +
+			req.params.filename,
+		function (err) {
+			if (err) {
+				console.log(err);
+			}
+		}
+	);
 });
 
 module.exports = router;

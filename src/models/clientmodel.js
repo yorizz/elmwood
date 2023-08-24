@@ -17,13 +17,12 @@ class ClientModel {
 
 		try {
 			const qb = await pool.get_connection();
-			const response = await qb.select("*").get("clients");
+			const response = await qb
+				.select("*")
+				.join("therapists", "c_therapist=t_ID", "left")
+				.get("clients");
 
-			// SELECT `name`, `position` FROM `planets` WHERE `type` = 'rocky' AND `diameter` < 12000
 			console.log("Query Ran: " + qb.last_query());
-
-			// [{name: 'Mercury', position: 1}, {name: 'Mars', position: 4}]
-			// console.log("Results:", response);
 
 			clients = JSON.parse(JSON.stringify(response));
 			rv = clients;
@@ -35,6 +34,32 @@ class ClientModel {
 			return console.error("Pool Query Error: " + err);
 		}
 	}
+
+	async getClient(clientID) {
+		let clients = [];
+		let clients_rv = false;
+
+		try {
+			const qb = await pool.get_connection();
+			const response = await qb
+				.select("*")
+				.join("therapists", "c_therapist=t_ID", "left")
+				.where("c_ID", clientID)
+				.get("clients");
+
+			console.log("Query Ran: " + qb.last_query());
+
+			clients = JSON.parse(JSON.stringify(response));
+			clients_rv = clients;
+
+			qb.disconnect();
+
+			return clients_rv;
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
+		}
+	}
+
 	async addClient() {}
 	async updateClient(clientID) {}
 	async removeClient(clientID) {}

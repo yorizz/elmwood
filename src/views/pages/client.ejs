@@ -1,0 +1,102 @@
+<% if(locals.t_client) { %> <% const cl = t_client[0]; %>
+    <div class="row t-row d-flex justify-content-between">
+        <h3 class="col-6">
+            <%= cl.c_first_name %> <%= cl.c_surname %> 
+        </h3>
+        <h3 class="col-3 edit-icon">
+            <a href="/client/<%= cl.t_ID %>/edit"><i class="bi bi-pencil"></i></a>
+        </h3>
+    </div>
+    <div class="row d-flex justify-content-between">
+        <p class="col-3"><strong>Phone</strong>: <%= cl.c_phone %></p>
+        <p class="col-6"><strong>Email</strong>: <a href="mailto:<%= cl.c_email %>"><%= cl.c_email %></a></p>
+    </div>
+    
+    <div class="row t-row d-flex justify-content-between">
+        <h3>Assigned to </h3> 
+        
+        <div class="row">
+            <h4><a href="/client/<%= cl.t_ID %>/edit"><%= cl.t_first_name %> <%= cl.t_surname %></a></h4>
+        </div>
+       
+    </div>
+    
+    <div class="row t-row d-flex justify-content-between">
+        <h3>Fees &amp; Contract types</h3>
+        
+    </div>
+    
+    <div class="row t-row d-flex justify-content-between">
+        <h3 class="col-6">Files</h3>
+        <h3 class="edit-icon col-3">
+            <a href="#"><i class="bi bi-file-earmark-plus"></i></a>
+        </h3>
+       
+            <% if(locals.files){ %>
+                
+                    <div class="table files-table table-responsive w-100 d-block d-md-table">
+                        <div class="table-head">
+                            <div class="th">File name</div>
+                            <div class="th">Date</div>
+                        </div>
+                        <div class="table-body">
+                            
+                        <%  for(let i=0; i<files.length; i++){ %>
+    
+                            <% let uploadDate = new Date(files[i].tf_file_upload_date).toLocaleString('en-IE', {  year: "numeric", month: "2-digit", day: "numeric",}); %>
+                            <div class="table-row">
+                                <div class="table-cell">
+                                    <a href="/file/therapists/<%= cl.t_ID %>/<%= files[i].tf_file_name %>"><i class="bi bi-file-earmark"></i> <%= files[i].tf_file_name %></a>   
+                                </div> 
+                                <div class="table-cell upload-date">  
+                                    <%= uploadDate %>
+                                </div> 
+                            </div>    
+                                
+                        <% } %>   
+                            
+                        </div> 
+                    </div>
+              
+            <% } %>   
+       
+        
+    </div>
+    
+    <div class="row t-row d-flex justify-content-between">
+        <h3 class="col-6">Notes</h3>
+        <h3 class="edit-icon col-3">
+            <a href=""><i class="bi bi-sticky"></i></a>
+        </h3>
+    
+        <% if(locals.notes){ %>
+                
+            <div class="table notes-table table-responsive w-100 d-block d-md-table">
+                <div class="table-head">
+                    <div class="th">Note</div>
+                    <div class="th">Date</div>
+                </div>
+                <div class="table-body">
+                    
+                <%  for(let i=0; i<notes.length; i++){ %>
+    
+                    <% let noteDate = new Date(notes[i].tn_date).toLocaleString('en-IE', {  year: "numeric", month: "2-digit", day: "numeric",}); %>
+                    <div class="table-row">
+                        <div class="table-cell">
+                            <%= notes[i].tn_note %>
+                        </div> 
+                        <div class="table-cell upload-date">  
+                            <%= noteDate %>
+                        </div> 
+                    </div>    
+                        
+                <% } %>   
+                    
+                </div> 
+            </div>
+      
+    <% } %>   
+        
+    </div>
+    
+    <% } %>

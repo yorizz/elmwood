@@ -7,14 +7,22 @@ const port = 8080;
 const path = require("path");
 const flash = require("express-flash");
 const session = require("express-session");
+const fileUpload = require("express-fileupload");
+const helper = require("./utils/helpers");
 
 app.use(express.json());
+app.use(fileUpload());
+
+app.locals.formatPhoneNumber = helper.formatPhoneNumber;
 
 const router = require("./controllers/routes");
 
 const bcrypt = require("bcrypt");
 
 app.use(express.static(path.join(__dirname, "../public")));
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
+
 app.set("view-engine", "ejs");
 app.set("views", path.join(__dirname, "./views"));
 

@@ -1,38 +1,131 @@
 <% if(locals.therapist) { %> <% const tp = therapist[0]; %>
 <div class="row t-row d-flex justify-content-between">
 	<h3 class="col-6">
-		<span
-			class="colour-circle"
-			style="
-				display: inline-block;
-				margin: 10px;
-				background-color: <%= tp.t_colour %>;
-			"
-		>
-			&nbsp;</span
-		><%= tp.t_first_name %> <%= tp.t_surname %>
+		<%= tp.t_first_name %> <%= tp.t_surname %> <span
+        class="colour-circle"
+        style="
+            display: inline-block;
+            margin: 10px;
+            background-color: <%= tp.t_colour %>;
+        "
+    >
+        &nbsp;</span
+    >
 	</h3>
 	<h3 class="col-3 edit-icon">
 		<a href="/therapist/<%= tp.t_ID %>/edit"><i class="bi bi-pencil"></i></a>
 	</h3>
 </div>
+<div class="row d-flex justify-content-between">
+    <p class="col-3"><strong>Phone</strong>: <%= tp.t_phone %></p>
+    <p class="col-6"><strong>Email</strong>: <a href="mailto:<%= tp.t_email %>"><%= tp.t_email %></a></p>
+</div>
 
 <div class="row t-row d-flex justify-content-between">
 	<h3>Qualifications</h3> 
-    <ul><% if(locals.qualifications){ %> 
-        <%  for(let i=0; i<qualifications.length; i++){ %>
-        <li> <%= qualifications[i].q_qualification %> : <%= (qualifications[i].q_fully_qualified == 1)?'Fully Qualified':'' %> </li>
-    <% } %>
-    </ul>
+    
+    <div class="row">
+        <ul class="qualifications"><% if(locals.qualifications){ %>
+            <%  for(let i=0; i<qualifications.length; i++){ %>
+            <li> <%= qualifications[i].q_qualification %>  <%= (qualifications[i].q_fully_qualified == 1)?' : Fully Qualified' : '' %> </li>
+            <% } %>
+        </ul>
+    </div>
     <% } %>
 </div>
 
 <div class="row t-row d-flex justify-content-between">
 	<h3>Fees &amp; Contract types</h3>
+    <div class="row d-flex justify-content-between">
+        <p class="col-3"><strong>Fee FQ</strong>: <span class="fee">&euro;<%= tp.t_fq_fee.toLocaleString("ie-IE", { maximumFractionDigits: 2, minimumFractionDigits: 2 }); %></span></p>
+        <p class="col-6"><strong>Fee</strong>: <span class="fee"> &euro;<%= tp.t_fee.toLocaleString("ie-IE", { maximumFractionDigits: 2, minimumFractionDigits: 2 }); %></span></p>
+    </div>
+    <hr>
+    <div class="row d-flex justify-content-between">
+        <% if(locals.contracts){ %>
+            <%  for(let i=0; i<contracts.length; i++){ %>
+                <div class="col-3 align-items-center">
+                    <i class="bi bi-check"></i> <%= contracts[i].ct_contract_type %> 
+                </div>
+            <% } %>    
+        <% } %>   
+    </div>
+    
 </div>
 
-<div class="row t-row d-flex justify-content-between"><h3>Files</h3></div>
+<div class="row t-row d-flex justify-content-between">
+    <h3 class="col-6">Files</h3>
+    <h3 class="edit-icon col-3">
+        <a href="#"><i class="bi bi-file-earmark-plus"></i></a>
+    </h3>
+   
+        <% if(locals.files){ %>
+            
+                <div class="table files-table table-responsive w-100 d-block d-md-table">
+                    <div class="table-head">
+                        <div class="th">File name</div>
+                        <div class="th">Date</div>
+                    </div>
+                    <div class="table-body">
+                        
+                    <%  for(let i=0; i<files.length; i++){ %>
 
-<div class="row t-row d-flex justify-content-between"><h3>Notes</h3></div>
+                        <% let uploadDate = new Date(files[i].tf_file_upload_date).toLocaleString('en-IE', {  year: "numeric", month: "2-digit", day: "numeric",}); %>
+                        <div class="table-row">
+                            <div class="table-cell">
+                                <a href="/file/therapists/<%= tp.t_ID %>/<%= files[i].tf_file_name %>"><i class="bi bi-file-earmark"></i> <%= files[i].tf_file_name %></a>   
+                            </div> 
+                            <div class="table-cell upload-date">  
+                                <%= uploadDate %>
+                            </div> 
+                        </div>    
+                            
+                    <% } %>   
+                        
+                    </div> 
+                </div>
+          
+        <% } %>   
+   
+    
+</div>
+
+<div class="row t-row d-flex justify-content-between">
+    <h3 class="col-6">Notes</h3>
+    <h3 class="edit-icon col-3">
+        <a href=""><i class="bi bi-sticky"></i></a>
+    </h3>
+
+    <% if(locals.notes){ %>
+            
+        <div class="table notes-table table-responsive w-100 d-block d-md-table">
+            <div class="table-head">
+                <div class="th">Note</div>
+                <div class="th">Date</div>
+            </div>
+            <div class="table-body">
+                
+            <%  for(let i=0; i<notes.length; i++){ %>
+
+                <% let noteDate = new Date(notes[i].tn_date).toLocaleString('en-IE', {  year: "numeric", month: "2-digit", day: "numeric",}); %>
+                <div class="table-row">
+                    <div class="table-cell">
+                        <%= notes[i].tn_note %>
+                    </div> 
+                    <div class="table-cell upload-date">  
+                        <%= noteDate %>
+                    </div> 
+                </div>    
+                    
+            <% } %>   
+                
+            </div> 
+        </div>
+  
+<% } %>   
+    
+</div>
 
 <% } %>
+
+
