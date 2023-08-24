@@ -1,30 +1,66 @@
 <% if(locals.t_client) { %> <% const cl = t_client[0]; %>
     <div class="row t-row d-flex justify-content-between">
-        <h3 class="col-6">
+        <h3 class="col-9">
             <%= cl.c_first_name %> <%= cl.c_surname %> 
+            <% if (cl.t_first_name != null) { %>
+             <span class="tone-down">Assigned to:</span> <a href="/therapist/<%= cl.t_ID %>"><%= cl.t_first_name %> <%= cl.t_surname %></a>
+             <% } %>
         </h3>
         <h3 class="col-3 edit-icon">
-            <a href="/client/<%= cl.t_ID %>/edit"><i class="bi bi-pencil"></i></a>
+            <a href="/client/<%= cl.c_ID %>/edit"><i class="bi bi-pencil"></i></a>
         </h3>
     </div>
     <div class="row d-flex justify-content-between">
         <p class="col-3"><strong>Phone</strong>: <%= cl.c_phone %></p>
         <p class="col-6"><strong>Email</strong>: <a href="mailto:<%= cl.c_email %>"><%= cl.c_email %></a></p>
     </div>
+    <div class="row d-flex justify-content-between">
+        <p class="col-6"><strong>Enquiry Date</strong>: <%= formatDate(cl.c_enquiry_date) %></p>
+        <p class="col-6"><strong>Referral</strong>: <%= cl.r_referral %></p>
+    </div>
     
     <div class="row t-row d-flex justify-content-between">
-        <h3>Assigned to </h3> 
-        
-        <div class="row">
-            <h4><a href="/client/<%= cl.t_ID %>/edit"><%= cl.t_first_name %> <%= cl.t_surname %></a></h4>
+        <h3>Assessed by: 
+            <% if (cl.c_assessed_by != null || locals.t_client_assessed_by) { %>
+                <a href="/therapist/<%= t_client_assessed_by[0].at_ID %>"><%= t_client_assessed_by[0].at_first_name %> <%= t_client_assessed_by[0].at_surname %></a>
+            <% } %>
+        </h3> 
+
+        <div class="row  w-100 d-block d-flex justify-content-between">
+            <div class="col-4 align-items-center">
+                <% if (cl.c_low_cost_employment != 0) { %>
+                    <i class="bi bi-check agreed"></i>  
+                <% } else { %>
+                    <i class="bi bi-x denied"></i>
+                <% } %>
+                Low Cost Employee
+            </div>
+            
+            <div class="col-4 align-items-center">
+                <% if (cl.c_research_participation != 0) { %>
+                    
+                    <i class="bi bi-check agreed"></i>  
+                <% } else { %>
+                    <i class="bi bi-x denied"></i>
+                <% } %>
+                    
+               
+                Research Participation
+            </div> 
+            <div class="col-4 align-items-center">
+                <% if (cl.c_rdetails_sent_to_claire != 0) { %>
+                    
+                    <i class="bi bi-check agreed"></i>  
+                <% } else { %>
+                    <i class="bi bi-x denied"></i>
+                <% } %> 
+                    
+                
+                Details Sent to Claire
+            </div>  
         </div>
-       
     </div>
-    
-    <div class="row t-row d-flex justify-content-between">
-        <h3>Fees &amp; Contract types</h3>
-        
-    </div>
+
     
     <div class="row t-row d-flex justify-content-between">
         <h3 class="col-6">Files</h3>
@@ -43,10 +79,10 @@
                             
                         <%  for(let i=0; i<files.length; i++){ %>
     
-                            <% let uploadDate = new Date(files[i].tf_file_upload_date).toLocaleString('en-IE', {  year: "numeric", month: "2-digit", day: "numeric",}); %>
+                            <% let uploadDate = formatDate(files[i].cf_file_upload_date); %>
                             <div class="table-row">
                                 <div class="table-cell">
-                                    <a href="/file/therapists/<%= cl.t_ID %>/<%= files[i].tf_file_name %>"><i class="bi bi-file-earmark"></i> <%= files[i].tf_file_name %></a>   
+                                    <a href="/file/clients/<%= cl.c_ID %>/<%= files[i].cf_file_name %>"> <%- formatFileType(files[i].cf_file_name) %> <%= files[i].cf_file_name %></a>   
                                 </div> 
                                 <div class="table-cell upload-date">  
                                     <%= uploadDate %>
@@ -80,10 +116,10 @@
                     
                 <%  for(let i=0; i<notes.length; i++){ %>
     
-                    <% let noteDate = new Date(notes[i].tn_date).toLocaleString('en-IE', {  year: "numeric", month: "2-digit", day: "numeric",}); %>
+                    <% let noteDate = formatDate(notes[i].cn_date); %>
                     <div class="table-row">
                         <div class="table-cell">
-                            <%= notes[i].tn_note %>
+                            <%= notes[i].cn_note %>
                         </div> 
                         <div class="table-cell upload-date">  
                             <%= noteDate %>

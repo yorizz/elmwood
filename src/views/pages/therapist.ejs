@@ -70,10 +70,10 @@
                         
                     <%  for(let i=0; i<files.length; i++){ %>
 
-                        <% let uploadDate = new Date(files[i].tf_file_upload_date).toLocaleString('en-IE', {  year: "numeric", month: "2-digit", day: "numeric",}); %>
+                        <% let uploadDate = formatDate(files[i].tf_file_upload_date); %>
                         <div class="table-row">
                             <div class="table-cell">
-                                <a href="/file/therapists/<%= tp.t_ID %>/<%= files[i].tf_file_name %>"><i class="bi bi-file-earmark"></i> <%= files[i].tf_file_name %></a>   
+                                <a href="/file/therapists/<%= tp.t_ID %>/<%= files[i].tf_file_name %>"><%- formatFileType(files[i].tf_file_name) %> <%= files[i].tf_file_name %></a>   
                             </div> 
                             <div class="table-cell upload-date">  
                                 <%= uploadDate %>
@@ -107,7 +107,7 @@
                 
             <%  for(let i=0; i<notes.length; i++){ %>
 
-                <% let noteDate = new Date(notes[i].tn_date).toLocaleString('en-IE', {  year: "numeric", month: "2-digit", day: "numeric",}); %>
+                <% let noteDate = formatDate(notes[i].tn_date); %>
                 <div class="table-row">
                     <div class="table-cell">
                         <%= notes[i].tn_note %>

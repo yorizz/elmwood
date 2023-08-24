@@ -162,13 +162,23 @@ router.get("/client/:id", isUserAuthenticated, async (req, res) => {
 			title: "Client",
 			sidebar: true,
 			pathCorrection: "../",
-			t_client: t_client,
-			// files: client.client_files,
-			// notes: client.client_notes,
+			t_client: t_client.t_client,
+			t_client_assessed_by: t_client.client_assessed_by,
+			files: t_client.client_files,
+			notes: t_client.client_notes,
 		});
 	} catch (error) {
 		console.log("unknown client error", error);
 	}
+});
+
+router.get("/newclient", (req, res) => {
+	res.render("templates/template.ejs", {
+		name: "New Enquiry",
+		page: "newclient.ejs",
+		title: "New Enquiry",
+		sidebar: true,
+	});
 });
 
 router.get("/alltherapists", isUserAuthenticated, async (req, res) => {
@@ -217,6 +227,15 @@ router.get("/therapist/:id", isUserAuthenticated, async (req, res) => {
 	} catch (error) {
 		console.log("unknown therapist error", error);
 	}
+});
+
+router.get("/newtherapist", isUserAuthenticated, (req, res) => {
+	res.render("templates/template.ejs", {
+		name: "New Therapist",
+		page: "newtherapist.ejs",
+		title: "New Therapist",
+		sidebar: true,
+	});
 });
 
 /**

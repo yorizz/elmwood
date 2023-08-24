@@ -166,7 +166,20 @@ i.bi{
 }
 
 
+.tone-down {
+    display: inline-block;
+    font-weight: lighter;
+    font-size: .6em;
+    color: var(--bs-gray-500);
+}
 
+.denied{
+    color:var(--bs-danger);
+}
+
+.agreed{
+    color:var(--bs-primary);
+}
 
 /* Login form */
 

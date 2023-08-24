@@ -14,6 +14,8 @@ app.use(express.json());
 app.use(fileUpload());
 
 app.locals.formatPhoneNumber = helper.formatPhoneNumber;
+app.locals.formatDate = helper.formatDate;
+app.locals.formatFileType = helper.formatFileType;
 
 const router = require("./controllers/routes");
 
