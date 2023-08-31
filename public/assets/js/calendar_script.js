@@ -56,6 +56,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	var calendar = new FullCalendar.Calendar(calendarEl, {
 		locale: "ie",
 		initialView: "dayGridMonth",
+		firstDay: 1,
 		initialDate: currentDate,
 		headerToolbar: {
 			left: "prev,next today",
@@ -63,37 +64,39 @@ document.addEventListener("DOMContentLoaded", async function () {
 			right: "dayGridMonth,timeGridWeek,timeGridDay",
 		},
 		events: events,
-		eventClick: function (info) {
-			eventCLickHandler(info);
-		},
 		editable: true,
 	});
 
 	calendar.on("dateClick", function (info) {
-		console.log("clicked on " + info.dateStr);
+		console.log("clicked on " + info.dateStr, $(this), info.jsEvent.clientX);
+
+		showSpinner(info.jsEvent.clientX, info.jsEvent.clientY);
 
 		let theModal = new bootstrap.Modal($("#theModal"), {});
 
 		let url = "/addappointment/" + info.dateStr;
 
 		console.log(
-			$(".modal-body").load(url, () => {
-				theModal.toggle();
-			})
+			"toggling",
+			$(".modal-body").load(
+				url,
+				() => {
+					theModal.toggle();
+				},
+				() => {
+					$(".modal-spinner").remove();
+				}
+			)
 		);
 	});
 
 	calendar.render();
 });
 
-function eventCLickHandler(info) {
-	console.log("info", info);
-	console.log(
-		"start",
-		info.event._instance.range.start.toString().split(" ")[4]
+function showSpinner(x, y) {
+	$("body").append(
+		'<div class="lds-spinner modal-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div>'
 	);
-	console.log("Event: " + info.event.title);
-	console.log("ID:", info.event.id);
-	console.log("Coordinates: " + info.jsEvent.pageX + "," + info.jsEvent.pageY);
-	console.log("View: " + info.view.type);
+	$(".modal-spinner").css("left", x - 20 + "px");
+	$(".modal-spinner").css("top", y - 20 + "px");
 }

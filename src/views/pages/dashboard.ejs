@@ -1,1 +1,47 @@
-TODO!
+<div class="container dashboard">
+	<div class="row">
+		<div class="col">
+			<div class="card">
+				<h5 class="card-header">
+					<span>Waiting List</span>
+					<a href="/waitinglist"><i class="bi bi-list-ul"></i></a>
+				</h5>
+				<div class="card-body">
+					<p class="card-text dashboard-number">
+						<% if(locals.waitinglistsize) { %> <%= waitinglistsize %> <% }
+						%>
+					</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="col">
+			<div class="card">
+				<h5 class="card-header">
+					<span>Today's Appointments</span>
+					<a href="/calendar"><i class="bi bi-calendar3"></i></a>
+				</h5>
+
+				<div class="card-body">
+					<% if(locals.appointments) { %>
+					<ul class="list-group list-group-flush">
+						<% for(appointment of appointments) { %>
+						<li class="list-group-item">
+							<span
+								class="colour-circle-sm"
+								style="background-color: <%= appointment.t_colour %>"
+							></span>
+							<%= formatTime(appointment.a_start_time) %> - <%=
+							formatTime(appointment.a_end_time) %>: <%=
+							dataDecrypt(appointment.c_first_name) %>&nbsp;<%=
+							dataDecrypt(appointment.c_surname) %> - <%=
+							dataDecrypt(appointment.t_first_name) %>&nbsp;<%=
+							dataDecrypt(appointment.t_surname) %><% } %>
+						</li>
+					</ul>
+					<% } %>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

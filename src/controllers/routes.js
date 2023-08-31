@@ -9,6 +9,7 @@ const clientmodel = require("../models/clientmodel");
 const therapistmodel = require("../models/therapistmodel");
 const appointmentsmodel = require("../models/appointmentsmodel");
 const checkAppointmentInput = require("../utils/appointmentvalidation");
+const helpers = require("../utils/helpers");
 
 async function authenticateUser(req) {
 	try {
@@ -53,12 +54,21 @@ router.get("/logout", (req, res) => {
 	res.redirect("/login");
 });
 
-router.get("/dashboard", isUserAuthenticated, (req, res) => {
+router.get("/dashboard", isUserAuthenticated, async (req, res) => {
+	const message = "bla bla bla";
+	const encryptedData = helpers.dataEncrypt(message);
+	console.log(helpers.dataDecrypt(encryptedData));
+
+	const appointments = await appointmentsmodel.getTodaysAppointments();
+	const waitinglistsize = await clientmodel.getNumberOfClientsOnWaitingList();
+
 	res.render("templates/template.ejs", {
 		name: "Dashboard",
 		page: "dashboard.ejs",
 		title: "Dashboard",
 		sidebar: true,
+		appointments: appointments,
+		waitinglistsize: waitinglistsize,
 	});
 });
 
@@ -73,7 +83,23 @@ router.get("/calendar", isUserAuthenticated, (req, res) => {
 });
 
 router.get("/allappointments", isUserAuthenticated, async (req, res) => {
-	res.send(await appointmentsmodel.getAllAppointments());
+	let allAppointments = [];
+	let appointments = await appointmentsmodel.getAllAppointments();
+	for (appointment of appointments) {
+		appointmentDetails = {
+			a_ID: appointment.a_ID,
+			a_date: appointment.a_date,
+			a_start_time: appointment.a_start_time,
+			a_end_time: appointment.a_end_time,
+			c_first_name: helpers.dataDecrypt(appointment.c_first_name),
+			c_surname: helpers.dataDecrypt(appointment.c_surname),
+			t_first_name: helpers.dataDecrypt(appointment.t_first_name),
+			t_surname: helpers.dataDecrypt(appointment.t_surname),
+			t_colour: appointment.t_colour,
+		};
+		allAppointments.push(appointmentDetails);
+	}
+	res.send(allAppointments);
 });
 
 router.get("/addappointment/:date", isUserAuthenticated, async (req, res) => {
@@ -138,6 +164,24 @@ router.get("/allclients", isUserAuthenticated, async (req, res) => {
 			name: "All Clients",
 			page: "allclients.ejs",
 			title: "All Clients",
+			sidebar: true,
+			clients: allclients,
+		});
+	} catch (error) {
+		console.log("authenticateUser error", error);
+	}
+});
+
+router.get("/waitinglist", async (req, res) => {
+	try {
+		let allclients = await clientmodel.getAllClientsOnWaitingList();
+
+		// console.log("allclients", allclients);
+
+		res.render("templates/template.ejs", {
+			name: "All Clients on Waiting List",
+			page: "waitinglist.ejs",
+			title: "All Clients on Waiting List",
 			sidebar: true,
 			clients: allclients,
 		});

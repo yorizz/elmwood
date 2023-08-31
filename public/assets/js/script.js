@@ -1,5 +1,7 @@
+console.log("opening page", window.document.location.href);
+
 $(document).ready(function () {
-	// console.log("called", Date.now().toLocaleString());
+	console.log("page loaded");
 
 	$(document).on("click", "#sidebarToggle", function () {
 		let el = $(this);
@@ -16,6 +18,12 @@ $(document).ready(function () {
 	if (window.location.href.indexOf("/calendar") >= 1) {
 		getTooltip();
 	}
+
+	$(document).on("click", ".sidebar a", function () {
+		$(this).append(
+			'<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>'
+		);
+	});
 
 	$(document).on(
 		"click",

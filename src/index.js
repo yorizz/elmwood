@@ -8,14 +8,21 @@ const path = require("path");
 const flash = require("express-flash");
 const session = require("express-session");
 const fileUpload = require("express-fileupload");
+const compression = require("compression");
+
 const helper = require("./utils/helpers");
 
 app.use(express.json());
 app.use(fileUpload());
+app.use(compression());
 
 app.locals.formatPhoneNumber = helper.formatPhoneNumber;
 app.locals.formatDate = helper.formatDate;
+app.locals.formatTime = helper.formatTime;
 app.locals.formatFileType = helper.formatFileType;
+app.locals.formatCurrency = helper.formatCurrency;
+app.locals.dataEncrypt = helper.dataEncrypt;
+app.locals.dataDecrypt = helper.dataDecrypt;
 
 const router = require("./controllers/routes");
 

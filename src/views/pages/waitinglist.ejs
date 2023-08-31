@@ -7,7 +7,7 @@
 			<div class="th">Name</div>
 			<div class="th">Phone</div>
 			<div class="th">Email</div>
-			<div class="th">Assigned to</div>
+			<div class="th">Waiting Since</div>
 			<div class="th">View</div>
 		</div>
 		<!-- End Table Head-->
@@ -26,10 +26,8 @@
 					<a href="mailto:<%= dataDecrypt(client.c_email) %>"><%= dataDecrypt(client.c_email) %></a>
 				</div>
 				<div class="table-cell">
-					<% if(client.t_first_name != null){ %>
-					<%= dataDecrypt(client.t_first_name) %> <%= dataDecrypt(client.t_surname) %>
-					<%}%>
-				</div>
+                    <%= formatDate(client.c_enquiry_date) %>
+                </div>
 				<div class="table-cell">
 					<a
 						href="/client/<%= client.c_ID %>"

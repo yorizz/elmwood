@@ -1,7 +1,7 @@
 <% if(locals.therapist) { %> <% const tp = therapist[0]; %>
 <div class="row t-row d-flex justify-content-between">
 	<h3 class="col-6">
-		<%= tp.t_first_name %> <%= tp.t_surname %> <span
+		<%= dataDecrypt(tp.t_first_name) %> <%= dataDecrypt(tp.t_surname) %> <span
         class="colour-circle"
         style="
             display: inline-block;
@@ -17,8 +17,8 @@
 	</h3>
 </div>
 <div class="row d-flex justify-content-between">
-    <p class="col-3"><strong>Phone</strong>: <%= tp.t_phone %></p>
-    <p class="col-6"><strong>Email</strong>: <a href="mailto:<%= tp.t_email %>"><%= tp.t_email %></a></p>
+    <p class="col-3"><strong>Phone</strong>: <%= dataDecrypt(tp.t_phone) %></p>
+    <p class="col-6"><strong>Email</strong>: <a href="mailto:<%= dataDecrypt(tp.t_email) %>"><%= dataDecrypt(tp.t_email) %></a></p>
 </div>
 
 <div class="row t-row d-flex justify-content-between">
@@ -37,8 +37,8 @@
 <div class="row t-row d-flex justify-content-between">
 	<h3>Fees &amp; Contract types</h3>
     <div class="row d-flex justify-content-between">
-        <p class="col-3"><strong>Fee FQ</strong>: <span class="fee">&euro;<%= tp.t_fq_fee.toLocaleString("ie-IE", { maximumFractionDigits: 2, minimumFractionDigits: 2 }); %></span></p>
-        <p class="col-6"><strong>Fee</strong>: <span class="fee"> &euro;<%= tp.t_fee.toLocaleString("ie-IE", { maximumFractionDigits: 2, minimumFractionDigits: 2 }); %></span></p>
+        <p class="col-3"><strong>Fee FQ</strong>: <span class="fee">&euro;<%= formatCurrency(tp.t_fq_fee); %></span></p>
+        <p class="col-6"><strong>Fee</strong>: <span class="fee"> &euro;<%= formatCurrency(tp.t_fee) %></span></p>
     </div>
     <hr>
     <div class="row d-flex justify-content-between">
@@ -110,7 +110,7 @@
                 <% let noteDate = formatDate(notes[i].tn_date); %>
                 <div class="table-row">
                     <div class="table-cell">
-                        <%= notes[i].tn_note %>
+                        <%= dataDecrypt(notes[i].tn_note) %>
                     </div> 
                     <div class="table-cell upload-date">  
                         <%= noteDate %>

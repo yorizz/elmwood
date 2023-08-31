@@ -7,6 +7,7 @@ const express = require("express");
 const app = express();
 
 const db_config = require("../utils/dbconfig");
+const helpers = require("../utils/helpers");
 
 const pool = new QueryBuilder(db_config, "mysql", "pool");
 
@@ -25,6 +26,40 @@ class AppointmentsModel {
 				.join("therapists", "a_therapist=t_ID")
 				.get();
 
+			console.log("Query Ran: " + qb.last_query());
+			console.log("db response for appointments", response);
+
+			appointments = JSON.parse(JSON.stringify(response));
+
+			rv = appointments;
+
+			qb.disconnect();
+
+			return rv;
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
+		}
+	}
+
+	async getTodaysAppointments() {
+		let appointments = [];
+		let rv = false;
+
+		try {
+			const qb = await pool.get_connection();
+
+			const response = await qb
+				.select(
+					"a_ID,a_date,a_start_time, a_end_time, c_first_name, c_surname, t_first_name, t_surname, t_colour"
+				)
+				.from("appointments")
+				.join("clients", "a_client=c_ID")
+				.join("therapists", "a_therapist=t_ID")
+				.where("a_date", helpers.formatYYYYMMDDDate(new Date(), "-"))
+				.order_by("a_start_time")
+				.get();
+
+			console.log("Query Ran: " + qb.last_query());
 			console.log("db response for appointments", response);
 
 			appointments = JSON.parse(JSON.stringify(response));

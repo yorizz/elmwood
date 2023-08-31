@@ -1,9 +1,9 @@
 <% if(locals.t_client) { %> <% const cl = t_client[0]; %>
     <div class="row t-row d-flex justify-content-between">
         <h3 class="col-9">
-            <%= cl.c_first_name %> <%= cl.c_surname %> 
+            <%= dataDecrypt(cl.c_first_name) %> <%= dataDecrypt(cl.c_surname) %> 
             <% if (cl.t_first_name != null) { %>
-             <span class="tone-down">Assigned to:</span> <a href="/therapist/<%= cl.t_ID %>"><%= cl.t_first_name %> <%= cl.t_surname %></a>
+             <span class="tone-down">Assigned to:</span> <a href="/therapist/<%= cl.t_ID %>"><%= dataDecrypt(cl.t_first_name) %> <%= dataDecrypt(cl.t_surname) %></a>
              <% } %>
         </h3>
         <h3 class="col-3 edit-icon">
@@ -11,8 +11,8 @@
         </h3>
     </div>
     <div class="row d-flex justify-content-between">
-        <p class="col-3"><strong>Phone</strong>: <%= cl.c_phone %></p>
-        <p class="col-6"><strong>Email</strong>: <a href="mailto:<%= cl.c_email %>"><%= cl.c_email %></a></p>
+        <p class="col-3"><strong>Phone</strong>: <%= formatPhoneNumber(dataDecrypt(cl.c_phone)) %></p>
+        <p class="col-6"><strong>Email</strong>: <a href="mailto:<%= dataDecrypt(cl.c_email) %>"><%= dataDecrypt(cl.c_email) %></a></p>
     </div>
     <div class="row d-flex justify-content-between">
         <p class="col-6"><strong>Enquiry Date</strong>: <%= formatDate(cl.c_enquiry_date) %></p>
@@ -22,7 +22,7 @@
     <div class="row t-row d-flex justify-content-between">
         <h3>Assessed by: 
             <% if (cl.c_assessed_by != null || locals.t_client_assessed_by) { %>
-                <a href="/therapist/<%= t_client_assessed_by[0].at_ID %>"><%= t_client_assessed_by[0].at_first_name %> <%= t_client_assessed_by[0].at_surname %></a>
+                <a href="/therapist/<%= t_client_assessed_by[0].at_ID %>"><%= dataDecrypt(t_client_assessed_by[0].at_first_name) %> <%= dataDecrypt(t_client_assessed_by[0].at_surname) %></a>
             <% } %>
         </h3> 
 
@@ -33,7 +33,7 @@
                 <% } else { %>
                     <i class="bi bi-x denied"></i>
                 <% } %>
-                Low Cost Employee
+                Low Cost
             </div>
             
             <div class="col-4 align-items-center">
@@ -119,7 +119,7 @@
                     <% let noteDate = formatDate(notes[i].cn_date); %>
                     <div class="table-row">
                         <div class="table-cell">
-                            <%= notes[i].cn_note %>
+                            <%= dataDecrypt(notes[i].cn_note) %>
                         </div> 
                         <div class="table-cell upload-date">  
                             <%= noteDate %>

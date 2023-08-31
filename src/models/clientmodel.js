@@ -35,6 +35,57 @@ class ClientModel {
 		}
 	}
 
+	async getAllClientsOnWaitingList() {
+		let clients = [];
+		let rv = false;
+
+		try {
+			const qb = await pool.get_connection();
+			const response = await qb
+				.select("*")
+				.join("therapists", "c_therapist=t_ID", "left")
+				.where("t_ID", null)
+				.order_by("c_enquiry_date", "desc")
+				.get("clients");
+
+			console.log("Query Ran: " + qb.last_query());
+
+			clients = JSON.parse(JSON.stringify(response));
+			rv = clients;
+
+			qb.disconnect();
+
+			return rv;
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
+		}
+	}
+
+	async getNumberOfClientsOnWaitingList() {
+		let clients = [];
+		let rv = false;
+
+		try {
+			const qb = await pool.get_connection();
+			const response = await qb
+				.select("*")
+				.join("therapists", "c_therapist=t_ID", "left")
+				.where("t_ID", null)
+				.get("clients");
+
+			console.log("Query Ran: " + qb.last_query());
+
+			clients = response.length;
+			rv = clients;
+
+			qb.disconnect();
+
+			return rv;
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
+		}
+	}
+
 	async getClient(clientID) {
 		let client = [];
 		let client_rv = false;
