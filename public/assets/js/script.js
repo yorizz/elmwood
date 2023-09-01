@@ -36,6 +36,7 @@ $(document).ready(function () {
 	// this is the close modal button
 	$(document).on("click", "button[data-bs-dismiss]", () => {
 		$(".modal-backdrop").remove();
+		$(".modal-spinner").remove();
 	});
 
 	$(document).on("click", "#submit-new-appointment", function (event) {
@@ -66,6 +67,26 @@ $(document).ready(function () {
 				},
 			});
 		}
+	});
+
+	$(document).on("change", "#new-appointment-form #clients", function () {
+		$.ajax({
+			url: "/gettherapistforclient",
+			data: { client: $(this).val() },
+			type: "post",
+			dataType: "JSON",
+			success: function (data) {
+				if (data[0].c_therapist.length > 1) {
+					console.log("therapist:", data[0].c_therapist);
+					$("#new-appointment-form #therapists").val(data[0].c_therapist);
+				} else {
+					console.log("no therapist assigned");
+				}
+			},
+			error: (error) => {
+				console.log("error", error);
+			},
+		});
 	});
 });
 

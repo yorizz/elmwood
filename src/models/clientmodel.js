@@ -15,8 +15,10 @@ class ClientModel {
 		let clients = [];
 		let rv = false;
 
+		let qb;
+
 		try {
-			const qb = await pool.get_connection();
+			qb = await pool.get_connection();
 			const response = await qb
 				.select("*")
 				.join("therapists", "c_therapist=t_ID", "left")
@@ -27,11 +29,11 @@ class ClientModel {
 			clients = JSON.parse(JSON.stringify(response));
 			rv = clients;
 
-			qb.disconnect();
-
 			return rv;
 		} catch (err) {
 			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
 		}
 	}
 
@@ -39,8 +41,10 @@ class ClientModel {
 		let clients = [];
 		let rv = false;
 
+		let qb;
+
 		try {
-			const qb = await pool.get_connection();
+			qb = await pool.get_connection();
 			const response = await qb
 				.select("*")
 				.join("therapists", "c_therapist=t_ID", "left")
@@ -53,11 +57,11 @@ class ClientModel {
 			clients = JSON.parse(JSON.stringify(response));
 			rv = clients;
 
-			qb.disconnect();
-
 			return rv;
 		} catch (err) {
 			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
 		}
 	}
 
@@ -65,8 +69,10 @@ class ClientModel {
 		let clients = [];
 		let rv = false;
 
+		let qb;
+
 		try {
-			const qb = await pool.get_connection();
+			qb = await pool.get_connection();
 			const response = await qb
 				.select("*")
 				.join("therapists", "c_therapist=t_ID", "left")
@@ -78,11 +84,11 @@ class ClientModel {
 			clients = response.length;
 			rv = clients;
 
-			qb.disconnect();
-
 			return rv;
 		} catch (err) {
 			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
 		}
 	}
 
@@ -99,8 +105,10 @@ class ClientModel {
 		let client_notes = [];
 		let client_notes_rv = false;
 
+		let qb;
+
 		try {
-			const qb = await pool.get_connection();
+			qb = await pool.get_connection();
 			const c_response = await qb
 				.select("*")
 				.join("therapists", "c_therapist=t_ID", "left")
@@ -148,8 +156,6 @@ class ClientModel {
 			client_notes = JSON.parse(JSON.stringify(cn_response));
 			client_notes_rv = client_notes;
 
-			qb.disconnect();
-
 			return {
 				t_client: client_rv,
 				client_assessed_by: client_assessed_by_rv,
@@ -158,6 +164,32 @@ class ClientModel {
 			};
 		} catch (err) {
 			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async getTherapistIDForClient(clientID) {
+		let qb;
+
+		try {
+			qb = await pool.get_connection();
+			const ct_response = await qb
+				.select("c_therapist")
+				.join("therapists", "c_therapist=t_ID", "left")
+				.where("c_ID", clientID)
+				.get("clients");
+
+			console.log("Query Ran: " + qb.last_query());
+
+			let client = JSON.parse(JSON.stringify(ct_response));
+
+			console.log("client", client);
+			return client;
+		} catch (error) {
+			return console.error("Pool Query Error: " + error);
+		} finally {
+			if (qb) qb.release();
 		}
 	}
 

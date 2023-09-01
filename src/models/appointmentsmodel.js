@@ -16,8 +16,10 @@ class AppointmentsModel {
 		let appointments = [];
 		let rv = false;
 
+		let qb;
+
 		try {
-			const qb = await pool.get_connection();
+			qb = await pool.get_connection();
 
 			const response = await qb
 				.select("*")
@@ -33,11 +35,11 @@ class AppointmentsModel {
 
 			rv = appointments;
 
-			qb.disconnect();
-
 			return rv;
 		} catch (err) {
 			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
 		}
 	}
 
@@ -45,8 +47,10 @@ class AppointmentsModel {
 		let appointments = [];
 		let rv = false;
 
+		let qb;
+
 		try {
-			const qb = await pool.get_connection();
+			qb = await pool.get_connection();
 
 			const response = await qb
 				.select(
@@ -66,47 +70,51 @@ class AppointmentsModel {
 
 			rv = appointments;
 
-			qb.disconnect();
+			qb.release();
 
 			return rv;
 		} catch (err) {
 			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
 		}
 	}
 
 	async addAppointment(appointment) {
 		console.log("appointment", appointment);
+		let qb;
 
 		try {
-			pool.get_connection(async (qb) => {
-				const sameRecords = await qb
-					.select("*")
-					.where("a_client", appointment.a_client)
-					.where("a_date", appointment.a_date)
-					.where("a_start_time", appointment.a_start_time)
-					.where("a_end_time", appointment.a_end_time)
-					.where("a_therapist", appointment.a_therapist)
-					.get("appointments");
+			qb = await pool.get_connection();
+			const sameRecords = await qb
+				.select("*")
+				.where("a_client", appointment.a_client)
+				.where("a_date", appointment.a_date)
+				.where("a_start_time", appointment.a_start_time)
+				.where("a_end_time", appointment.a_end_time)
+				.where("a_therapist", appointment.a_therapist)
+				.get("appointments");
 
-				console.log(
-					"Number of records with same appointment",
-					sameRecords.length,
-					qb.last_query()
-				);
-				if (sameRecords.length == 0) {
-					qb.insert("appointments", appointment, (err, res) => {
-						console.log("Query Ran: " + qb.last_query());
-						qb.release();
-						if (err) return console.error(err);
-						console.log("insert id:", res.insert_id);
-						return res.insert_id;
-					});
-				} else {
-					return 0;
-				}
-			});
+			console.log(
+				"Number of records with same appointment",
+				sameRecords.length,
+				qb.last_query()
+			);
+			if (sameRecords.length == 0) {
+				qb.insert("appointments", appointment, (err, res) => {
+					console.log("Query Ran: " + qb.last_query());
+					qb.release();
+					if (err) return console.error(err);
+					console.log("insert id:", res.insert_id);
+					return res.insert_id;
+				});
+			} else {
+				return 0;
+			}
 		} catch (error) {
 			console.log(error);
+		} finally {
+			if (qb) qb.release();
 		}
 	}
 	async updateAppointment(AppointmentID) {}

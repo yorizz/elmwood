@@ -16,8 +16,10 @@ class LoginModel {
 		let rv = false;
 		let name = req.body.username;
 		let password = req.body.password;
+
+		let qb;
 		try {
-			const qb = await pool.get_connection();
+			qb = await pool.get_connection();
 			const response = await qb
 				.select("*")
 				.where({ u_name: name })
@@ -40,10 +42,12 @@ class LoginModel {
 					rv = false;
 				}
 			}
-			qb.disconnect();
+
 			return rv;
 		} catch (err) {
 			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
 		}
 	}
 }

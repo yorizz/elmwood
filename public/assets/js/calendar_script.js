@@ -72,7 +72,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 		showSpinner(info.jsEvent.clientX, info.jsEvent.clientY);
 
-		let theModal = new bootstrap.Modal($("#theModal"), {});
+		let theModal = new bootstrap.Modal($("#theModal"), {
+			backdrop: "static",
+		});
 
 		let url = "/addappointment/" + info.dateStr;
 
@@ -97,6 +99,6 @@ function showSpinner(x, y) {
 	$("body").append(
 		'<div class="lds-spinner modal-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div>'
 	);
-	$(".modal-spinner").css("left", x - 20 + "px");
-	$(".modal-spinner").css("top", y - 20 + "px");
+	$(".modal-spinner").css("left", x - 40 + "px");
+	$(".modal-spinner").css("top", y - 40 + "px");
 }

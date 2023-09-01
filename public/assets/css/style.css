@@ -108,6 +108,11 @@ a.sidebar-brand {
     align-items: center;
 }
 
+.dashboard .appointment{
+    font-size: .95em;
+}
+
+
 .accordion {
     overflow-anchor: none;
 }

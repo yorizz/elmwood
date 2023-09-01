@@ -14,25 +14,22 @@ class TherapistModel {
 	async getAllTherapists() {
 		let therapists = [];
 		let rv = false;
+		let qb;
 
 		try {
-			const qb = await pool.get_connection();
+			qb = await pool.get_connection();
 			const response = await qb.select("*").get("therapists");
 
-			// SELECT `name`, `position` FROM `planets` WHERE `type` = 'rocky' AND `diameter` < 12000
 			console.log("Query Ran: " + qb.last_query());
-
-			// [{name: 'Mercury', position: 1}, {name: 'Mars', position: 4}]
-			// console.log("Results:", response);
 
 			therapists = JSON.parse(JSON.stringify(response));
 			rv = therapists;
 
-			qb.disconnect();
-
 			return rv;
 		} catch (err) {
 			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
 		}
 	}
 
@@ -52,18 +49,16 @@ class TherapistModel {
 		let therapist_notes = [];
 		let therapist_notes_rv = false;
 
+		let qb;
+
 		try {
-			const qb = await pool.get_connection();
+			qb = await pool.get_connection();
 			const response = await qb
 				.select("*")
 				.where("t_ID", therapistID)
 				.get("therapists");
 
-			// SELECT `name`, `position` FROM `planets` WHERE `type` = 'rocky' AND `diameter` < 12000
 			console.log("Query Ran: " + qb.last_query());
-
-			// [{name: 'Mercury', position: 1}, {name: 'Mars', position: 4}]
-			// console.log("Results:", response);
 
 			therapists = JSON.parse(JSON.stringify(response));
 			therapists_rv = therapists;
@@ -74,7 +69,6 @@ class TherapistModel {
 				.where("tq_therapist", therapistID)
 				.get("therapist_qualifications");
 
-			// SELECT `name`, `position` FROM `planets` WHERE `type` = 'rocky' AND `diameter` < 12000
 			console.log("Query Ran: " + qb.last_query());
 
 			therapist_qualifications = JSON.parse(JSON.stringify(tq_response));
@@ -116,8 +110,6 @@ class TherapistModel {
 			therapist_notes = JSON.parse(JSON.stringify(tn_response));
 			therapist_notes_rv = therapist_notes;
 
-			qb.disconnect();
-
 			let rv = {
 				therapist: therapists_rv,
 				therapist_qualifications: therapist_qualifications_rv,
@@ -129,8 +121,11 @@ class TherapistModel {
 			return rv;
 		} catch (err) {
 			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
 		}
 	}
+
 	async addTherapist() {}
 	async updateTherapist(therapistID) {}
 	async removeTherapist(therapistID) {}

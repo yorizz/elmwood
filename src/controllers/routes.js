@@ -55,10 +55,6 @@ router.get("/logout", (req, res) => {
 });
 
 router.get("/dashboard", isUserAuthenticated, async (req, res) => {
-	const message = "bla bla bla";
-	const encryptedData = helpers.dataEncrypt(message);
-	console.log(helpers.dataDecrypt(encryptedData));
-
 	const appointments = await appointmentsmodel.getTodaysAppointments();
 	const waitinglistsize = await clientmodel.getNumberOfClientsOnWaitingList();
 
@@ -213,6 +209,18 @@ router.get("/client/:id", isUserAuthenticated, async (req, res) => {
 		});
 	} catch (error) {
 		console.log("unknown client error", error);
+	}
+});
+
+router.post("/gettherapistforclient", isUserAuthenticated, async (req, res) => {
+	let clientID = req.body.client;
+	try {
+		let therapist = await clientmodel.getTherapistIDForClient(clientID);
+		if (therapist != null) {
+			return res.json(therapist);
+		}
+	} catch (error) {
+		console.log("/gettherapistforclient error", error);
 	}
 });
 
