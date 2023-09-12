@@ -1,1 +1,204 @@
-TODO!
+<form
+	action="/newtherapist"
+	method="post"
+>
+	<% if(locals.errors){ %> <% let msg = checkError(errors, "nepvraag").msg; %>
+	<% if(msg!=null){ %>
+	<div class="form-text error"><%= msg %></div>
+	<% } %> <% } %>
+	<input
+		type="text"
+		id="nepvraag"
+		name="nepvraag"
+		class="hidden"
+	/>
+
+	<div class="mb-3">
+		<label for="first_name">First Name</label>
+		<% if(locals.errors){ %> <% let msg = checkError(errors,
+		"first_name").msg; %> <% if(msg!=null){ %>
+		<div class="form-text error"><%= msg %></div>
+		<% } %> <% } %>
+		<input
+			type="text"
+			class="form-control"
+			id="first_name"
+			name="first_name"
+			placeholder="First Name"
+			value="<%= (locals.post)?post.first_name:'' %>"
+			required="required"
+		/>
+	</div>
+
+	<div class="mb-3">
+		<label for="surname">Surname</label>
+		<% if(locals.errors){ %> <% let msg = checkError(errors, "surname").msg;
+		%> <% if(msg!=null){ %>
+		<div class="form-text error"><%= msg %></div>
+		<% } %> <% } %>
+		<input
+			type="text"
+			class="form-control"
+			id="surname"
+			name="surname"
+			placeholder="Surname"
+			value="<%= (locals.post)?post.surname:'' %>"
+			required="required"
+		/>
+	</div>
+
+	<div class="mb-3">
+		<label
+			for="email"
+			class="form-label"
+			><i class="bi bi-envelope"></i> Email address</label
+		>
+		<% if(locals.errors){ %> <% let msg = checkError(errors, "email").msg; %>
+		<% if(msg!=null){ %>
+		<div class="form-text error"><%= msg %></div>
+		<% } %> <% } %>
+		<input
+			type="email"
+			class="form-control"
+			id="email"
+			name="email"
+			placeholder="Email Address"
+			value="<%= (locals.post)?post.email:'' %>"
+			required="required"
+		/>
+	</div>
+
+	<div class="mb-3">
+		<label
+			for="phone"
+			class="form-label"
+			><i class="bi bi-phone"></i> Phone</label
+		>
+		<% if(locals.errors){ %> <% let msg = checkError(errors, "phone").msg; %>
+		<% if(msg!=null){ %>
+		<div class="form-text error"><%= msg %></div>
+		<% } %> <% } %>
+		<input
+			type="text"
+			class="form-control"
+			id="phone"
+			name="phone"
+			placeholder="Phone Number"
+			value="<%= (locals.post)?post.phone:'' %>"
+			required="required"
+		/>
+	</div>
+
+	<div class="mb-3">
+		<label
+			for="fee_fq"
+			class="form-label"
+			><i class="bi bi-currency-euro"></i> Fee FQ</label
+		>
+		<input
+			type="number"
+			step="0.01"
+			class="form-control"
+			id="fee_fq"
+			name="fee_fq"
+			placeholder="&euro;"
+			value="<%= (locals.post)?post.fee_fq:'' %>"
+			required="required"
+		/>
+	</div>
+	<div class="mb-3">
+		<label
+			for="fee"
+			class="form-label"
+			><i class="bi bi-currency-euro"></i> Fee</label
+		>
+		<input
+			type="number"
+			step="0.01"
+			class="form-control"
+			id="fee"
+			name="fee"
+			placeholder="&euro;"
+			value="<%= (locals.post)?post.fee:'' %>"
+			required="required"
+		/>
+	</div>
+
+	<h5 class="category">Qualfications</h5>
+	<div class="qualifications d-md-flex justify-content-between">
+		<div class="fully-qualified">
+			<% if(locals.qualifications && qualifications.length >= 1){ %> <%
+			for(qualification of qualifications){ %> <% if(
+			qualification.q_fully_qualified == 1) { %>
+			<div class="qualification">
+				<input
+					class="form-check-input"
+					type="checkbox"
+					value="<%= qualification.q_ID %>"
+					id="<%= formatAttribute(qualification.q_qualification) %>"
+					name="qualification_<%= formatAttribute(qualification.q_qualification) %>"
+				/>
+				<label
+					class="form-check-label"
+					for="<%= formatAttribute(qualification.q_qualification) %>"
+				>
+					<%= qualification.q_qualification %>
+				</label>
+			</div>
+			<% } %> <% } %> <% } %>
+		</div>
+
+		<div class="not-fully-qualified">
+			<% if(locals.qualifications && qualifications.length >= 1){ %> <%
+			for(qualification of qualifications){ %><% if(
+			qualification.q_fully_qualified == 0) { %>
+			<div class="qualification">
+				<input
+					class="form-check-input"
+					type="checkbox"
+					value="<%= qualification.q_ID %>"
+					id="<%= formatAttribute(qualification.q_qualification) %>"
+					name="qualification_<%= formatAttribute(qualification.q_qualification) %>"
+				/>
+				<label
+					class="form-check-label"
+					for="<%= formatAttribute(qualification.q_qualification) %>"
+				>
+					<%= qualification.q_qualification %>
+				</label>
+			</div>
+			<% } %> <% } %> <% } %>
+		</div>
+	</div>
+
+	<h5 class="category">Contract Types</h5>
+	<div class="contract-types d-md-flex justify-content-between">
+		<% if(locals.contract_types && contract_types.length >= 1){ %> <%
+		for(contract_type of contract_types){ %>
+		<div class="contract-type">
+			<input
+				class="form-check-input"
+				type="checkbox"
+				value="<%= contract_type.ct_ID %>"
+				id="<%= formatAttribute(contract_type.ct_contract_type) %>"
+				name="contract_type_<%= formatAttribute(contract_type.ct_contract_type) %>"
+			/>
+			<label
+				class="form-check-label"
+				for="<%= formatAttribute(contract_type.ct_contract_type) %>"
+			>
+				<%= contract_type.ct_contract_type %>
+			</label>
+		</div>
+		<% } %> <% } %>
+	</div>
+
+	<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+		<button
+			type="submit"
+			class="btn btn-primary form-save-button"
+		>
+			Save
+		</button>
+	</div>
+</form>

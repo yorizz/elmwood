@@ -1,7 +1,6 @@
 require("dotenv").config();
 
 const QueryBuilder = require("node-querybuilder");
-const bcrypt = require("bcrypt");
 
 const express = require("express");
 const app = express();
@@ -112,7 +111,7 @@ class ClientModel {
 			const c_response = await qb
 				.select("*")
 				.join("therapists", "c_therapist=t_ID", "left")
-				.join("referrals", "c_referred_by=r_ID")
+				.join("referrals", "c_referred_by=r_ID", "left")
 				.where("c_ID", clientID)
 				.get("clients");
 
@@ -193,7 +192,20 @@ class ClientModel {
 		}
 	}
 
-	async addClient() {}
+	async addClient(clientData) {
+		let qb = await pool.get_connection();
+		try {
+			qb.insert("clients", clientData, (err, res) => {
+				if (err) return console.error(err);
+				else return 1;
+			});
+			console.log("Query Ran: " + qb.last_query());
+		} catch (error) {
+			return console.error("Pool Query Error: " + error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
 	async updateClient(clientID) {}
 	async removeClient(clientID) {}
 }

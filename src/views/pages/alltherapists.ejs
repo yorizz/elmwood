@@ -1,4 +1,21 @@
 <% if(locals.therapists) { %>
+<div class="input-group mb-3">
+	<input
+		type="text"
+		class="form-control"
+		placeholder="Search"
+		aria-label="Search"
+		aria-describedby="basic-addon2"
+		name="search"
+		id="search"
+	/>
+	<span
+		class="input-group-text"
+		id="basic-addon2"
+		><i class="bi bi-search"></i
+	></span>
+</div>
+
 <div
 	id="therapists-table"
 	class="table"
@@ -14,7 +31,7 @@
 		<% for(therapist of therapists) { %>
 		<div class="table-row">
 			<div
-				class="table-cell"
+				class="table-cell align-middle"
 				style="border-left: 4px solid <%= therapist.t_colour %>"
 			>
 				<div
@@ -24,11 +41,11 @@
 					&nbsp;
 				</div>
 			</div>
-			<div class="table-cell">
+			<div class="table-cell align-middle">
 				<%= dataDecrypt(therapist.t_first_name) %> <%=
 				dataDecrypt(therapist.t_surname) %>
 			</div>
-			<div class="table-cell">
+			<div class="table-cell align-middle view-single">
 				<a
 					href="/therapist/<%= therapist.t_ID %>"
 					title="view therapist"

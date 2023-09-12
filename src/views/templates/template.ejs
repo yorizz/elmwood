@@ -1,5 +1,4 @@
-<% let pathCorrection = ""; %> <% if(locals.pathCorrection){ %> <%
-pathCorrection = locals.pathCorrection; %> <% } %>
+<% let pathCorrection = (locals.pathCorrection)?locals.pathCorrection:""; %>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -51,6 +50,10 @@ pathCorrection = locals.pathCorrection; %> <% } %>
 		<script
 			type="text/javascript"
 			src="<%= pathCorrection %>./assets/js/script.js"
+		></script>
+		<script
+			type="text/javascript"
+			src="<%= pathCorrection %>./assets/js/mottie.github.io_tablesorter_js_jquery.tablesorter.combined.js"
 		></script>
 	</head>
 

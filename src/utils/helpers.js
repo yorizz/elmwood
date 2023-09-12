@@ -35,6 +35,12 @@ class Helpers {
 		return rv;
 	}
 
+	formatAttribute(attribute) {
+		let rv = attribute.toLowerCase();
+		rv = rv.replaceAll(" ", "_");
+		return rv;
+	}
+
 	padTo2Digits(num) {
 		return num.toString().padStart(2, "0");
 	}
@@ -78,6 +84,49 @@ class Helpers {
 
 	dataDecrypt(encryptedData) {
 		return cryptr.decrypt(encryptedData);
+	}
+
+	checkForFieldError(errors, fieldName) {
+		let rv = false;
+		let msg = null;
+		for (let i = 0; i < errors.length; i++) {
+			if (errors[i].path == fieldName) {
+				rv = true;
+				msg = errors[i].msg;
+			}
+		}
+		return { rv: rv, msg: msg };
+	}
+
+	generateColorHexCode() {
+		const colorHexValues = [
+			1,
+			2,
+			3,
+			4,
+			5,
+			6,
+			7,
+			8,
+			9,
+			0,
+			"A",
+			"B",
+			"C",
+			"D",
+			"E",
+			"F",
+		];
+		let newColor = "#";
+		for (let i = 0; i < 6; i++) {
+			newColor +=
+				colorHexValues[Math.floor(Math.random() * colorHexValues.length)];
+		}
+		return newColor;
+	}
+
+	add_week(currentWeekDate) {
+		return new Date(currentWeekDate.setDate(currentWeekDate.getDate() + 7));
 	}
 }
 

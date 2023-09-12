@@ -1,7 +1,6 @@
 require("dotenv").config();
 
 const QueryBuilder = require("node-querybuilder");
-const bcrypt = require("bcrypt");
 
 const express = require("express");
 const app = express();
@@ -26,10 +25,11 @@ class AppointmentsModel {
 				.from("appointments")
 				.join("clients", "a_client=c_ID")
 				.join("therapists", "a_therapist=t_ID")
+				// .order_by("a_date", "desc")
 				.get();
 
 			console.log("Query Ran: " + qb.last_query());
-			console.log("db response for appointments", response);
+			// console.log("db response for appointments", response);
 
 			appointments = JSON.parse(JSON.stringify(response));
 
@@ -70,8 +70,6 @@ class AppointmentsModel {
 
 			rv = appointments;
 
-			qb.release();
-
 			return rv;
 		} catch (err) {
 			return console.error("Pool Query Error: " + err);
@@ -103,7 +101,7 @@ class AppointmentsModel {
 			if (sameRecords.length == 0) {
 				qb.insert("appointments", appointment, (err, res) => {
 					console.log("Query Ran: " + qb.last_query());
-					qb.release();
+
 					if (err) return console.error(err);
 					console.log("insert id:", res.insert_id);
 					return res.insert_id;
@@ -112,13 +110,24 @@ class AppointmentsModel {
 				return 0;
 			}
 		} catch (error) {
+			console.log("addAppointment", error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+	async updateAppointment(appointmentID, data) {
+		let qb;
+		try {
+			qb = await pool.get_connection();
+			qb.where("a_ID", appointmentID).set(data).update("appointments");
+			console.log("Query Ran: " + qb.last_query());
+		} catch (error) {
 			console.log(error);
 		} finally {
 			if (qb) qb.release();
 		}
 	}
-	async updateAppointment(AppointmentID) {}
-	async removeAppointment(AppointmentID) {}
+	async removeAppointment(appointmentID) {}
 }
 
 module.exports = new AppointmentsModel();

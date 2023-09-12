@@ -1,14 +1,32 @@
 <% if(locals.clients) { %> 
+	<div class="input-group mb-3">
+		<input
+			type="text"
+			class="form-control"
+			placeholder="Search"
+			aria-label="Search"
+			aria-describedby="basic-addon2"
+			name="search"
+			id="search"
+		/>
+		<span
+			class="input-group-text"
+			id="basic-addon2"
+			><i class="bi bi-search"></i
+		></span>
+	</div>
+
 	<div
 		id="clients-table"
 		class="table table-responsive w-100 d-block d-md-table"
 	>
 		<div class="table-head">
+			<div class="th">Date of Enquiry</div>
 			<div class="th">Name</div>
 			<div class="th">Phone</div>
 			<div class="th">Email</div>
-			<div class="th">Waiting Since</div>
-			<div class="th">View</div>
+			<div class="th">&nbsp;</div>
+			
 		</div>
 		<!-- End Table Head-->
 
@@ -16,19 +34,20 @@
 			<% for(client of clients) { console.log("client", client);%>
 
 			<div class="table-row">
-				<div class="table-cell">
-					<%= dataDecrypt(client.c_first_name) %> <%= dataDecrypt(client.c_surname) %>
-				</div>
-				<div class="table-cell">
-					<%= formatPhoneNumber(dataDecrypt(client.c_phone)) %>
-				</div>
-				<div class="table-cell">
-					<a href="mailto:<%= dataDecrypt(client.c_email) %>"><%= dataDecrypt(client.c_email) %></a>
-				</div>
-				<div class="table-cell">
+				<div class="table-cell align-middle ">
                     <%= formatDate(client.c_enquiry_date) %>
                 </div>
-				<div class="table-cell">
+				<div class="table-cell align-middle ">
+					<%= dataDecrypt(client.c_first_name) %> <%= dataDecrypt(client.c_surname) %>
+				</div>
+				<div class="table-cell align-middle ">
+					<%= formatPhoneNumber(dataDecrypt(client.c_phone)) %>
+				</div>
+				<div class="table-cell align-middle ">
+					<a href="mailto:<%= dataDecrypt(client.c_email) %>"><%= dataDecrypt(client.c_email) %></a>
+				</div>
+				
+				<div class="table-cell align-middle  view-single">
 					<a
 						href="/client/<%= client.c_ID %>"
 						title="view client"

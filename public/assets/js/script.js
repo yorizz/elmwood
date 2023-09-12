@@ -3,6 +3,20 @@ console.log("opening page", window.document.location.href);
 $(document).ready(function () {
 	console.log("page loaded");
 
+	$(".table").tablesorter();
+
+	if ($("#therapists-table").length == 1) {
+		console.log("sort the #therapists-table");
+		$("#therapists-table").tablesorter();
+	}
+
+	const tooltipTriggerList = document.querySelectorAll(
+		'[data-bs-toggle="tooltip"]'
+	);
+	const tooltipList = [...tooltipTriggerList].map(
+		(tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
+	);
+
 	$(document).on("click", "#sidebarToggle", function () {
 		let el = $(this);
 
@@ -13,9 +27,8 @@ $(document).ready(function () {
 		}
 	});
 
-	// console.log("events length", $(".fc-event-title").length);
-
 	if (window.location.href.indexOf("/calendar") >= 1) {
+		console.log("calling tooltip");
 		getTooltip();
 	}
 
@@ -37,6 +50,77 @@ $(document).ready(function () {
 	$(document).on("click", "button[data-bs-dismiss]", () => {
 		$(".modal-backdrop").remove();
 		$(".modal-spinner").remove();
+	});
+
+	let theModal = new bootstrap.Modal($("#theModal"), {
+		backdrop: "static",
+	});
+
+	let theAppointmentID;
+	$(document).on("click", ".cancel-appointment", function () {
+		theAppointmentID = $(this).attr("data-appointment");
+		console.log("APPOINTMENT-ID", theAppointmentID);
+		let theAppointmentHTML = $(this).parent().parent()[0].innerHTML;
+
+		$(".modal-title").text("Cancel Appointment");
+		$(".modal-body").html(theAppointmentHTML);
+		$(".modal-body .appointment-cancel-button ").remove();
+		$(".modal-body").append(
+			'<form action="/cancelappointment/' +
+				theAppointmentID +
+				'" method="POST" id="cancel-appointment-form">' +
+				'<label for="cancellation_reason" class="form-label">Reason for cancelling this appointment</label>' +
+				'<textarea class="form-control" id="cancellation_reason" name="cancellation_reason" rows="5" required="required"></textarea>' +
+				"</form>"
+		);
+		$("#submit-new-appointment")
+			.attr("id", "submit-cancel-appointment")
+			.text("Save");
+
+		$("#submit-cancel-appointment").attr(
+			"data-appointment-id",
+			theAppointmentID
+		);
+
+		console.log("id changed to ", theAppointmentID);
+
+		theModal.toggle();
+	});
+
+	$(document).on("click", "#submit-cancel-appointment", function (event) {
+		event.preventDefault();
+
+		$(".error").remove();
+		let appointmentID = $(this).attr("data-appointment-id");
+		let url = "/cancelappointment/" + appointmentID;
+		console.log("to url", url);
+
+		if (
+			$("#cancellation_reason").val() == null ||
+			$("#cancellation_reason").val().trim() == ""
+		) {
+			$(".modal-body label").prepend(
+				'<p class="error">Please provide a reason for cancelling this appointment</p>'
+			);
+		} else {
+			$.ajax({
+				url: url,
+				type: "post",
+				data: $("#cancel-appointment-form").serialize(),
+				success: function (data) {
+					console.log("data", data);
+					theModal.toggle();
+					//find the row with the appointment ID
+					$(`[data-appointment=${theAppointmentID}]`).addClass(
+						"cancelled-appointment"
+					);
+					theAppointmentID = null;
+				},
+				error: function (error) {
+					console.log("error", error);
+				},
+			});
+		}
 	});
 
 	$(document).on("click", "#submit-new-appointment", function (event) {
@@ -88,6 +172,21 @@ $(document).ready(function () {
 			},
 		});
 	});
+
+	$(document).on(
+		"focus",
+		"#therapists, #assessed-by, #referred-by",
+		function () {
+			sortSelect($(this));
+		}
+	);
+
+	$(document).on("keyup", "#search", function () {
+		var value = $(this).val().toLowerCase();
+		$(".table .table-row").filter(function () {
+			$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+		});
+	});
 });
 
 function slideIn(el) {
@@ -121,4 +220,12 @@ function getTooltip() {
 
 function errorMessage(error) {
 	return '<div class="error">' + error + "</div>";
+}
+
+function sortSelect(selectToSort) {
+	selectToSort.html(
+		selectToSort.find("option").sort(function (x, y) {
+			return $(x).text() > $(y).text() ? 1 : -1;
+		})
+	);
 }

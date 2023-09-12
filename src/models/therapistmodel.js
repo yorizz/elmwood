@@ -1,12 +1,12 @@
 require("dotenv").config();
 
 const QueryBuilder = require("node-querybuilder");
-const bcrypt = require("bcrypt");
 
 const express = require("express");
 const app = express();
 
 const db_config = require("../utils/dbconfig");
+const helpers = require("../utils/helpers");
 
 const pool = new QueryBuilder(db_config, "mysql", "pool");
 
@@ -126,7 +126,62 @@ class TherapistModel {
 		}
 	}
 
-	async addTherapist() {}
+	async addTherapist(therapist, qualifications, contract_types) {
+		let qb;
+		const newID = Date.now();
+		let msg = "";
+
+		try {
+			const data = {
+				t_ID: newID,
+				t_first_name: helpers.dataEncrypt(therapist.first_name),
+				t_surname: helpers.dataEncrypt(therapist.surname),
+				t_colour: helpers.generateColorHexCode(),
+				t_phone: helpers.dataEncrypt(therapist.phone),
+				t_email: helpers.dataEncrypt(therapist.email),
+				t_fq_fee: therapist.fee_fq,
+				t_fee: therapist.fee,
+			};
+
+			qb = await pool.get_connection();
+
+			const insertID = await qb.insert("therapists", data);
+			if (insertID.affectedRows == 1) {
+				msg = "Therapist added";
+				// insert the qualifications
+				if (qualifications.length >= 1) {
+					for (let i = 0; i < qualifications.length; i++) {
+						let tq_data = {
+							tq_therapist: newID,
+							tq_qualification: qualifications[i],
+						};
+						await qb.insert("therapist_qualifications", tq_data);
+
+						msg += ", qualifications added";
+					}
+				}
+				if (contract_types.length >= 1) {
+					for (let i = 0; i < contract_types.length; i++) {
+						let tct_data = {
+							tct_contract_type: contract_types[i],
+							tct_therapist: newID,
+						};
+						await qb.insert("therapist_contract_types", tct_data);
+
+						msg += ", contract types added";
+					}
+				}
+			}
+
+			return msg;
+		} catch (error) {
+			console.log("Unable to save therapist", error);
+			msg = "Error: " + error;
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async updateTherapist(therapistID) {}
 	async removeTherapist(therapistID) {}
 }

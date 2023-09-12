@@ -6,6 +6,10 @@ a{
     text-decoration: none;
 }
 
+label{
+    color: var(--bs-primary);
+}
+
 .fc .fc-toolbar.fc-header-toolbar button{
     background-color: white;
     color: var(--primary);
@@ -39,6 +43,10 @@ a{
     text-decoration:underline;
 }
 
+
+.view-single{
+    text-align: right;
+}
 
 .navbar a{
     color:var(--bs-primary);
@@ -113,6 +121,10 @@ a.sidebar-brand {
 }
 
 
+#nepvraag{
+    display: none;
+}
+
 .accordion {
     overflow-anchor: none;
 }
@@ -126,6 +138,10 @@ i.bi{
 .qualifications li{
     list-style: none;
     margin-bottom: 5px 10px;
+}
+
+.qualifications label, .contract-types label{
+    color:#000;
 }
 
 .fee{
@@ -152,8 +168,8 @@ i.bi{
     overflow-x: hidden;
 }
 
-#content-wrapper {
-    /* margin-top: 80px; */
+.form-save-button{
+    margin-top: 40px;
 }
 
 .flex-column {
@@ -176,6 +192,12 @@ i.bi{
     margin-left: -0.75rem;
     padding: 20px 60px;
 }
+
+h5.category{
+    margin-top: 40px;
+    color: var(--bs-primary);
+}
+
 
 .dev-cred{
     font-size: .7em;
@@ -354,6 +376,7 @@ ul.navbar-nav.top-navbar{
     width: 30px;
     height: 30px;
     border-radius: 50%;
+    font-size: 0;
 }
 .colour-circle-sm{
     width: 20px;
@@ -390,6 +413,25 @@ ul.navbar-nav.top-navbar{
 }
 .tooltip.bs-tooltip-top .tooltip-arrow::before {
     border-top-color: #2f4fff !important;
+}
+
+
+.paid{
+    color: var(--bs-green);
+}
+
+.not-paid{
+    color: red;
+}
+
+
+.cancel-appointment i{
+   margin: 0;
+}
+.cancelled-appointment{
+    text-decoration: line-through;
+    font-style: italic;
+    color: red;
 }
 
 

@@ -1,0 +1,118 @@
+<form
+	action="/newenquiry"
+	method="post"
+>	<input type="text" id="nepvraag" name="nepvraag" class="hidden">
+	<div class="mb-3">
+		<label for="first_name">First Name</label>
+		<input
+			type="text"
+			class="form-control"
+			id="first_name"
+			name="first_name"
+			placeholder="First Name"
+			required="required"
+		/>
+	</div>
+	<div class="mb-3">
+		<label for="surname">Surname</label>
+		<input
+			type="text"
+			class="form-control"
+			id="surname"
+			name="surname"
+			placeholder="Surname"
+			required="required"
+		/>
+	</div>
+	<div class="mb-3">
+		<label
+			for="email"
+			class="form-label"
+			><i class="bi bi-envelope"></i> Email address</label
+		>
+		<input
+			type="email"
+			class="form-control"
+			id="email"
+			name="email"
+			placeholder="Email Address"
+			required="required"
+		/>
+	</div>
+	<div class="mb-3">
+		<label
+			for="phone"
+			class="form-label"
+			><i class="bi bi-phone"></i> Phone</label
+		>
+		<input
+			type="text"
+			class="form-control"
+			id="phone"
+			name="phone"
+			placeholder="Phone Number"
+			required="required"
+		/>
+	</div>
+
+    <div class="mb-3">
+        <label for="therapists" class="form-label"><i class="bi bi-person-fill"></i> Therapist</label>
+        <select name="therapists" id="therapists" class="form-select" aria-label="Therapist">
+            <option value="-1" disabled selected hidden>Select a therapist</option>
+            <% if(locals.therapists && therapists.length >= 1){ %>
+				<% for(let i=0; i<therapists.length; i++){ %>
+					<% let therapist = therapists[i]; %>
+					<option value="<%= therapist.t_ID %>"><%= dataDecrypt(therapist.t_first_name) + " " + dataDecrypt(therapist.t_surname) %></option>
+				<% } %>
+            <% } %>
+        </select>
+    </div>  
+    
+    <div class="mb-3">
+        <label for="assessed_by" class="form-label"><i class="bi bi-person-fill"></i> Assessed By</label>
+        <select name="assessed_by" id="assessed_by" class="form-select" aria-label="Assessed By">
+            <option value="-1" disabled selected hidden>Select a therapist</option>
+            <% if(locals.therapists && therapists.length >= 1){ %>
+				<% for(let i=0; i<therapists.length; i++){ %>
+					<% let therapist = therapists[i]; %>
+					<option value="<%= therapist.t_ID %>"><%= dataDecrypt(therapist.t_first_name) + " " + dataDecrypt(therapist.t_surname) %></option>
+				<% } %>
+            <% } %>
+        </select>
+    </div>  
+    <div class="mb-3">
+        <label for="referred_by" class="form-label"><i class="bi bi-building"></i> Referred By</label>
+        <select name="referred_by" id="referred_by" class="form-select" aria-label="Referred By">
+            <option value="-1" disabled selected hidden>Select a referral</option>
+            <% if(locals.referrers && referrers.length >= 1){ %>
+				<% for(let i=0; i<referrers.length; i++){ %>
+					<% let referrer = referrers[i]; %>
+					<option value="<%= referrer.r_ID %>"><%=referrer.r_referral %></option>
+				<% } %>
+            <% } %>
+        </select>
+    </div>  
+
+   
+	<div class="form-check col-6">
+		<input class="form-check-input" type="checkbox" value="1" id="low_cost" name="low_cost">
+		<label class="form-check-label" for="low_cost">
+			Low Cost
+		</label>
+	</div>
+	<div class="form-check col-6">
+		<input class="form-check-input" type="checkbox" value="1" id="sent_to_claire" name="sent_to_claire">
+		<label class="form-check-label" for="sent_to_claire">
+			Details Sent to Claire
+		</label>
+	</div>
+
+	<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+    <button
+		type="submit"
+		class="btn btn-primary form-save-button"
+	>
+		Save
+	</button>
+</div>
+</form>

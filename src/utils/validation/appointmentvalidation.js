@@ -24,4 +24,8 @@ const checkAppointmentInput = [
 		.escape(),
 ];
 
-module.exports = checkAppointmentInput;
+const checkCancelAppointmentInput = [
+	body("cancellation_reason").exists().isLength({ min: 3 }).trim().escape(),
+];
+
+module.exports = { checkAppointmentInput, checkCancelAppointmentInput };

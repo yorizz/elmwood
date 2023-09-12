@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 	const response = await fetch("/allappointments");
 	const appointments = await response.json();
 
-	// console.log("The appoimtments are:", appointments);
+	console.log("The appoimtments are:", appointments);
 
 	let events = [];
 

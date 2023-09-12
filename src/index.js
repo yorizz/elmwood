@@ -9,6 +9,10 @@ const flash = require("express-flash");
 const session = require("express-session");
 const fileUpload = require("express-fileupload");
 const compression = require("compression");
+const morgan = require("morgan");
+const winston = require("winston");
+
+const { format } = winston;
 
 const helper = require("./utils/helpers");
 
@@ -21,12 +25,37 @@ app.locals.formatDate = helper.formatDate;
 app.locals.formatTime = helper.formatTime;
 app.locals.formatFileType = helper.formatFileType;
 app.locals.formatCurrency = helper.formatCurrency;
+app.locals.formatAttribute = helper.formatAttribute;
 app.locals.dataEncrypt = helper.dataEncrypt;
 app.locals.dataDecrypt = helper.dataDecrypt;
+app.locals.checkError = helper.checkForFieldError;
+app.locals.generateColor = helper.generateColorHexCode;
 
-const router = require("./controllers/routes");
+const router = require("./routes/routes");
 
 const bcrypt = require("bcrypt");
+
+const logger = winston.createLogger({
+	format: format.combine(
+		format.colorize(),
+		format.timestamp(),
+		format.printf((msg) => {
+			return `${msg.timestamp} [${msg.level}] ${msg.message}`;
+		})
+	),
+	transports: [new winston.transports.Console({ level: "http" })],
+});
+
+const morganMiddleware = morgan(
+	":method :url :status :res[content-length] - :response-time ms",
+	{
+		stream: {
+			write: (message) => logger.http(message.trim()),
+		},
+	}
+);
+
+app.use(morganMiddleware);
 
 app.use(express.static(path.join(__dirname, "../public")));
 const multer = require("multer");
