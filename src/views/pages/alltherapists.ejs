@@ -24,6 +24,7 @@
 		<div class="th">Calendar Colour</div>
 		<div class="th">Name</div>
 		<div class="th">&nbsp;</div>
+		<div class="th">&nbsp;</div>
 	</div>
 	<!-- End Table Head-->
 
@@ -44,6 +45,13 @@
 			<div class="table-cell align-middle">
 				<%= dataDecrypt(therapist.t_first_name) %> <%=
 				dataDecrypt(therapist.t_surname) %>
+			</div>
+			<div class="table-cell align-middle view-single">
+				<a
+					href="/viewavailability/<%= therapist.t_ID %>"
+					title="view therapist availability"
+					><i class="bi bi-clock"></i
+				></a>
 			</div>
 			<div class="table-cell align-middle view-single">
 				<a

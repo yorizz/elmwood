@@ -35,6 +35,33 @@ class AppointmentController {
 		}
 	}
 
+	async allAppointmentsNotCancelled(req, res) {
+		try {
+			let allAppointments = [];
+			let selectedMonth = req.params.month ? req.params.month : null;
+			let appointments = await appointmentsmodel.getAllAppointmentsForMonth(
+				selectedMonth
+			);
+			for (let appointment of appointments) {
+				let appointmentDetails = {
+					a_ID: appointment.a_ID,
+					a_date: appointment.a_date,
+					a_start_time: appointment.a_start_time,
+					a_end_time: appointment.a_end_time,
+					c_first_name: helpers.dataDecrypt(appointment.c_first_name),
+					c_surname: helpers.dataDecrypt(appointment.c_surname),
+					t_first_name: helpers.dataDecrypt(appointment.t_first_name),
+					t_surname: helpers.dataDecrypt(appointment.t_surname),
+					t_colour: appointment.t_colour,
+				};
+				allAppointments.push(appointmentDetails);
+			}
+			return res.send(allAppointments);
+		} catch (error) {
+			console.log("allAppointments error", error);
+		}
+	}
+
 	async appointmentsList(req, res) {
 		let allAppointments = [];
 

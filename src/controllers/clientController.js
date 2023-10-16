@@ -1,6 +1,7 @@
 const clientmodel = require("../models/clientmodel");
 const therapistmodel = require("../models/therapistmodel");
 const referrersmodel = require("../models/referrersmodel");
+const qualificationsmodel = require("../models/qualificationsmodel");
 
 const { check, validationResult } = require("express-validator");
 
@@ -44,7 +45,6 @@ class ClientController {
 
 	async getSingleClient(req, res) {
 		try {
-			let therapist = {};
 			let t_client;
 			if (!isNaN(parseInt(req.params.id))) {
 				t_client = await clientmodel.getClient(req.params.id);
@@ -72,6 +72,8 @@ class ClientController {
 		try {
 			let therapists = await therapistmodel.getAllTherapists();
 			let referrers = await referrersmodel.getAllReferrers();
+			let qualifications = await qualificationsmodel.getAllQualifications();
+			console.log("qualifications", qualifications);
 
 			return res.render("templates/template.ejs", {
 				name: "New Enquiry",
@@ -81,6 +83,7 @@ class ClientController {
 				pathCorrection: "../",
 				therapists: therapists,
 				referrers: referrers,
+				qualifications: qualifications,
 			});
 		} catch (error) {
 			console.log("can't open new enquiry", error);
@@ -130,6 +133,45 @@ class ClientController {
 			}
 		} catch (error) {
 			console.log("/gettherapistforclient error", error);
+		}
+	}
+
+	async editClient(req, res) {
+		try {
+			let t_client;
+			if (!isNaN(parseInt(req.params.id))) {
+				t_client = await clientmodel.getClient(req.params.id);
+
+				console.log("t_client", t_client);
+			}
+			let therapists = await therapistmodel.getAllTherapists();
+			let referrers = await referrersmodel.getAllReferrers();
+
+			return res.render("templates/template.ejs", {
+				name:
+					"Edit " +
+					helpers.dataDecrypt(t_client.t_client[0].c_first_name) +
+					" " +
+					helpers.dataDecrypt(t_client.t_client[0].c_surname),
+				page: "newenquiry.ejs",
+				title:
+					"Edit " +
+					helpers.dataDecrypt(t_client.t_client[0].c_first_name) +
+					" " +
+					helpers.dataDecrypt(t_client.t_client[0].c_surname),
+				sidebar: true,
+				t_client: t_client,
+				pathCorrection: "../../",
+				t_client: t_client,
+				t_client_assessed_by: t_client.t_client[0].client_assessed_by,
+				therapists: therapists,
+				referrers: referrers,
+				files: t_client.t_client[0].client_files,
+				notes: t_client.t_client[0].client_notes,
+				isEdit: true,
+			});
+		} catch (error) {
+			console.log("unable to display edit therapist", error);
 		}
 	}
 }

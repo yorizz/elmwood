@@ -53,6 +53,16 @@ router.get(
 	isUserAuthenticated,
 	appointmentController.allAppointments
 );
+router.get(
+	"/allappointments/notcancelled",
+	isUserAuthenticated,
+	appointmentController.allAppointmentsNotCancelled
+);
+router.get(
+	"/allappointments/notcancelled/:month",
+	isUserAuthenticated,
+	appointmentController.allAppointmentsNotCancelled
+);
 
 router.get(
 	"/allappointmentslist",
@@ -81,6 +91,10 @@ router.post(
 	appointmentController.addAppointment
 );
 
+/********************************************************************************************************
+ *  CLIENTS
+ ********************************************************************************************************/
+
 router.get("/allclients", isUserAuthenticated, clientController.getAllClients);
 
 router.get("/waitinglist", clientController.getWaitingList);
@@ -101,6 +115,16 @@ router
 		clientController.postNewEnquiry
 	);
 
+router.get(
+	"/client/:id/edit",
+	isUserAuthenticated,
+	clientController.editClient
+);
+
+/********************************************************************************************************
+ *  THERAPISTS
+ ********************************************************************************************************/
+
 router.post(
 	"/gettherapistforclient",
 	isUserAuthenticated,
@@ -119,6 +143,12 @@ router.get(
 	therapistController.getSingleTherapist
 );
 
+router.get(
+	"/therapist/:id/edit",
+	isUserAuthenticated,
+	therapistController.editTherapist
+);
+
 router
 	.route("/newtherapist")
 	.get(isUserAuthenticated, therapistController.getNewTherapist)
@@ -127,6 +157,19 @@ router
 		checkAddTherapistValues,
 		therapistController.postNewTherapist
 	);
+
+router.post(
+	"/updatetherapist/:id",
+	isUserAuthenticated,
+	checkAddTherapistValues,
+	therapistController.updateTherapist
+);
+
+router.get(
+	"/viewavailability/:id",
+	isUserAuthenticated,
+	therapistController.viewAvailability
+);
 
 router.get("/file/:type/:owner/:filename", (req, res) => {
 	console.log("baseurl", req.baseUrl);

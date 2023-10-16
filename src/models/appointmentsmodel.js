@@ -43,6 +43,75 @@ class AppointmentsModel {
 		}
 	}
 
+	async getAllAppointmentsForMonth(month) {
+		let appointments = [];
+		let rv = false;
+
+		let selectedMonth = month ? '"' + month + '"' : "now()";
+
+		let qb;
+
+		try {
+			qb = await pool.get_connection();
+
+			const response = await qb
+				.select("*")
+				.from("appointments")
+				.join("clients", "a_client=c_ID")
+				.join("therapists", "a_therapist=t_ID")
+				.where(`MONTH(a_date)=MONTH(${selectedMonth})`)
+				.where("a_is_cancelled", 0)
+				// .order_by("a_date", "desc")
+				.get();
+
+			console.log("Query Ran: " + qb.last_query());
+			// console.log("db response for appointments", response);
+
+			appointments = JSON.parse(JSON.stringify(response));
+
+			rv = appointments;
+
+			return rv;
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async getAllAppointmentsNotCancelled() {
+		let appointments = [];
+		let rv = false;
+
+		let qb;
+
+		try {
+			qb = await pool.get_connection();
+
+			const response = await qb
+				.select("*")
+				.from("appointments")
+				.join("clients", "a_client=c_ID")
+				.join("therapists", "a_therapist=t_ID")
+				// .order_by("a_date", "desc")
+				.where("a_is_cancelled", 0)
+				.get();
+
+			console.log("Query Ran: " + qb.last_query());
+			// console.log("db response for appointments", response);
+
+			appointments = JSON.parse(JSON.stringify(response));
+
+			rv = appointments;
+
+			return rv;
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async getTodaysAppointments() {
 		let appointments = [];
 		let rv = false;
@@ -60,6 +129,7 @@ class AppointmentsModel {
 				.join("clients", "a_client=c_ID")
 				.join("therapists", "a_therapist=t_ID")
 				.where("a_date", helpers.formatYYYYMMDDDate(new Date(), "-"))
+				.where("a_is_cancelled", 0)
 				.order_by("a_start_time")
 				.get();
 

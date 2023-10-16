@@ -21,8 +21,9 @@
     
     <div class="row t-row d-flex justify-content-between">
         <h3>Assessed by: 
-            <% if (cl.c_assessed_by != null || locals.t_client_assessed_by) { %>
-                <a href="/therapist/<%= t_client_assessed_by[0].at_ID %>"><%= dataDecrypt(t_client_assessed_by[0].at_first_name) %> <%= dataDecrypt(t_client_assessed_by[0].at_surname) %></a>
+            
+            <% if (locals.client_assessed_by && t.client.c_assessed_by != null  ) { %>
+                <a href="/therapist/<%= client_assessed_by[0].at_ID %>"><%= dataDecrypt(client_assessed_by[0].at_first_name) %> <%= dataDecrypt(client_assessed_by[0].at_surname) %></a>
             <% } %>
         </h3> 
 

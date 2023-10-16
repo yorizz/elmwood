@@ -182,7 +182,95 @@ class TherapistModel {
 		}
 	}
 
-	async updateTherapist(therapistID) {}
+	async updateTherapist(therapist, qualifications, contract_types) {
+		let qb;
+		let msg = "";
+		console.log("UPDATE THERAPIST", therapist);
+
+		try {
+			const updatedTherapistData = {
+				t_first_name: helpers.dataEncrypt(therapist.first_name),
+				t_surname: helpers.dataEncrypt(therapist.surname),
+				t_phone: helpers.dataEncrypt(therapist.phone),
+				t_email: helpers.dataEncrypt(therapist.email),
+				t_fq_fee: therapist.fee_fq,
+				t_fee: therapist.fee,
+			};
+
+			qb = await pool.get_connection();
+
+			const insertID = await qb.update("therapists", updatedTherapistData, {
+				t_ID: therapist.therapist_ID,
+			});
+
+			console.log("UPDATING THERAPIST", qb.last_query());
+
+			if (insertID.affectedRows == 1) {
+				msg = "Therapist updated";
+
+				//delete existing qualifications
+				let deletedQualifications = await qb.delete(
+					"therapist_qualifications",
+					{
+						tq_therapist: therapist.therapist_ID,
+					}
+				);
+
+				console.log("Deleted ", deletedQualifications, qb.last_query());
+
+				// insert the qualifications
+				console.log("new qualifications", qualifications);
+				if (qualifications.length >= 1) {
+					for (let i = 0; i < qualifications.length; i++) {
+						let tq_data = {
+							tq_therapist: therapist.therapist_ID,
+							tq_qualification: qualifications[i],
+						};
+						await qb.insert("therapist_qualifications", tq_data);
+
+						console.log("new qualifications entered", qb.last_query());
+
+						msg += ", qualifications added";
+					}
+				}
+
+				//delete existing contract types
+				let deletedContractTypes = await qb.delete(
+					"therapist_contract_types",
+					{
+						tct_therapist: therapist.therapist_ID,
+					}
+				);
+
+				console.log(
+					"Deleted Contract Types",
+					deletedContractTypes,
+					qb.last_query()
+				);
+
+				if (contract_types.length >= 1) {
+					for (let i = 0; i < contract_types.length; i++) {
+						let tct_data = {
+							tct_contract_type: contract_types[i],
+							tct_therapist: therapist.therapist_ID,
+						};
+						await qb.insert("therapist_contract_types", tct_data);
+
+						console.log("added new contract types", qb.last_query());
+
+						msg += ", contract types added";
+					}
+				}
+			}
+
+			return msg;
+		} catch (error) {
+			console.log("Unable to save therapist", error);
+			msg = "Error: " + error;
+		} finally {
+			if (qb) qb.release();
+		}
+	}
 	async removeTherapist(therapistID) {}
 }
 

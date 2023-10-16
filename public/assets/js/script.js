@@ -10,10 +10,10 @@ $(document).ready(function () {
 		$("#therapists-table").tablesorter();
 	}
 
-	const tooltipTriggerList = document.querySelectorAll(
+	let tooltipTriggerList = document.querySelectorAll(
 		'[data-bs-toggle="tooltip"]'
 	);
-	const tooltipList = [...tooltipTriggerList].map(
+	let tooltipList = [...tooltipTriggerList].map(
 		(tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
 	);
 
@@ -27,7 +27,10 @@ $(document).ready(function () {
 		}
 	});
 
-	if (window.location.href.indexOf("/calendar") >= 1) {
+	if (
+		window.location.href.indexOf("/calendar") >= 1 ||
+		window.location.href.indexOf("/therapist") >= 1
+	) {
 		console.log("calling tooltip");
 		getTooltip();
 	}
@@ -45,6 +48,28 @@ $(document).ready(function () {
 			getTooltip();
 		}
 	);
+
+	$(document).on("click", "#availability", function (event) {
+		event.preventDefault();
+
+		window.location.href =
+			"/viewavailability/" + $(this).attr("data-therapist");
+	});
+
+	$(document).on("click", "#therapist-activation", function (event) {
+		event.preventDefault();
+		console.log("#therapist-activation clicked!");
+
+		if ($("#therapist-activation").hasClass("btn-primary")) {
+			console.log("yes remove primary");
+			$("#therapist-activation").addClass("btn-secondary");
+			$("#therapist-activation").removeClass("btn-primary");
+		}
+		if ($("#therapist-activation").hasClass("btn-secondary")) {
+			// $("#therapist-activation").addClass("btn-primary");
+			// $("#therapist-activation").removeClass("btn-secondary");
+		}
+	});
 
 	// this is the close modal button
 	$(document).on("click", "button[data-bs-dismiss]", () => {
@@ -213,6 +238,9 @@ function getTooltip() {
 				$(this).addClass("tt");
 			});
 			$(".fc-event-title").tooltip();
+			clearInterval(eventsInterval);
+		} else {
+			$("button").tooltip();
 			clearInterval(eventsInterval);
 		}
 	}, 100);

@@ -116,6 +116,10 @@ a.sidebar-brand {
     align-items: center;
 }
 
+.dashboard .card-body{
+    min-height: 180px;
+}
+
 .dashboard .appointment{
     font-size: .95em;
 }
@@ -255,11 +259,28 @@ h5.category{
     border: 2px solid #000
 }
 
+.dropdown-toggle .placeholder{
+    background-color: #fff;
+}
+
+.filter-multi-select > .viewbar > .selected-items > .item {
+    background-color: var(--bs-primary);
+}
+
+.filter-multi-select .dropdown-item .custom-checkbox:checked ~ .custom-control-label::before, .filter-multi-select .dropdown-item .custom-checkbox:indeterminate ~ .custom-control-label::before {
+    background-color: var(--bs-primary);
+}
+
 .btn{
     height: 50px;
-    background-color: var(--bs-primary);
+    /* background-color: var(--bs-primary); */
     color: #fff;
 }
+
+.login-button{
+    background-color: var(--bs-primary);
+}
+
 .success-data{
     display: flex;
     flex-direction: column
@@ -372,11 +393,16 @@ ul.navbar-nav.top-navbar{
     border-bottom: 1px solid black;
 }    
 
+form#add-availability-form td, thead th {
+    text-align: center;
+}
+
 .colour-circle{
     width: 30px;
     height: 30px;
     border-radius: 50%;
     font-size: 0;
+    vertical-align: middle;
 }
 .colour-circle-sm{
     width: 20px;

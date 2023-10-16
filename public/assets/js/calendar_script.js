@@ -1,52 +1,12 @@
+let viewedMonths = [];
+
 document.addEventListener("DOMContentLoaded", async function () {
-	const response = await fetch("/allappointments");
-	const appointments = await response.json();
+	let response = await fetch("/allappointments/notcancelled");
+	let appointments = await response.json();
 
 	console.log("The appoimtments are:", appointments);
 
-	let events = [];
-
-	for (let i = 0; i < appointments.length; i++) {
-		let appointment = appointments[i];
-
-		let newEvent = {
-			id: appointment.a_ID,
-			groupId: "",
-			allDay: false,
-			start:
-				appointment.a_date.split("T")[0] + " " + appointment.a_start_time,
-			end: appointment.a_date.split("T")[0] + " " + appointment.a_end_time,
-			startStr: "",
-			endStr: "",
-			title:
-				appointment.c_first_name +
-				" " +
-				appointment.c_surname +
-				" - " +
-				appointment.t_first_name +
-				" " +
-				appointment.t_surname +
-				" | " +
-				appointment.a_start_time +
-				" - " +
-				appointment.a_end_time,
-			url: "",
-			classNames: "",
-			editable: true,
-			startEditable: true,
-			durationEditable: true,
-			resourceEditable: true,
-			display: "auto",
-			overlap: true,
-			constraint: "",
-			backgroundColor: appointment.t_colour,
-			borderColor: "",
-			textColor: "",
-			extendedProps: "",
-			source: null,
-		};
-		events.push(newEvent);
-	}
+	let events = await buildAppointments(appointments);
 
 	// console.log("events", events);
 
@@ -92,8 +52,82 @@ document.addEventListener("DOMContentLoaded", async function () {
 		);
 	});
 
+	$(document).on("click", ".fc-prev-button, .fc-next-button", async (info) => {
+		// $(".fc-daygrid-day-events").each(function () {
+		// 	$(this).html("");
+		// });
+		let months = [
+			"January",
+			"February",
+			"March",
+			"April",
+			"May",
+			"June",
+			"July",
+			"August",
+			"September",
+			"October",
+			"November",
+			"December",
+		];
+		let currentMonthAndYear = $("h2").text().split(" ");
+
+		if (viewedMonths.indexOf($("h2").text()) <= -1) {
+			showSpinner($(document).width() / 2, $(document).height() / 2);
+			console.log("Not in viewedMonths");
+
+			let currentmonth = currentMonthAndYear[0];
+			let currentyear = currentMonthAndYear[1];
+
+			let constructedDate =
+				currentyear +
+				"" +
+				(months.indexOf(currentmonth) + 1 < 10
+					? "0" + (months.indexOf(currentmonth) + 1)
+					: months.indexOf(currentmonth) + 1) +
+				"01";
+			console.log("constructedDate", constructedDate);
+
+			response = await fetch(
+				"/allappointments/notcancelled/" + constructedDate
+			);
+
+			appointments = await response.json();
+			let events = await buildAppointments(appointments);
+			console.log("events", events);
+
+			calendar.addEventSource(events);
+			$(".modal-spinner").remove();
+			viewedMonths.push($("h2").text());
+
+			let tooltipTriggerList = document.querySelectorAll(
+				'[data-bs-toggle="tooltip"]'
+			);
+			let tooltipList = [...tooltipTriggerList].map(
+				(tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
+			);
+
+			getTooltip();
+		}
+		calendar.refetchEvents();
+	});
+
 	calendar.render();
+	viewedMonths.push($("h2").text());
 });
+
+function getTooltip() {
+	let eventsInterval = setInterval(() => {
+		if ($(".fc-event-title").length > 0) {
+			$(".fc-event-title").each(function () {
+				$(this).attr("title", $(this).text());
+				$(this).addClass("tt");
+			});
+			$(".fc-event-title").tooltip();
+			clearInterval(eventsInterval);
+		}
+	}, 100);
+}
 
 function showSpinner(x, y) {
 	$("body").append(
@@ -101,4 +135,50 @@ function showSpinner(x, y) {
 	);
 	$(".modal-spinner").css("left", x - 40 + "px");
 	$(".modal-spinner").css("top", y - 40 + "px");
+}
+
+async function buildAppointments(appointments) {
+	let events = [];
+	for (let i = 0; i < appointments.length; i++) {
+		let appointment = appointments[i];
+
+		let newEvent = {
+			id: appointment.a_ID,
+			groupId: "",
+			allDay: false,
+			start:
+				appointment.a_date.split("T")[0] + " " + appointment.a_start_time,
+			end: appointment.a_date.split("T")[0] + " " + appointment.a_end_time,
+			startStr: "",
+			endStr: "",
+			title:
+				appointment.c_first_name +
+				" " +
+				appointment.c_surname +
+				" - " +
+				appointment.t_first_name +
+				" " +
+				appointment.t_surname +
+				" | " +
+				appointment.a_start_time +
+				" - " +
+				appointment.a_end_time,
+			url: "",
+			classNames: "",
+			editable: true,
+			startEditable: true,
+			durationEditable: true,
+			resourceEditable: true,
+			display: "auto",
+			overlap: true,
+			constraint: "",
+			backgroundColor: appointment.t_colour,
+			borderColor: "",
+			textColor: "",
+			extendedProps: "",
+			source: null,
+		};
+		events.push(newEvent);
+	}
+	return events;
 }

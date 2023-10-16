@@ -1,7 +1,17 @@
 <form
-	action="/newenquiry"
+	action="<%=(locals.isEdit)? '/updateclient/' + t_client.t_client[0].c_ID : '/newenquiry' %>"
 	method="post"
->	<input type="text" id="nepvraag" name="nepvraag" class="hidden">
+>	<input type="text" id="nepvraag" name="nepvraag" class="hidden" />
+	
+<% if(locals.t_client && t_client.t_client){ %>
+	<input 
+		type="hidden" 
+		id="client_ID" 
+		name="client_ID" 
+		class="hidden"
+		value="<%=(locals.isEdit) ? t_client.t_client[0].c_ID : '' %>"
+	 />
+	 <% } %>
 	<div class="mb-3">
 		<label for="first_name">First Name</label>
 		<input
@@ -10,6 +20,7 @@
 			id="first_name"
 			name="first_name"
 			placeholder="First Name"
+			value="<%=(locals.isEdit) ? dataDecrypt(t_client.t_client[0].c_first_name) : '' %>"
 			required="required"
 		/>
 	</div>
@@ -21,6 +32,7 @@
 			id="surname"
 			name="surname"
 			placeholder="Surname"
+			value="<%=(locals.isEdit) ? dataDecrypt(t_client.t_client[0].c_surname) : '' %>"
 			required="required"
 		/>
 	</div>
@@ -36,6 +48,7 @@
 			id="email"
 			name="email"
 			placeholder="Email Address"
+			value="<%=(locals.isEdit) ? dataDecrypt(t_client.t_client[0].c_email) : '' %>"
 			required="required"
 		/>
 	</div>
@@ -51,6 +64,7 @@
 			id="phone"
 			name="phone"
 			placeholder="Phone Number"
+			value="<%=(locals.isEdit) ? dataDecrypt(t_client.t_client[0].c_phone) : '' %>"
 			required="required"
 		/>
 	</div>
@@ -59,10 +73,17 @@
         <label for="therapists" class="form-label"><i class="bi bi-person-fill"></i> Therapist</label>
         <select name="therapists" id="therapists" class="form-select" aria-label="Therapist">
             <option value="-1" disabled selected hidden>Select a therapist</option>
-            <% if(locals.therapists && therapists.length >= 1){ %>
-				<% for(let i=0; i<therapists.length; i++){ %>
-					<% let therapist = therapists[i]; %>
-					<option value="<%= therapist.t_ID %>"><%= dataDecrypt(therapist.t_first_name) + " " + dataDecrypt(therapist.t_surname) %></option>
+            <% if(locals.therapists && therapists.length >= 1) { %>
+				<% for(let i=0; i<therapists.length; i++){ 
+						let therapist = therapists[i]; 
+						let selected = '';
+						if(locals.t_client && t_client.length >=1){
+							if(t_client.t_client[0].c_therapist == therapist.t_ID){
+								selected = 'selected'
+							}
+						}
+					%>
+					<option value="<%= therapist.t_ID %>"  selected="<%= selected %>"><%= dataDecrypt(therapist.t_first_name) + " " + dataDecrypt(therapist.t_surname) %></option>
 				<% } %>
             <% } %>
         </select>
@@ -72,36 +93,90 @@
         <label for="assessed_by" class="form-label"><i class="bi bi-person-fill"></i> Assessed By</label>
         <select name="assessed_by" id="assessed_by" class="form-select" aria-label="Assessed By">
             <option value="-1" disabled selected hidden>Select a therapist</option>
-            <% if(locals.therapists && therapists.length >= 1){ %>
-				<% for(let i=0; i<therapists.length; i++){ %>
-					<% let therapist = therapists[i]; %>
-					<option value="<%= therapist.t_ID %>"><%= dataDecrypt(therapist.t_first_name) + " " + dataDecrypt(therapist.t_surname) %></option>
+            <% if((locals.therapists && therapists.length >= 1)){ %>
+				<% for(let i=0; i<therapists.length; i++){ 
+					 let therapist = therapists[i]; 
+					 let selected = '';
+						if(locals.t_client && t_client.length >=1){
+							if(t_client.t_client[0].c_assessed_by == therapist.t_ID){
+								selected = 'selected'
+							}
+						}
+				%>
+					<option value="<%= therapist.t_ID %>" <%= selected %>>
+						<%= dataDecrypt(therapist.t_first_name) + " " + dataDecrypt(therapist.t_surname) %>
+					</option>
 				<% } %>
             <% } %>
         </select>
     </div>  
     <div class="mb-3">
-        <label for="referred_by" class="form-label"><i class="bi bi-building"></i> Referred By</label>
+       	<%
+		let referralSelected = '';
+		%>
+		<label for="referred_by" class="form-label"><i class="bi bi-building"></i> Referred By</label>
         <select name="referred_by" id="referred_by" class="form-select" aria-label="Referred By">
             <option value="-1" disabled selected hidden>Select a referral</option>
             <% if(locals.referrers && referrers.length >= 1){ %>
 				<% for(let i=0; i<referrers.length; i++){ %>
+					<% 
+						if(locals.t_client && t_client.length >=1) {
+							if(t_client.t_client[0].c_referred_by == referrer.r_ID){
+								referralSelected = "selected=selected" ;
+							}
+						}
+					%>
 					<% let referrer = referrers[i]; %>
-					<option value="<%= referrer.r_ID %>"><%=referrer.r_referral %></option>
+					<option value="<%= referrer.r_ID %>" <%= referralSelected %>><%= referrer.r_referral %></option>
 				<% } %>
             <% } %>
         </select>
     </div>  
 
-   
+	<div class="mb-3">
+        <label for="therapy_types_requested" class="form-label"> Therapy Type(s) Requested</label>
+		<select class="form-select" name="therapy_types_requested" id="therapy_types_requested" multiple data-mdb-placeholder="Type(s) of Therapy" multiple>
+			<% 
+			if(locals.qualifications && qualifications.length >= 1){
+				for(let i=0; i<qualifications.length; i++){ %>
+				<option value="<%= qualifications[i].q_ID %>"><%= qualifications[i].q_qualification %></option>
+			
+			<% 
+				}
+			} 
+			%>
+
+		</select>
+	</div>
+
+	<% 
+	let checked = '';
+	if((locals.t_client && t_client.length >= 1)) {
+		if(t_client.t_client[0].c_low_cost_employment == 1){
+			checked = 'checked';
+		}
+	} %> 
 	<div class="form-check col-6">
-		<input class="form-check-input" type="checkbox" value="1" id="low_cost" name="low_cost">
+		<input class="form-check-input" type="checkbox" value="1" id="low_cost" name="low_cost" <%= checked %>>
 		<label class="form-check-label" for="low_cost">
 			Low Cost
 		</label>
 	</div>
+
+	
+	
+	<%
+	if((locals.t_client && t_client.length >= 1)) {
+		if(t_client.t_client[0].c_details_sent_to_claire == 1){
+			checked = 'checked';
+		}
+		else{
+			checked = '';
+		}
+	}
+	%>
 	<div class="form-check col-6">
-		<input class="form-check-input" type="checkbox" value="1" id="sent_to_claire" name="sent_to_claire">
+		<input class="form-check-input" type="checkbox" value="1" id="sent_to_claire" name="sent_to_claire" <%= checked %>>
 		<label class="form-check-label" for="sent_to_claire">
 			Details Sent to Claire
 		</label>
