@@ -271,6 +271,102 @@ class TherapistModel {
 			if (qb) qb.release();
 		}
 	}
+
+	async listClientsPerTherapist() {
+		let qb;
+		let msg = "";
+		console.log("listClientsPerTherapist");
+
+		try {
+			qb = await pool.get_connection();
+			const response = await qb
+				.select(
+					[
+						"t_ID",
+						"t_first_name",
+						"t_surname",
+						"t_colour",
+						"c_ID",
+						"c_first_name",
+						"c_surname",
+					],
+					null,
+					false
+				)
+				.join("clients", "c_therapist=t_ID", "inner")
+				.where("c_is_active", 1)
+				.order_by("t_surname")
+				.get("therapists");
+
+			console.log("Clients per Therapist Query", qb.last_query());
+
+			console.log("clients per therapist", response);
+			return JSON.parse(JSON.stringify(response));
+		} catch (error) {
+			console.log("Unable to list clients per therapist therapist", error);
+			msg = "Error: " + error;
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async deactivateTherapist(therapistID) {
+		let qb = await pool.get_connection();
+		try {
+			qb.update(
+				"therapists",
+				{ t_is_active: 0 },
+				{ t_ID: therapistID },
+				(err, res) => {
+					if (err) return console.error(err);
+					else return 1;
+				}
+			);
+
+			console.log("Query Ran: " + qb.last_query());
+		} catch (error) {
+			return console.error("Pool Query Error: " + error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+	async activateTherapist(therapistID) {
+		let qb = await pool.get_connection();
+		try {
+			qb.update(
+				"therapists",
+				{ t_is_active: 1 },
+				{ t_ID: therapistID },
+				(err, res) => {
+					if (err) return console.error(err);
+					else return 1;
+				}
+			);
+
+			console.log("Query Ran: " + qb.last_query());
+			return { msg: "therapist activated" };
+		} catch (error) {
+			return console.error("Pool Query Error: " + error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async addTherapistNote(note, clientID) {
+		let qb = await pool.get_connection();
+		try {
+			qb.insert("therapist_notes", note, (err, res) => {
+				if (err) return console.error(err);
+			});
+			console.log("Query Ran: " + qb.last_query());
+			return res.JSON({ msg: "added note to therapist" });
+		} catch (error) {
+			return console.error("Pool Query Error: " + error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async removeTherapist(therapistID) {}
 }
 

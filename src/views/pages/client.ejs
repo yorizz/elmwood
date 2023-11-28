@@ -1,11 +1,16 @@
 <% if(locals.t_client) { %> <% const cl = t_client[0]; %>
-    <div class="row t-row d-flex justify-content-between">
-        <h3 class="col-9">
+    <div class="row client-row t-row d-flex justify-content-between">
+        <h3 class="">
             <%= dataDecrypt(cl.c_first_name) %> <%= dataDecrypt(cl.c_surname) %> 
             <% if (cl.t_first_name != null) { %>
              <span class="tone-down">Assigned to:</span> <a href="/therapist/<%= cl.t_ID %>"><%= dataDecrypt(cl.t_first_name) %> <%= dataDecrypt(cl.t_surname) %></a>
              <% } %>
         </h3>
+        <h3 class="col-2 ">
+            <% let activeChecked = (cl.c_is_active == 1)?'checked':''  %>
+            <button id="client_active" class="btn <%=  (cl.c_is_active == 1) ? 'btn-primary' : 'btn-secondary' %>" value="<%= cl.c_ID  %>" data-bs-original-title="<%=  (cl.c_is_active == 1) ? 'Deactivate' : 'Activate' %>"><i class="bi <%=  (cl.c_is_active == 1) ? 'bi-person-fill-check' : "bi-person-fill-x" %>"></i> <%=  (cl.c_is_active == 1) ? 'Active' : 'Inactive' %></button>
+        </h3>
+        
         <h3 class="col-3 edit-icon">
             <a href="/client/<%= cl.c_ID %>/edit"><i class="bi bi-pencil"></i></a>
         </h3>
@@ -22,14 +27,14 @@
     <div class="row t-row d-flex justify-content-between">
         <h3>Assessed by: 
             
-            <% if (locals.client_assessed_by && t.client.c_assessed_by != null  ) { %>
-                <a href="/therapist/<%= client_assessed_by[0].at_ID %>"><%= dataDecrypt(client_assessed_by[0].at_first_name) %> <%= dataDecrypt(client_assessed_by[0].at_surname) %></a>
+            <% if (locals.t_client_assessed_by && cl.c_assessed_by != null  ) { %>
+                <a href="/therapist/<%= t_client_assessed_by[0].at_ID %>"><%= dataDecrypt(t_client_assessed_by[0].at_first_name) %> <%= dataDecrypt(t_client_assessed_by[0].at_surname) %></a>
             <% } %>
         </h3> 
 
         <div class="row  w-100 d-block d-flex justify-content-between">
             <div class="col-4 align-items-center">
-                <% if (cl.c_low_cost_employment != 0) { %>
+                <% if (cl.c_low_cost_employment  == 1) { %>
                     <i class="bi bi-check agreed"></i>  
                 <% } else { %>
                     <i class="bi bi-x denied"></i>
@@ -38,7 +43,7 @@
             </div>
             
             <div class="col-4 align-items-center">
-                <% if (cl.c_research_participation != 0) { %>
+                <% if (cl.c_research_participation == 1) { %>
                     
                     <i class="bi bi-check agreed"></i>  
                 <% } else { %>
@@ -49,7 +54,7 @@
                 Research Participation
             </div> 
             <div class="col-4 align-items-center">
-                <% if (cl.c_rdetails_sent_to_claire != 0) { %>
+                <% if (cl.c_details_sent_to_claire == 1) { %>
                     
                     <i class="bi bi-check agreed"></i>  
                 <% } else { %>
@@ -62,11 +67,24 @@
         </div>
     </div>
 
+
+    <%
+    if(locals.requestedTherapyTypes && requestedTherapyTypes.length >= 1){
+    %>
+        <div class="row t-row d-flex justify-content-between">
+            <h3 class="col-6">Therapy Types Requested</h3>
+            <ul>
+            <% for(let i=0; i<requestedTherapyTypes.length; i++){ %>    
+                 <li><%= requestedTherapyTypes[i].q_qualification %></li> 
+            <% } %>      
+            </ul>
+        </div>
+    <% } %>
     
     <div class="row t-row d-flex justify-content-between">
         <h3 class="col-6">Files</h3>
         <h3 class="edit-icon col-3">
-            <a href="#"><i class="bi bi-file-earmark-plus"></i></a>
+            <a href="<%=cl.c_ID%>" id="open-file-modal" data-bs-toggle="modal" data-bs-target="#filesModal"><i class="bi bi-file-earmark-plus"></i></a>
         </h3>
        
             <% if(locals.files){ %>
@@ -103,7 +121,7 @@
     <div class="row t-row d-flex justify-content-between">
         <h3 class="col-6">Notes</h3>
         <h3 class="edit-icon col-3">
-            <a href=""><i class="bi bi-sticky"></i></a>
+            <a href="<%=cl.c_ID%>" id="open-note-modal" data-bs-toggle="modal" data-bs-target="#notesModal"><i class="bi bi-sticky"></i></a>
         </h3>
     
         <% if(locals.notes){ %>
@@ -120,7 +138,7 @@
                     <% let noteDate = formatDate(notes[i].cn_date); %>
                     <div class="table-row">
                         <div class="table-cell">
-                            <%= dataDecrypt(notes[i].cn_note) %>
+                            <%= htmlUnescape(dataDecrypt(notes[i].cn_note)) %>
                         </div> 
                         <div class="table-cell upload-date">  
                             <%= noteDate %>
@@ -137,3 +155,54 @@
     </div>
     
     <% } %>
+
+<div class="modal" id="notesModal"  aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+     
+      <div class="modal-header">
+        <h4 class="modal-title">Add Note</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+   
+      <div class="modal-body">
+        <%- include('./addclientnote'); %>
+      </div>
+
+   
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="save-client-note" data-bs-dismiss="modal">Save</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div class="modal" id="filesModal"  aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+     
+      <div class="modal-header">
+        <h4 class="modal-title">Add File</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+   
+      <div class="modal-body">
+        <%- include('./addclientfile'); %>
+      </div>
+
+   
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="save-client-file" data-bs-dismiss="modal">Save</button>
+      </div>
+
+    </div>
+  </div>
+</div>

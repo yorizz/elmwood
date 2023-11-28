@@ -66,7 +66,8 @@ class AppointmentController {
 		let allAppointments = [];
 
 		try {
-			let appointments = await appointmentsmodel.getAllAppointments();
+			let appointments =
+				await appointmentsmodel.getAllAppointmentsAfterToday();
 
 			return res.render("templates/template.ejs", {
 				name: "Appointments",
@@ -75,6 +76,27 @@ class AppointmentController {
 				calendar: false,
 				sidebar: true,
 				appointments: appointments,
+			});
+		} catch (error) {
+			console.log("unable to retrieve appointments", error);
+		}
+	}
+
+	async appointmentsListPast(req, res) {
+		let allAppointments = [];
+
+		try {
+			let appointments =
+				await appointmentsmodel.getAllAppointmentsBeforeToday();
+
+			return res.render("templates/template.ejs", {
+				name: "Appointments",
+				page: "allappointmentslist.ejs",
+				title: "Appointments",
+				calendar: false,
+				sidebar: true,
+				appointments: appointments,
+				isPast: true,
 			});
 		} catch (error) {
 			console.log("unable to retrieve appointments", error);
@@ -134,12 +156,14 @@ class AppointmentController {
 			helpers.formatTime(new Date(Date.now()));
 		try {
 			const errors = validationResult(req);
+			console.log("needs payment:", req.body.canceled_needs_payment);
 			if (errors.isEmpty()) {
 				let data = {
 					a_is_cancelled: 1,
 					a_cancellation_reason: helpers.dataEncrypt(
 						req.body.cancellation_reason
 					),
+					a_needs_payment: req.body.canceled_needs_payment == 1 ? 1 : 0,
 					a_cancellation_date: currentTime,
 				};
 

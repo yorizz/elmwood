@@ -31,7 +31,9 @@
 		<div class="table-body">
 			<% for(client of clients) { console.log("client", client);%>
 
-			<div class="table-row">
+
+
+			<div class="table-row <%= (client.c_is_active == 0) ? 'inactive' : '' %>">
 				<div class="table-cell  align-middle ">
 					<%= dataDecrypt(client.c_first_name) %> <%= dataDecrypt(client.c_surname) %>
 				</div>

@@ -17,6 +17,8 @@ const {
 } = require("../utils/validation/appointmentvalidation");
 const checkAddTherapistValues = require("../utils/validation/therapistvalidation");
 const checkNewEnquiryValidation = require("../utils/validation/clientvalidation");
+const checkClientNoteValidation = require("../utils/validation/clientnotevalidation");
+const checkTherapistNoteValidation = require("../utils/validation/therapistnotevalidation");
 
 const bodyParser = require("body-parser");
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -38,7 +40,7 @@ router
 	.get(loginController.loginUser)
 	.post(loginController.checkUser);
 
-router.get("/logout");
+router.get("/logout", loginController.logout);
 
 router.get(
 	"/dashboard",
@@ -53,11 +55,13 @@ router.get(
 	isUserAuthenticated,
 	appointmentController.allAppointments
 );
+
 router.get(
 	"/allappointments/notcancelled",
 	isUserAuthenticated,
 	appointmentController.allAppointmentsNotCancelled
 );
+
 router.get(
 	"/allappointments/notcancelled/:month",
 	isUserAuthenticated,
@@ -68,6 +72,12 @@ router.get(
 	"/allappointmentslist",
 	isUserAuthenticated,
 	appointmentController.appointmentsList
+);
+
+router.get(
+	"/allappointmentslistpast",
+	isUserAuthenticated,
+	appointmentController.appointmentsListPast
 );
 
 router.get(
@@ -121,6 +131,42 @@ router.get(
 	clientController.editClient
 );
 
+router
+	.route("/updateclient/:id")
+	.post(
+		isUserAuthenticated,
+		urlencodedParser,
+		checkNewEnquiryValidation,
+		clientController.updateClient
+	);
+
+router.get(
+	"/client/deactivate/:id",
+	isUserAuthenticated,
+	clientController.deactivateClient
+);
+
+router.get(
+	"/client/activate/:id",
+	isUserAuthenticated,
+	clientController.activateClient
+);
+
+router.get(
+	"/client/activate/:id",
+	isUserAuthenticated,
+	clientController.getNoteModalContent
+);
+
+router
+	.route("/client/note/:id")
+	.post(
+		isUserAuthenticated,
+		urlencodedParser,
+		checkClientNoteValidation,
+		clientController.addNote
+	);
+
 /********************************************************************************************************
  *  THERAPISTS
  ********************************************************************************************************/
@@ -164,6 +210,33 @@ router.post(
 	checkAddTherapistValues,
 	therapistController.updateTherapist
 );
+
+router.get(
+	"/clientspertherapist",
+	isUserAuthenticated,
+	therapistController.listClientsPerTherapist
+);
+
+router.get(
+	"/therapist/deactivate/:id",
+	isUserAuthenticated,
+	therapistController.deactivateTherapist
+);
+
+router.get(
+	"/therapist/activate/:id",
+	isUserAuthenticated,
+	therapistController.activateTherapist
+);
+
+router
+	.route("/therapist/note/:id")
+	.post(
+		isUserAuthenticated,
+		urlencodedParser,
+		checkTherapistNoteValidation,
+		therapistController.addTherapistNote
+	);
 
 router.get(
 	"/viewavailability/:id",

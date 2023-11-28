@@ -2,6 +2,8 @@ require("dotenv").config();
 const Cryptr = require("cryptr");
 const cryptr = new Cryptr(process.env.CRYPTR_SECRET);
 
+const he = require("he");
+
 class Helpers {
 	formatPhoneNumber(phoneNumber) {
 		let formattedPhoneNumber = "";
@@ -25,6 +27,10 @@ class Helpers {
 			month: "2-digit",
 			day: "2-digit",
 		});
+	}
+
+	formatSQLDate(date) {
+		return new Date(date).toISOString();
 	}
 
 	formatTime(time) {
@@ -84,6 +90,10 @@ class Helpers {
 
 	dataDecrypt(encryptedData) {
 		return cryptr.decrypt(encryptedData);
+	}
+
+	htmlUnescape(escapedHTML) {
+		return he.unescape(escapedHTML);
 	}
 
 	checkForFieldError(errors, fieldName) {

@@ -4,11 +4,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 	let response = await fetch("/allappointments/notcancelled");
 	let appointments = await response.json();
 
-	console.log("The appoimtments are:", appointments);
+	console.log("The appointments are:", appointments);
 
 	let events = await buildAppointments(appointments);
 
-	// console.log("events", events);
+	console.log("events", events);
 
 	var calendarEl = document.getElementById("calendar");
 
@@ -53,9 +53,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 	});
 
 	$(document).on("click", ".fc-prev-button, .fc-next-button", async (info) => {
-		// $(".fc-daygrid-day-events").each(function () {
-		// 	$(this).html("");
-		// });
 		let months = [
 			"January",
 			"February",
@@ -70,9 +67,17 @@ document.addEventListener("DOMContentLoaded", async function () {
 			"November",
 			"December",
 		];
-		let currentMonthAndYear = $("h2").text().split(" ");
 
-		if (viewedMonths.indexOf($("h2").text()) <= -1) {
+		let monthElement = $("h2.fc-toolbar-title");
+		let currentMonthAndYear = monthElement.text().split(" ");
+
+		console.log(
+			"currentMonthAndYear",
+			currentMonthAndYear,
+			"viewedMonths",
+			viewedMonths
+		);
+		if (viewedMonths.indexOf(monthElement.text()) <= -1) {
 			showSpinner($(document).width() / 2, $(document).height() / 2);
 			console.log("Not in viewedMonths");
 
@@ -98,7 +103,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 			calendar.addEventSource(events);
 			$(".modal-spinner").remove();
-			viewedMonths.push($("h2").text());
+			viewedMonths.push(monthElement.text());
 
 			let tooltipTriggerList = document.querySelectorAll(
 				'[data-bs-toggle="tooltip"]'
@@ -113,7 +118,47 @@ document.addEventListener("DOMContentLoaded", async function () {
 	});
 
 	calendar.render();
-	viewedMonths.push($("h2").text());
+	try {
+		viewedMonths.push($("h2.fc-toolbar-title").text());
+	} catch (error) {
+		console.log("error", error);
+	}
+
+	calendar.on("eventClick", function (info) {
+		console.log("event", info.event._def);
+
+		let theModal = new bootstrap.Modal($("#theModal"), {
+			backdrop: "static",
+		});
+		let theAppointmentID = info.event._def.publicId;
+
+		let theAppointmentHTML = info.event._def.title;
+
+		$(".modal-title").text("Cancel Appointment");
+		$(".modal-body").html(theAppointmentHTML);
+		$(".modal-body .appointment-cancel-button ").remove();
+		$(".modal-body").append(
+			'<form action="/cancelappointment/' +
+				theAppointmentID +
+				'" method="POST" id="cancel-appointment-form">' +
+				'<label for="cancellation_reason" class="form-label">Reason for cancelling this appointment</label>' +
+				'<textarea class="form-control" id="cancellation_reason" name="cancellation_reason" rows="5" required="required"></textarea>' +
+				'<input type="checkbox" value="1" id="canceled_needs_payment" name="canceled_needs_payment" checked> <label for="canceed_needs_payment">Needs payment</label>' +
+				"</form>"
+		);
+		$("#submit-new-appointment")
+			.attr("id", "submit-cancel-appointment")
+			.text("Save");
+
+		$("#submit-cancel-appointment").attr(
+			"data-appointment-id",
+			theAppointmentID
+		);
+
+		// console.log("id changed to ", theAppointmentID);
+
+		theModal.toggle();
+	});
 });
 
 function getTooltip() {
@@ -175,7 +220,9 @@ async function buildAppointments(appointments) {
 			backgroundColor: appointment.t_colour,
 			borderColor: "",
 			textColor: "",
-			extendedProps: "",
+			extendedProps: {
+				appointment: appointment.a_ID,
+			},
 			source: null,
 		};
 		events.push(newEvent);

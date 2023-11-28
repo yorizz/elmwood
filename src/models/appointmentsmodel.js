@@ -43,6 +43,71 @@ class AppointmentsModel {
 		}
 	}
 
+	async getAllAppointmentsAfterToday() {
+		let appointments = [];
+		let rv = false;
+
+		let qb;
+
+		try {
+			qb = await pool.get_connection();
+
+			const response = await qb
+				.select("*")
+				.where("a_date >=", helpers.formatSQLDate(Date.now()))
+				.from("appointments")
+				.join("clients", "a_client=c_ID")
+				.join("therapists", "a_therapist=t_ID")
+				.order_by("a_date", "desc")
+				.get();
+
+			console.log("Query Ran: " + qb.last_query());
+			// console.log("db response for appointments", response);
+
+			appointments = JSON.parse(JSON.stringify(response));
+
+			rv = appointments;
+
+			return rv;
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+	async getAllAppointmentsBeforeToday() {
+		let appointments = [];
+		let rv = false;
+
+		let qb;
+
+		try {
+			qb = await pool.get_connection();
+
+			const response = await qb
+				.select("*")
+				.where("a_date <", helpers.formatSQLDate(Date.now()))
+				.from("appointments")
+				.join("clients", "a_client=c_ID")
+				.join("therapists", "a_therapist=t_ID")
+				.order_by("a_date", "desc")
+				.get();
+
+			console.log("Query Ran: " + qb.last_query());
+			// console.log("db response for appointments", response);
+
+			appointments = JSON.parse(JSON.stringify(response));
+
+			rv = appointments;
+
+			return rv;
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async getAllAppointmentsForMonth(month) {
 		let appointments = [];
 		let rv = false;
@@ -123,7 +188,7 @@ class AppointmentsModel {
 
 			const response = await qb
 				.select(
-					"a_ID,a_date,a_start_time, a_end_time, c_first_name, c_surname, t_first_name, t_surname, t_colour"
+					"a_ID,a_date,a_client,a_start_time, a_end_time, c_first_name, c_surname, a_therapist, t_first_name, t_surname, t_colour"
 				)
 				.from("appointments")
 				.join("clients", "a_client=c_ID")

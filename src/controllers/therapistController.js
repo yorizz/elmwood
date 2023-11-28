@@ -331,6 +331,78 @@ class TherapistController {
 			console.log("");
 		}
 	}
+
+	async listClientsPerTherapist(req, res) {
+		console.log("see clients per therapist");
+		let clientsPerTherapist = await therapistmodel.listClientsPerTherapist();
+		return res.render("templates/template.ejs", {
+			name: "Clients per Therapist",
+			page: "clientspertherapist.ejs",
+			title: "Clients per Therapist ",
+			pathCorrection: "../../",
+			sidebar: true,
+			clientsPerTherapist: clientsPerTherapist,
+		});
+		try {
+		} catch (error) {}
+	}
+
+	async deactivateTherapist(req, res) {
+		try {
+			let therapistID = req.params.id;
+			let therapistDeactivated = await therapistmodel.deactivateTherapist(
+				therapistID
+			);
+			console.log("therapistDeactivated", therapistDeactivated);
+			res.send(therapistDeactivated);
+		} catch (error) {
+			console.log("unable to deactivate therapist", error);
+		}
+	}
+
+	async activateTherapist(req, res) {
+		try {
+			let therapistID = req.params.id;
+			let therapistActivated = await therapistmodel.activateTherapist(
+				therapistID
+			);
+			console.log("therapistActivated", therapistActivated);
+			res.send(therapistActivated);
+		} catch (error) {
+			console.log("unable to deactivate therapist", error);
+		}
+	}
+	async getNoteModalContent() {
+		try {
+			return res.render("pages/addtherapistnote.ejs");
+		} catch (error) {
+			console.log("getNoteModalContent error", error);
+		}
+	}
+	async addTherapistNote(req, res) {
+		try {
+			// console.log(session.user);
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.json(errors);
+			} else {
+				let data = {
+					tn_ID: Date.now(),
+					tn_note: helpers.dataEncrypt(req.body.therapist_note),
+					tn_therapist: req.body.therapistId,
+				};
+				console.log("client note data", data);
+				let storeTherapistNote = await therapistmodel.addTherapistNote(
+					data,
+					req.body.therapistId
+				);
+
+				res.json({ msg: "therapist note added: " + storeTherapistNote });
+			}
+		} catch (error) {
+			console.log("post note error", error);
+		}
+	}
 }
 
 module.exports = new TherapistController();

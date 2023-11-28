@@ -1,7 +1,7 @@
 <div class="container dashboard">
-	<div class="row">
+	<div class="row gy-4">
 		<div class="col">
-			<div class="card">
+			<div class="card waiting-list-card">
 				<h5 class="card-header">
 					<span>Waiting List</span>
 					<a href="/waitinglist"><i class="bi bi-list-ul"></i></a>
@@ -13,8 +13,41 @@
 					</p>
 				</div>
 			</div>
-		</div>
+		</div> <!-- end column -->
 
+		
+
+		<div class="col">
+			<div class="card">
+				<h5 class="card-header">
+					<span>Clients per Therapist</span>
+					<a href="/clientspertherapist"><i class="bi bi-people"></i></a>
+				</h5>
+				<div class="card-body  .table-responsive">
+					<div class="table table-responsive w-100 d-block d-md-table">
+						<div class="table-body">	
+							<% if (locals.clientsPerTherapist){
+								for(cpt of clientsPerTherapist){
+							%>
+								<div class="table-row">
+									<div class="table-cell therapist-name">
+										<a href="/therapist/<%= cpt.t_ID %>"><%= dataDecrypt(cpt.t_first_name) %> <%= dataDecrypt(cpt.t_surname) %></a>
+									</div>
+									<div class="table-cell align-middle"><%= cpt.NumberOfClients %></div>
+								</div> <!-- end row -->
+							<%		
+								}
+							   } 
+							%>
+						</div> <!-- end table body-->
+					</div> <!-- end table -->	
+				</div> <!-- end card-body -->
+			</div> <!-- end card -->
+		</div> <!-- end column -->
+
+	</div> <!-- end row --> 
+
+	<div class="row gy-4">
 		<div class="col">
 			<div class="card">
 				<h5 class="card-header">
@@ -22,26 +55,54 @@
 					<a href="/calendar"><i class="bi bi-calendar3"></i></a>
 				</h5>
 
-				<div class="card-body">
-					<% if(locals.appointments) { %>
-					<ul class="list-group list-group-flush">
-						<% for(appointment of appointments) { %>
-						<li class="list-group-item appointment">
-							<span
-								class="colour-circle-sm"
-								style="background-color: <%= appointment.t_colour %>"
-							></span>
-							<%= formatTime(appointment.a_start_time) %> - <%=
-							formatTime(appointment.a_end_time) %>: <%=
-							dataDecrypt(appointment.c_first_name) %>&nbsp;<%=
-							dataDecrypt(appointment.c_surname) %> - <%=
-							dataDecrypt(appointment.t_first_name) %>&nbsp;<%=
-							dataDecrypt(appointment.t_surname) %><% } %>
-						</li>
-					</ul>
-					<% } %>
+				<div class="card-body .table-responsive">
+	<div class="table table-responsive w-100 d-block d-md-table">
+		<div class="table-head">
+			<div class="th">&nbsp;</div>
+			<div class="th">Time</div>
+			<div class="th">Client</div>
+			<div class="th">Therapist</div>
+
+		</div>
+		<div class="table-body col-12">
+			<% if (locals.appointments){ 
+                for(appointment of appointments){ 
+            %>
+			<div class="table-row">
+				<div class="table-cell align-middle">
+                    <span
+                    class="colour-circle-sm"
+                    style="background-color: <%= appointment.t_colour %>"
+                    ></span>
+                </div>
+                <div class="table-cell ">
+                    <%= formatTime(appointment.a_start_time) %> - <%=
+                    formatTime(appointment.a_end_time) %>
+                </div>
+                <div class="table-cell ">
+                 <a href="/client/<%= appointment.a_client %>"><%=
+                    dataDecrypt(appointment.c_first_name) %>&nbsp;<%=
+                    dataDecrypt(appointment.c_surname) %> </a>
+                </div> 
+                <div class="table-cell ">
+                <a href="/therapist/<%= appointment.a_therapist %>"><%=
+                dataDecrypt(appointment.t_first_name) %>&nbsp;<%=
+                dataDecrypt(appointment.t_surname) %></a>
 				</div>
 			</div>
+			<!-- end row -->
+			<% } } %>
 		</div>
+		<!-- end table body-->
 	</div>
+	<!-- end table -->
 </div>
+<!-- end card-body --> %>
+				</div>
+			</div>
+		</div> 
+	</div> 
+</div>
+
+
+

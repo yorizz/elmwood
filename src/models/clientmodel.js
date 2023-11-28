@@ -148,6 +148,7 @@ class ClientModel {
 				.select("*")
 				.join("clients", "cn_client=c_ID")
 				.where("c_ID", clientID)
+				.order_by("cn_date", "desc")
 				.get("client_notes");
 
 			console.log("Query Ran: " + qb.last_query());
@@ -206,8 +207,178 @@ class ClientModel {
 			if (qb) qb.release();
 		}
 	}
-	async updateClient(clientID) {}
+
+	async storeClientTherapyTypeRequests(clientID, therapy_types_requested) {
+		let qb = await pool.get_connection();
+		try {
+			for (let i = 0; i < therapy_types_requested.length; i++) {
+				let clientData = {
+					cttr_client_ID: `${clientID}`,
+					cttr_therapy_type_requested: therapy_types_requested[i],
+				};
+				qb.insert(
+					" client_therapy_types_requests",
+					clientData,
+					(err, res) => {
+						if (err) return console.error(err);
+						else return 1;
+					}
+				);
+				console.log("Query Ran: " + qb.last_query());
+			}
+		} catch (error) {
+			return console.error("Pool Query Error: " + error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async getRequestedTherapyTypes(client_ID) {
+		let qb;
+		let rv = [];
+
+		try {
+			qb = await pool.get_connection();
+			const cttr_response = await qb
+				.select("*")
+				.join("qualifications", "cttr_therapy_type_requested=q_ID", "left")
+				.where("cttr_client_ID", client_ID)
+				.get("client_therapy_types_requests");
+
+			console.log("Query Ran: " + qb.last_query());
+
+			rv = JSON.parse(JSON.stringify(cttr_response));
+
+			return rv;
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async removeExistingTherapyRequestsForClient(clientID) {
+		let qb;
+		try {
+			qb = await pool.get_connection();
+			const results = await qb.delete("client_therapy_types_requests", {
+				cttr_client_ID: clientID,
+			});
+			console.log("number of rows deleted", results.affected_rows);
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async updateClient(clientData, clientID) {
+		let qb = await pool.get_connection();
+		try {
+			qb.update("clients", clientData, { c_ID: clientID }, (err, res) => {
+				if (err) return console.error(err);
+				else return 1;
+			});
+			console.log("Query Ran: " + qb.last_query());
+		} catch (error) {
+			return console.error("Pool Query Error: " + error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async removeClient(clientID) {}
+
+	async clientDeactivated(clientID) {
+		let qb = await pool.get_connection();
+		try {
+			qb.update(
+				"clients",
+				{ c_is_active: 0 },
+				{ c_ID: clientID },
+				(err, res) => {
+					if (err) return console.error(err);
+					else return 1;
+				}
+			);
+
+			console.log("Query Ran: " + qb.last_query());
+			return { msg: "client dactivated" };
+		} catch (error) {
+			return console.error("Pool Query Error: " + error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async clientActivated(clientID) {
+		let qb = await pool.get_connection();
+		try {
+			qb.update(
+				"clients",
+				{ c_is_active: 1 },
+				{ c_ID: clientID },
+				(err, res) => {
+					if (err) return console.error(err);
+					else return 1;
+				}
+			);
+
+			console.log("Query Ran: " + qb.last_query());
+			return { msg: "client activated" };
+		} catch (error) {
+			return console.error("Pool Query Error: " + error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async getClientsPerTherapist() {
+		let qb = await pool.get_connection();
+		try {
+			const ct_response = await qb
+				.limit(5)
+				.select(
+					[
+						"t_ID",
+						"t_first_name",
+						"t_surname",
+						"COUNT(`c_ID`) as `NumberOfClients`",
+					],
+					null,
+					false
+				)
+				.join("clients", "c_therapist=t_ID", "inner")
+				.where("t_is_active", 1)
+				.where("c_is_active", 1)
+				.group_by("c_therapist")
+				.order_by("NumberOfClients", "desc")
+				.get("therapists");
+
+			console.log("cpt ", qb.last_query());
+
+			return JSON.parse(JSON.stringify(ct_response));
+		} catch (error) {
+			return console.error("Pool Query Error: " + error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async addNote(note, clientId) {
+		let qb = await pool.get_connection();
+		try {
+			qb.insert("client_notes", note, (err, res) => {
+				if (err) return console.error(err);
+			});
+			console.log("Query Ran: " + qb.last_query());
+			return res.JSON({ msg: "added note to client" });
+		} catch (error) {
+			return console.error("Pool Query Error: " + error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
 }
 
 module.exports = new ClientModel();

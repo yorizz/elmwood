@@ -10,6 +10,8 @@ const session = require("express-session");
 const fileUpload = require("express-fileupload");
 const compression = require("compression");
 const morgan = require("morgan");
+const multer = require("multer");
+
 const winston = require("winston");
 
 const { format } = winston;
@@ -30,6 +32,7 @@ app.locals.dataEncrypt = helper.dataEncrypt;
 app.locals.dataDecrypt = helper.dataDecrypt;
 app.locals.checkError = helper.checkForFieldError;
 app.locals.generateColor = helper.generateColorHexCode;
+app.locals.htmlUnescape = helper.htmlUnescape;
 
 const router = require("./routes/routes");
 

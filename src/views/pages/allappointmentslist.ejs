@@ -16,6 +16,7 @@
 	></span>
 </div>
 
+<%- (locals.isPast) ? '<a href="/allappointmentslist" class="appointments-link">Future Appointments</a>':'<a href="/allappointmentslistpast" class="appointments-link">Past Appointments</a>' %>
 
 <div class="table-responsive">
 	<table
@@ -29,6 +30,7 @@
 				<th class="th">Client</th>
 				<th class="th">Therapist</th>
 				<th class="th">Fee</th>
+				<th class="th">Paid</th>
 				<th class="th">&nbsp;</th>
 			</tr>
 		</thead>
@@ -57,19 +59,24 @@
 					</div>
 				</td>
 				<td class="table-cell align-middle appointment-client">
-					<%= dataDecrypt(appointment.c_first_name) %> <%=
-					dataDecrypt(appointment.c_surname) %>
+					<a href="/client/<%= appointment.a_client %>"><%= dataDecrypt(appointment.c_first_name) %> <%=
+					dataDecrypt(appointment.c_surname) %></a>
 				</td>
 				<td class="table-cell align-middle appointment-therapist">
-					<%= dataDecrypt(appointment.t_first_name) %> <%=
-					dataDecrypt(appointment.t_surname) %>
+					<a href="/therapist/<%= appointment.a_therapist %>"><%= dataDecrypt(appointment.t_first_name) %> <%=
+					dataDecrypt(appointment.t_surname) %></a>
 				</td>
 				<td class="table-cell align-middle appointment-fee">
-					&euro;<%= formatCurrency(appointment.a_fee) %> <%
+					&euro;<%= formatCurrency(appointment.a_fee) %>
+				</td>
+				<td class="table-cell align-middle appointment-paid">
+					<%
 					if(appointment.a_is_paid == 1){ %>
-					<span class="paid">✔</span>
+					<!-- <span class="paid">✔</span> -->
+					<span class="paid" title="paid"><i class="bi bi-cash"></i></span>
 					<% } else { %>
-					<span class="not-paid">✘</span>
+					<!-- <span class="not-paid" title="not paid">✘</span> -->
+					<span class="not-paid"><i class="bi bi-cash"></i></span>
 					<% } %>
 				</td>
 

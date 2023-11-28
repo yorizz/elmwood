@@ -1,16 +1,10 @@
 <% if(locals.therapist) { %> <% const tp = therapist[0]; %>
 <div class="row t-row d-flex justify-content-between">
 	<h3 class="col-4">
-		<%= dataDecrypt(tp.t_first_name) %> <%= dataDecrypt(tp.t_surname) %> <span
-        class="colour-circle"
-        style="
-            display: inline-block;
-            margin: 10px;
-            background-color: <%= tp.t_colour %>;
-        ">&nbsp;</span>
+		<%= dataDecrypt(tp.t_first_name) %> <%= dataDecrypt(tp.t_surname) %> <span class="colour-circle" style="display: inline-block; margin: 10px; background-color: <%= tp.t_colour %>;">&nbsp;</span>
 	</h3>
     <h3 class="col-3"><button class="btn btn-primary" id="availability" data-therapist="<%= tp.t_ID %>"><i class="bi bi-clock"></i> Availability</button></h3>
-    <h3 class="col-2 "><button id="therapist-activation" class="btn <%=  (tp.t_active == 1) ? 'btn-primary' : 'btn-secondary' %>" value="<%= tp.t_ID  %>" data-bs-original-title="<%=  (tp.t_active == 1) ? 'Deactivate' : 'Activiate' %>"><i class="bi <%=  (tp.t_active == 1) ? 'bi-person-fill-check' : "bi-person-fill-x" %>"></i> <%=  (tp.t_active == 1) ? 'Active' : 'Inactive' %></button></h3>
+    <h3 class="col-2 "><button id="therapist-activation" class="btn <%=  (tp.t_is_active == 1) ? 'btn-primary' : 'btn-secondary' %>" value="<%= tp.t_ID  %>" data-bs-original-title="<%=  (tp.t_is_active == 1) ? 'Deactivate' : 'Activate' %>"><i class="bi <%=  (tp.t_active == 1) ? 'bi-person-fill-check' : "bi-person-fill-x" %>"></i> <%=  (tp.t_is_active == 1) ? 'Active' : 'Inactive' %></button></h3>
 	<h3 class="col-2 edit-icon">
 		<a href="/therapist/<%= tp.t_ID %>/edit"> <i class="bi bi-pencil"></i></a>
 	</h3>
@@ -36,8 +30,8 @@
 <div class="row t-row d-flex justify-content-between">
 	<h3>Fees &amp; Contract types</h3>
     <div class="row d-flex justify-content-between">
-        <p class="col-3"><strong>Fee FQ</strong>: <span class="fee">&euro;<%= formatCurrency(tp.t_fq_fee); %></span></p>
-        <p class="col-6"><strong>Fee</strong>: <span class="fee"> &euro;<%= formatCurrency(tp.t_fee) %></span></p>
+        <p class="col-4"><strong>Therapist Fee (FQ)</strong>: <span class="fee">&euro;<%= formatCurrency(tp.t_fq_fee); %></span></p>
+        <p class="col-6"><strong>Client Fee</strong>: <span class="fee"> &euro;<%= formatCurrency(tp.t_fee) %></span></p>
     </div>
     <hr>
     <div class="row d-flex justify-content-between">
@@ -92,7 +86,7 @@
 <div class="row t-row d-flex justify-content-between">
     <h3 class="col-6">Notes</h3>
     <h3 class="edit-icon col-3">
-        <a href=""><i class="bi bi-sticky"></i></a>
+        <a href="<%=tp.t_ID%>"  id="open-note-modal" data-bs-toggle="modal" data-bs-target="#notesModal"><i class="bi bi-sticky"></i></a>
     </h3>
 
     <% if(locals.notes){ %>
@@ -109,7 +103,7 @@
                 <% let noteDate = formatDate(notes[i].tn_date); %>
                 <div class="table-row">
                     <div class="table-cell">
-                        <%= dataDecrypt(notes[i].tn_note) %>
+                        <%= htmlUnescape(dataDecrypt(notes[i].tn_note)) %>
                     </div> 
                     <div class="table-cell upload-date">  
                         <%= noteDate %>
@@ -124,7 +118,30 @@
 <% } %>   
     
 </div>
-<div data-bs-toggle="tooltip" data-bs-title="<%=  (tp.t_active == 1) ? 'Deactivate' : 'Activiate' %>"></div>
+<!-- <div data-bs-toggle="tooltip" data-bs-title="<%=  (tp.t_active == 1) ? 'Deactivate' : 'Activate' %>"></div> -->
 <% } %>
 
-
+<div class="modal" id="notesModal"  aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+       
+        <div class="modal-header">
+          <h4 class="modal-title">Add Note</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+  
+     
+        <div class="modal-body">
+          <%- include('./addtherapistnote'); %>
+        </div>
+  
+     
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="save-therapist-note" data-bs-dismiss="modal">Save</button>
+        </div>
+  
+      </div>
+    </div>
+  </div>

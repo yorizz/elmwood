@@ -35,11 +35,22 @@ $(document).ready(function () {
 		getTooltip();
 	}
 
-	$(document).on("click", ".sidebar a", function () {
-		$(this).append(
-			'<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>'
-		);
-	});
+	$(document).on(
+		"click",
+		".sidebar a, .bi-pencil, .form-save-button, .appointments-link",
+		function () {
+			let elipsisClass =
+				$(this).hasClass("bi-pencil") ||
+				$(this).hasClass("form-save-button") ||
+				$(this).hasClass("appointments-link")
+					? "main-content-section"
+					: "";
+			console.log("elipsisClass", elipsisClass);
+			$(this).append(
+				`<div class="lds-ellipsis ${elipsisClass}"><div></div><div></div><div></div><div></div></div>`
+			);
+		}
+	);
 
 	$(document).on(
 		"click",
@@ -58,17 +69,12 @@ $(document).ready(function () {
 
 	$(document).on("click", "#therapist-activation", function (event) {
 		event.preventDefault();
-		console.log("#therapist-activation clicked!");
+		activateDeactivate($(this), "therapist");
+	});
 
-		if ($("#therapist-activation").hasClass("btn-primary")) {
-			console.log("yes remove primary");
-			$("#therapist-activation").addClass("btn-secondary");
-			$("#therapist-activation").removeClass("btn-primary");
-		}
-		if ($("#therapist-activation").hasClass("btn-secondary")) {
-			// $("#therapist-activation").addClass("btn-primary");
-			// $("#therapist-activation").removeClass("btn-secondary");
-		}
+	$(document).on("click", "#client_active", function (event) {
+		event.preventDefault();
+		activateDeactivate($(this), "client");
 	});
 
 	// this is the close modal button
@@ -96,6 +102,7 @@ $(document).ready(function () {
 				'" method="POST" id="cancel-appointment-form">' +
 				'<label for="cancellation_reason" class="form-label">Reason for cancelling this appointment</label>' +
 				'<textarea class="form-control" id="cancellation_reason" name="cancellation_reason" rows="5" required="required"></textarea>' +
+				'<input type="checkbox" value="1" id="canceled_needs_payment" name="canceled_needs_payment" checked> <label for="canceed_needs_payment">Needs payment</label>' +
 				"</form>"
 		);
 		$("#submit-new-appointment")
@@ -114,6 +121,8 @@ $(document).ready(function () {
 
 	$(document).on("click", "#submit-cancel-appointment", function (event) {
 		event.preventDefault();
+
+		console.log("We really want to cancel the appointment");
 
 		$(".error").remove();
 		let appointmentID = $(this).attr("data-appointment-id");
@@ -146,6 +155,8 @@ $(document).ready(function () {
 				},
 			});
 		}
+		$("#theModal").hide();
+		$(".modal-backdrop").remove();
 	});
 
 	$(document).on("click", "#submit-new-appointment", function (event) {
@@ -166,7 +177,9 @@ $(document).ready(function () {
 					console.log(data);
 					if (data != "Don't do it!") {
 						console.log(data.clients);
-						window.location = "/calendar";
+						setTimeout(() => {
+							window.location = "/calendar";
+						}, 500);
 					} else {
 						console.log("argh");
 					}
@@ -208,8 +221,52 @@ $(document).ready(function () {
 
 	$(document).on("keyup", "#search", function () {
 		var value = $(this).val().toLowerCase();
+		console.log("searching", value);
 		$(".table .table-row").filter(function () {
 			$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+		});
+	});
+
+	$(document).on("click", "#open-note-modal", function (event) {
+		event.preventDefault();
+		console.log("clicked edit button");
+		if ($("#clientId").length == 1) {
+			$("#clientId").val($(this).attr("href"));
+		}
+		if ($("#therapistId").length == 1) {
+			$("#therapistId").val($(this).attr("href"));
+		}
+	});
+
+	$(document).on("click", "#save-client-note", function (event) {
+		event.preventDefault();
+
+		$.ajax({
+			url: `/client/note/${$("#clientId").val()}`,
+			data: $("#add-client-note").serialize(),
+			dataType: "json",
+			method: "POST",
+			success: (data) => {
+				console.log("note added:", data);
+				window.location.href = `/client/${$("#clientId").val()}`;
+			},
+			error: (error) => console.log("error"),
+		});
+	});
+
+	$(document).on("click", "#save-therapist-note", function (event) {
+		event.preventDefault();
+
+		$.ajax({
+			url: `/therapist/note/${$("#therapistId").val()}`,
+			data: $("#add-therapist-note").serialize(),
+			dataType: "json",
+			method: "POST",
+			success: (data) => {
+				console.log("note added:", data);
+				window.location.href = `/therapist/${$("#therapistId").val()}`;
+			},
+			error: (error) => console.log("error"),
 		});
 	});
 });
@@ -256,4 +313,34 @@ function sortSelect(selectToSort) {
 			return $(x).text() > $(y).text() ? 1 : -1;
 		})
 	);
+}
+
+function activateDeactivate(el, activationType) {
+	if (el.hasClass("btn-primary")) {
+		el.addClass("btn-secondary");
+		el.removeClass("btn-primary");
+		let d_url = "/" + activationType + "/deactivate/" + el.val();
+		console.log("url", d_url);
+		$.ajax({
+			url: d_url,
+			success: function (d_data) {
+				console.log("d_data", d_data);
+				el.attr("title", "Activate");
+				el.html('<i class="bi bi-person-x"></i> Inactive');
+			},
+		});
+	} else {
+		el.addClass("btn-primary");
+		el.removeClass("btn-secondary");
+		let a_url = "/" + activationType + "/activate/" + el.val();
+		console.log("url", a_url);
+		$.ajax({
+			url: a_url,
+			success: function (a_data) {
+				console.log("a_data", a_data);
+				el.attr("title", "Deactivate");
+				el.html('<i class="bi bi-person-fill-check"></i> Active');
+			},
+		});
+	}
 }

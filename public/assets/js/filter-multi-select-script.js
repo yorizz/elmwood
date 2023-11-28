@@ -4,7 +4,10 @@ $(document).ready(function () {
 
 	let loc = window.location.href;
 	console.log("loc", loc, loc.indexOf("/newenquiry"));
-	if (loc.indexOf("/newenquiry") >= 1) {
+	if (
+		loc.indexOf("/newenquiry") >= 1 ||
+		(loc.indexOf("client") >= 1 && loc.indexOf("edit") >= 1)
+	) {
 		$(function () {
 			console.log("running the multi select function");
 			// Apply the plugin
