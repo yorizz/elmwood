@@ -167,6 +167,10 @@ router
 		clientController.addNote
 	);
 
+router
+	.route("/client/:id/addfile")
+	.post(isUserAuthenticated, urlencodedParser, clientController.storeFile);
+
 /********************************************************************************************************
  *  THERAPISTS
  ********************************************************************************************************/
@@ -237,6 +241,10 @@ router
 		checkTherapistNoteValidation,
 		therapistController.addTherapistNote
 	);
+
+router
+	.route("/therapist/:id/addfile")
+	.post(isUserAuthenticated, urlencodedParser, therapistController.storeFile);
 
 router.get(
 	"/viewavailability/:id",

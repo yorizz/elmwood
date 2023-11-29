@@ -2,7 +2,6 @@ const clientmodel = require("../models/clientmodel");
 const therapistmodel = require("../models/therapistmodel");
 const referrersmodel = require("../models/referrersmodel");
 const qualificationsmodel = require("../models/qualificationsmodel");
-const upload = multer(process.env.MULTEROPTIONS);
 
 const { check, validationResult } = require("express-validator");
 
@@ -10,6 +9,9 @@ const bodyParser = require("body-parser");
 const helpers = require("../utils/helpers");
 
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
+
+const path = require("path");
+const fs = require("fs");
 
 class ClientController {
 	async getAllClients(req, res) {
@@ -291,6 +293,45 @@ class ClientController {
 			res.json({ msg: "client " + clientID + " activated" });
 		} catch (error) {
 			console.log("unable to deactivate client", error);
+		}
+	}
+
+	async storeFile(req, res) {
+		const clientFile = req.files.client_file;
+		console.log("StoreFile", clientFile);
+
+		const newDirPath =
+			__dirname +
+			`/../..${process.env.UPLOAD_PATH}clients/${req.body.clientID}/`;
+
+		const clientFileDestinationPath = newDirPath + `${clientFile.name}`;
+		let msg;
+		try {
+			if (!fs.existsSync(newDirPath)) {
+				fs.mkdirSync(newDirPath, { recursive: true });
+				console.log("Directory created:", newDirPath);
+			} else {
+				console.log("Directory exists!");
+			}
+
+			await clientFile.mv(clientFileDestinationPath);
+
+			// store file data in database
+			const clientFileData = {
+				cf_ID: Date.now(),
+				cf_file_name: clientFile.name,
+				cf_client: req.body.clientID,
+			};
+			if (clientmodel.storeFileData(clientFileData)) {
+				msg = { msg: "File added to client dossier" };
+				console.log("msg", msg);
+			} else {
+				msg = { msg: "Unable to add file to client dossier" };
+				console.log("msg", msg);
+			}
+			return res.json(msg);
+		} catch (error) {
+			console.log("storing file went wrong", error);
 		}
 	}
 }

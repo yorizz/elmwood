@@ -237,6 +237,18 @@ $(document).ready(function () {
 			$("#therapistId").val($(this).attr("href"));
 		}
 	});
+	$(document).on("click", "#open-file-modal", function (event) {
+		event.preventDefault();
+		console.log("clicked add open file modal button", $(this).attr("href"));
+		if ($("#clientID").length == 1) {
+			$("#clientID").val($(this).attr("href"));
+			console.log("clientID updated", $("#clientID").val());
+		}
+		if ($("#therapistID").length == 1) {
+			$("#therapistID").val($(this).attr("href"));
+			console.log("therapistID updated", $("#therapistID").val());
+		}
+	});
 
 	$(document).on("click", "#save-client-note", function (event) {
 		event.preventDefault();
@@ -267,6 +279,92 @@ $(document).ready(function () {
 				window.location.href = `/therapist/${$("#therapistId").val()}`;
 			},
 			error: (error) => console.log("error"),
+		});
+	});
+
+	$(document).on("click", "#save-client-file", function (event) {
+		event.preventDefault();
+
+		let formData = new FormData();
+		formData.append("file", $("#client_file")[0].files[0]);
+		console.log("formData", formData);
+
+		$.ajax({
+			url: `/client/${$("#clientID").val()}/addfile`,
+			type: "POST",
+
+			data: new FormData($("#add-client-file")[0]),
+
+			cache: false,
+			contentType: false,
+			processData: false,
+			success: (data) => {
+				console.log("file added:", data);
+				window.location.href = `/client/${$("#clientID").val()}`;
+			},
+			error: (error) => console.log("error"),
+
+			xhr: function () {
+				var myXhr = $.ajaxSettings.xhr();
+				if (myXhr.upload) {
+					myXhr.upload.addEventListener(
+						"progress",
+						function (e) {
+							if (e.lengthComputable) {
+								$("progress").attr({
+									value: e.loaded,
+									max: e.total,
+								});
+							}
+						},
+						false
+					);
+				}
+				return myXhr;
+			},
+		});
+	});
+
+	$(document).on("click", "#save-therapist-file", function (event) {
+		event.preventDefault();
+
+		let formData = new FormData();
+		formData.append("file", $("#therapist_file")[0].files[0]);
+		console.log("formData", formData);
+
+		$.ajax({
+			url: `/therapist/${$("#therapistID").val()}/addfile`,
+			type: "POST",
+
+			data: new FormData($("#add-therapist-file")[0]),
+
+			cache: false,
+			contentType: false,
+			processData: false,
+			success: (data) => {
+				console.log("file added:", data);
+				window.location.href = `/therapist/${$("#therapistID").val()}`;
+			},
+			error: (error) => console.log("error"),
+
+			xhr: function () {
+				var myXhr = $.ajaxSettings.xhr();
+				if (myXhr.upload) {
+					myXhr.upload.addEventListener(
+						"progress",
+						function (e) {
+							if (e.lengthComputable) {
+								$("progress").attr({
+									value: e.loaded,
+									max: e.total,
+								});
+							}
+						},
+						false
+					);
+				}
+				return myXhr;
+			},
 		});
 	});
 });

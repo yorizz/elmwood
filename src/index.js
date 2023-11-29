@@ -10,8 +10,6 @@ const session = require("express-session");
 const fileUpload = require("express-fileupload");
 const compression = require("compression");
 const morgan = require("morgan");
-const multer = require("multer");
-
 const winston = require("winston");
 
 const { format } = winston;
@@ -20,6 +18,7 @@ const helper = require("./utils/helpers");
 
 app.use(express.json());
 app.use(fileUpload());
+
 app.use(compression());
 
 app.locals.formatPhoneNumber = helper.formatPhoneNumber;
@@ -61,8 +60,6 @@ const morganMiddleware = morgan(
 app.use(morganMiddleware);
 
 app.use(express.static(path.join(__dirname, "../public")));
-const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
 
 app.set("view-engine", "ejs");
 app.set("views", path.join(__dirname, "./views"));

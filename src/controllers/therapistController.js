@@ -4,9 +4,7 @@ const contracttypesmodel = require("../models/contracttypesmodel");
 const helpers = require("../utils/helpers");
 const { check, validationResult } = require("express-validator");
 const path = require("path");
-
-const bodyParser = require("body-parser");
-const urlencodedParser = bodyParser.urlencoded({ extended: false });
+const fs = require("fs");
 
 class TherapistController {
 	async getAllTherapists(req, res) {
@@ -401,6 +399,45 @@ class TherapistController {
 			}
 		} catch (error) {
 			console.log("post note error", error);
+		}
+	}
+
+	async storeFile(req, res) {
+		const therapistFile = req.files.therapist_file;
+		console.log("StoreFile", therapistFile);
+
+		const newDirPath =
+			__dirname +
+			`/../..${process.env.UPLOAD_PATH}therapists/${req.body.therapistID}/`;
+
+		const therapistFileDestinationPath = newDirPath + `${therapistFile.name}`;
+		let msg;
+		try {
+			if (!fs.existsSync(newDirPath)) {
+				fs.mkdirSync(newDirPath, { recursive: true });
+				console.log("Directory created:", newDirPath);
+			} else {
+				console.log("Directory exists!");
+			}
+
+			await therapistFile.mv(therapistFileDestinationPath);
+
+			// store file data in database
+			const therapistFileData = {
+				tf_ID: Date.now(),
+				tf_file_name: therapistFile.name,
+				tf_therapist: req.body.therapistID,
+			};
+			if (therapistmodel.storeFileData(therapistFileData)) {
+				msg = { msg: "File added to therapist dossier" };
+				console.log("msg", msg);
+			} else {
+				msg = { msg: "Unable to add file to therapist dossier" };
+				console.log("msg", msg);
+			}
+			return res.json(msg);
+		} catch (error) {
+			console.log("storing file went wrong", error);
 		}
 	}
 }

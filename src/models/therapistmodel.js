@@ -367,6 +367,21 @@ class TherapistModel {
 		}
 	}
 
+	async storeFileData(clientFileData) {
+		let qb = await pool.get_connection();
+		try {
+			qb.insert("therapist_files", clientFileData, (err, res) => {
+				if (err) return console.error(err);
+			});
+			console.log("Query Ran: " + qb.last_query());
+			return 1;
+		} catch (error) {
+			return console.error("Pool Query Error: " + error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async removeTherapist(therapistID) {}
 }
 
