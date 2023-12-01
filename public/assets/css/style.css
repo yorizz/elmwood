@@ -635,6 +635,10 @@ thead th {
 	pointer-events: all;
 }
 
+.outstanding-fees-card .cars-body {
+	align-items: flex-start;
+}
+
 /* SPINNER SPINNER */
 
 .modal-spinner {

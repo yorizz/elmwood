@@ -394,6 +394,45 @@ class ClientModel {
 			if (qb) qb.release();
 		}
 	}
+
+	async getOutstandingFeesPerClient() {
+		let qb;
+		let msg = "";
+		try {
+			qb = await pool.get_connection();
+			const response = await qb
+				.select(
+					[
+						`a_client`,
+						`c_first_name`,
+						`c_surname`,
+						"SUM(`a_fee`) AS `unpaid`",
+					],
+					null,
+					false
+				)
+				.join("clients", "a_client=c_ID", "inner")
+				.where({
+					a_is_paid: 0,
+					"`a_date`<": Date.now(),
+					a_needs_payment: 1,
+					"`a_fee`>": 0,
+				})
+				.group_by("a_client")
+				.order_by("unpaid", "desc")
+				.get("appointments");
+
+			console.log("Unpaid fees per client Query", qb.last_query());
+
+			console.log("Unpaid fees per client", response);
+			return JSON.parse(JSON.stringify(response));
+		} catch (error) {
+			console.log("Unable to list unpaid fees per client ", error);
+			msg = "Error: " + error;
+		} finally {
+			if (qb) qb.release();
+		}
+	}
 }
 
 module.exports = new ClientModel();

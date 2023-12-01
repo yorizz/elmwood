@@ -257,7 +257,9 @@ router.get("/file/:type/:owner/:filename", (req, res) => {
 
 	res.download(
 		__dirname +
-			"../../../public/uploads/" +
+			"../../.." +
+			process.env.UPLOAD_PATH +
+			"" +
 			req.params.type +
 			"/" +
 			req.params.owner +

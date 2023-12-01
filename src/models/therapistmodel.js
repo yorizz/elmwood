@@ -382,6 +382,45 @@ class TherapistModel {
 		}
 	}
 
+	async getOutstandingFeesPerTherapist() {
+		let qb;
+		let msg = "";
+		try {
+			qb = await pool.get_connection();
+			const response = await qb
+				.select(
+					[
+						`a_therapist`,
+						`t_first_name`,
+						`t_surname`,
+						"SUM(`a_fee`) AS `unpaid`",
+					],
+					null,
+					false
+				)
+				.join("therapists", "a_therapist=t_ID", "inner")
+				.where({
+					a_is_paid: 0,
+					"`a_date`<": Date.now(),
+					a_needs_payment: 1,
+					"`a_fee`>": 0,
+				})
+				.group_by("a_therapist")
+				.order_by("unpaid", "desc")
+				.get("appointments");
+
+			console.log("Unpaid fees per Therapist Query", qb.last_query());
+
+			console.log("Unpaid fees per therapist", response);
+			return JSON.parse(JSON.stringify(response));
+		} catch (error) {
+			console.log("Unable to list unpaid fees per  therapist", error);
+			msg = "Error: " + error;
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async removeTherapist(therapistID) {}
 }
 

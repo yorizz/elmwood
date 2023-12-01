@@ -30,6 +30,10 @@
             <% if (locals.t_client_assessed_by && cl.c_assessed_by != null  ) { %>
                 <a href="/therapist/<%= t_client_assessed_by[0].at_ID %>"><%= dataDecrypt(t_client_assessed_by[0].at_first_name) %> <%= dataDecrypt(t_client_assessed_by[0].at_surname) %></a>
             <% } %>
+
+            <% if(cl.c_assessment_date != null){ %>
+                <span class="assessment-date"> on <%= formatDate(cl.c_assessment_date) %></span>
+            <% } %>
         </h3> 
 
         <div class="row  w-100 d-block d-flex justify-content-between">

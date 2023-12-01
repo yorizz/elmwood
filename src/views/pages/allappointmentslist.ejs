@@ -87,7 +87,7 @@
 						class="btn btn-primary cancel-appointment"
 						href="/appointment/<%=(appointment.a_is_cancelled == 0) ? 'cancel': 'uncancel'%>/<%= id %>"
 						data-bs-toggle="modal"
-						data-bs-target="#staticBackdrop"
+						data-bs-target="#appointmentsModal"
 						data-appointment="<%= id %>"
 					>
 						<% if(appointment.a_is_cancelled == 1){ %>
@@ -105,3 +105,29 @@
 </div>
 <!-- End Table-->
 <% } %>
+
+
+<div class="modal" id="appointmentsModal"  aria-hidden="true" style="display: none;">
+  <div class="modal-dialog  modal-lg modal-dialog-centered">
+    <div class="modal-content">
+
+     
+      <div class="modal-header">
+        <h4 class="modal-title">Add File</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+   
+      <div class="modal-body">
+         
+      </div>
+
+   
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="submit-cancel-appointment" data-bs-dismiss="modal">Save</button>
+      </div>
+
+    </div>
+  </div>
+</div>

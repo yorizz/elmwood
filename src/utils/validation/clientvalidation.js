@@ -18,6 +18,7 @@ let checkNewEnquiryValidation = [
 		.withMessage("Check if this phone number is correct"),
 	check("therapists").optional().isLength({ min: 13, max: 13 }),
 	check("assessed_by").optional().isLength({ min: 13, max: 13 }),
+	check("assessment_date").optional().isDate(),
 	check("referred_by").optional().isNumeric(),
 	check("low_cost").optional(),
 	check("sent_to_claire").optional(),

@@ -123,6 +123,7 @@ class ClientController {
 				c_email: helpers.dataEncrypt(req.body.email),
 				c_therapist: req.body.therapists,
 				c_assessed_by: req.body.assessed_by,
+				c_assessment_date: req.body.assessment_date,
 				c_enquiry_date: dateString,
 				c_referred_by: req.body.referred_by,
 				c_research_participation:

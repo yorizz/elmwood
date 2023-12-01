@@ -117,7 +117,15 @@
 			<option value="-1" disabled <%= (!selectedFlag) ? "selected" : "" %> >Select a therapist</option>
 			<%  selectedFlag = false; %>
         </select>
-    </div>  
+	</div> 
+
+	<div class="mb-3">
+		<label
+			for="assessment_date"
+			class="form-label"
+			><i class="bi bi-calendar3"></i> Assessment Date</label>
+		<input type="date" class="form-control" name="assessment_date" id="assessment_date">
+    </div>
 
     <div class="mb-3">
        	<%

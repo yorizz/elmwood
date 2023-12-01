@@ -37,7 +37,7 @@ $(document).ready(function () {
 
 	$(document).on(
 		"click",
-		".sidebar a, .bi-pencil, .form-save-button, .appointments-link",
+		".sidebar a, .bi-pencil, .form-save-button, .appointments-link, .login-button",
 		function () {
 			let elipsisClass =
 				$(this).hasClass("bi-pencil") ||
@@ -115,8 +115,6 @@ $(document).ready(function () {
 		);
 
 		console.log("id changed to ", theAppointmentID);
-
-		theModal.toggle();
 	});
 
 	$(document).on("click", "#submit-cancel-appointment", function (event) {
@@ -143,7 +141,7 @@ $(document).ready(function () {
 				data: $("#cancel-appointment-form").serialize(),
 				success: function (data) {
 					console.log("data", data);
-					theModal.toggle();
+					// theModal.toggle();
 					//find the row with the appointment ID
 					$(`[data-appointment=${theAppointmentID}]`).addClass(
 						"cancelled-appointment"
@@ -155,7 +153,6 @@ $(document).ready(function () {
 				},
 			});
 		}
-		$("#theModal").hide();
 		$(".modal-backdrop").remove();
 	});
 
