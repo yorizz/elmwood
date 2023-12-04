@@ -3,7 +3,7 @@ const { waitUntil, TimeoutError } = require("async-wait-until");
 
 const express = require("express");
 const app = express();
-const port = 8080;
+const port = process.env.PORT;
 const path = require("path");
 const flash = require("express-flash");
 const session = require("express-session");
@@ -36,6 +36,12 @@ app.locals.htmlUnescape = helper.htmlUnescape;
 const router = require("./routes/routes");
 
 const bcrypt = require("bcrypt");
+
+// const saltRounds = 10;
+// const myPlaintextPassword = "ucv7qwh3REJ-ypj7pbr";
+
+// const hash = bcrypt.hashSync(myPlaintextPassword, saltRounds);
+// console.log("bcrypting ", hash);
 
 const logger = winston.createLogger({
 	format: format.combine(
@@ -71,6 +77,7 @@ app.use(
 		secret: process.env.SESSION_SECRET,
 		resave: false,
 		saveUninitialized: false,
+		// cookie: { secure: true },
 	})
 );
 

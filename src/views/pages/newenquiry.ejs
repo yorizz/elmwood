@@ -86,7 +86,7 @@
 							}
 						}
 					%>
-					<option value="<%= therapist.t_ID %>"  <%= selected %>><%= dataDecrypt(therapist.t_first_name) + " " + dataDecrypt(therapist.t_surname) %></option>
+					<option value="<%= therapist.t_ID %>"  <%= selected %>><%= therapist.t_first_name + " " + therapist.t_surname %></option>
 				<% } %>
             <% } %>
 			<option value="-1" disabled <%= (!selectedFlag) ? "selected" : "" %> >Select a therapist</option>
@@ -110,7 +110,7 @@
 						}
 				%>
 					<option value="<%= therapist.t_ID %>" <%= selected %>>
-						<%= dataDecrypt(therapist.t_first_name) + " " + dataDecrypt(therapist.t_surname) %>
+						<%= therapist.t_first_name + " " + therapist.t_surname %>
 					</option>
 				<% } %>
             <% } %>
@@ -192,6 +192,22 @@
 		<input class="form-check-input" type="checkbox" value="1" id="low_cost" name="low_cost" <%= checked %>>
 		<label class="form-check-label" for="low_cost">
 			Low Cost
+		</label>
+	</div>
+	
+	<% 
+	
+	if(locals.isEdit) {
+		console.log("--- LOW COST ---", t_client.t_client[0].c_low_cost_suitable);
+		if(t_client.t_client[0].c_low_cost_suitable == 1){
+			checked = 'checked';
+			
+		}
+	} %> 
+	<div class="form-check col-6">
+		<input class="form-check-input" type="checkbox" value="1" id="low_cost_suitable" name="low_cost_suitable" <%= checked %>>
+		<label class="form-check-label" for="low_cost_suitable">
+			Suitable
 		</label>
 	</div>
 

@@ -45,15 +45,23 @@ class ClientModel {
 		try {
 			qb = await pool.get_connection();
 			const response = await qb
-				.select("*")
-				.join("therapists", "c_therapist=t_ID", "left")
-				.where("t_ID", null)
+				.select([
+					"c_ID",
+					"c_first_name",
+					"c_surname",
+					"c_phone",
+					"c_email",
+					"c_enquiry_date",
+				])
+				.where("c_therapist", null)
 				.order_by("c_enquiry_date", "desc")
 				.get("clients");
 
 			console.log("Query Ran: " + qb.last_query());
 
 			clients = JSON.parse(JSON.stringify(response));
+			console.log("waitinglist", response);
+
 			rv = clients;
 
 			return rv;
@@ -429,6 +437,24 @@ class ClientModel {
 		} catch (error) {
 			console.log("Unable to list unpaid fees per client ", error);
 			msg = "Error: " + error;
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async allClientsForSession() {
+		let qb;
+		try {
+			qb = await pool.get_connection();
+			const allTherapistsForSession = await qb
+				.select(["c_ID", "c_first_name", "c_surname", "c_phone", "c_email"])
+				.get("clients");
+
+			console.log("Query Ran: " + qb.last_query());
+
+			return allTherapistsForSession;
+		} catch (error) {
+			return console.error("Pool Query Error: " + error);
 		} finally {
 			if (qb) qb.release();
 		}

@@ -9,7 +9,38 @@ const fs = require("fs");
 class TherapistController {
 	async getAllTherapists(req, res) {
 		try {
+			let therapists = [];
+
 			let allTherapists = await therapistmodel.getAllTherapists();
+
+			if (
+				req.session.allTherapists &&
+				req.session.allTherapists.length >= 1
+			) {
+				for (let i = 0; i < allTherapists.length; i++) {
+					let sessionTherapist = helpers.getPersonName(
+						req.session.allTherapists,
+						"therapist",
+						allTherapists[i].t_ID
+					);
+
+					let therapist = {
+						t_ID: allTherapists[i].t_ID,
+						t_first_name: sessionTherapist.t_first_name,
+						t_surname: sessionTherapist.t_surname,
+						t_colour: allTherapists[i].t_colour,
+						t_phone: sessionTherapist.t_phone,
+						t_email: sessionTherapist.t_email,
+						t_fq_fee: allTherapists[i].t_fq_fee,
+						t_fee: allTherapists[i].t_fee,
+						t_is_active: allTherapists[i].t_is_active,
+					};
+
+					therapists.push(therapist);
+				}
+			} else {
+				therapists = allTherapists;
+			}
 
 			console.log(path.join(__dirname, "../public"));
 
@@ -18,7 +49,7 @@ class TherapistController {
 				page: "alltherapists.ejs",
 				title: "All Therapists",
 				sidebar: true,
-				therapists: allTherapists,
+				therapists: therapists,
 			});
 		} catch (error) {
 			console.log("authenticateUser error", error);
@@ -200,7 +231,18 @@ class TherapistController {
 			);
 			console.log("Add Therapist Result", addTherapistResult);
 
-			return res.send(req.body);
+			let allTherapists = req.session.allTherapists;
+			const newTherapist = {
+				t_ID: addTherapistResult.insertID,
+				t_first_name: req.body.first_name,
+				t_surname: req.body.surname,
+				t_phone: req.body.phone,
+				t_email: req.body.email,
+			};
+			allTherapists.push(newTherapist);
+			req.session.allTherapists = allTherapists;
+
+			return res.redirect("/dashboard");
 		}
 	}
 

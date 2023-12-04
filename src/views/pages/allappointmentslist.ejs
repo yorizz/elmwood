@@ -16,7 +16,6 @@
 	></span>
 </div>
 
-<%- (locals.isPast) ? '<a href="/allappointmentslist" class="appointments-link">Future Appointments</a>':'<a href="/allappointmentslistpast" class="appointments-link">Past Appointments</a>' %>
 
 <div class="table-responsive">
 	<table
@@ -59,12 +58,12 @@
 					</div>
 				</td>
 				<td class="table-cell align-middle appointment-client">
-					<a href="/client/<%= appointment.a_client %>"><%= dataDecrypt(appointment.c_first_name) %> <%=
-					dataDecrypt(appointment.c_surname) %></a>
+					<a href="/client/<%= appointment.a_client %>"><%= appointment.c_first_name %> <%=
+					 appointment.c_surname  %></a>
 				</td>
 				<td class="table-cell align-middle appointment-therapist">
-					<a href="/therapist/<%= appointment.a_therapist %>"><%= dataDecrypt(appointment.t_first_name) %> <%=
-					dataDecrypt(appointment.t_surname) %></a>
+					<a href="/therapist/<%= appointment.a_therapist %>"><%= appointment.t_first_name %> <%=
+					 appointment.t_surname %></a>
 				</td>
 				<td class="table-cell align-middle appointment-fee">
 					&euro;<%= formatCurrency(appointment.a_fee) %>

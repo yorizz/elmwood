@@ -31,7 +31,7 @@
 							%>
 								<div class="table-row">
 									<div class="table-cell therapist-name">
-										<a href="/therapist/<%= cpt.t_ID %>"><%= dataDecrypt(cpt.t_first_name) %> <%= dataDecrypt(cpt.t_surname) %></a>
+										<a href="/therapist/<%= cpt.t_ID %>"><%= cpt.t_first_name %> <%=  cpt.t_surname %></a>
 									</div>
 									<div class="table-cell align-middle"><%= cpt.NumberOfClients %></div>
 								</div> <!-- end row -->
@@ -124,7 +124,7 @@
 											<div class="table-row">
 												
 												<div class="table-cell ">
-													<a href="/therapist/<%= fee.a_therapist %>"><%= dataDecrypt(fee.t_first_name) %> <%= dataDecrypt(fee.t_surname) %></a>
+													<a href="/therapist/<%= fee.a_therapist %>"><%= fee.t_first_name %> <%= fee.t_surname %></a>
 												</div>
 												<div class="table-cell ">
 													&euro; <%= fee.unpaid %>
@@ -163,7 +163,7 @@
 											<div class="table-row">
 												
 												<div class="table-cell ">
-													<a href="/client/<%= fee.a_client %>"><%= dataDecrypt(fee.c_first_name) %> <%= dataDecrypt(fee.c_surname) %></a>
+													<a href="/client/<%= fee.a_client %>"><%= fee.c_first_name %> <%= fee.c_surname  %></a>
 												</div>
 												<div class="table-cell ">
 													&euro; <%= fee.unpaid %>

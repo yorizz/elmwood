@@ -25,8 +25,10 @@ const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 function isUserAuthenticated(req, res, next) {
 	if (req.session.user) {
+		console.log("user:", req.session.user);
 		next();
 	} else {
+		console.log("show the login page");
 		res.redirect("/login");
 	}
 }
@@ -72,12 +74,6 @@ router.get(
 	"/allappointmentslist",
 	isUserAuthenticated,
 	appointmentController.appointmentsList
-);
-
-router.get(
-	"/allappointmentslistpast",
-	isUserAuthenticated,
-	appointmentController.appointmentsListPast
 );
 
 router.get(

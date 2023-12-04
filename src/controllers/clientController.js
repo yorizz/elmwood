@@ -16,14 +16,68 @@ const fs = require("fs");
 class ClientController {
 	async getAllClients(req, res) {
 		try {
+			let clients = [];
 			let allclients = await clientmodel.getAllClients();
+
+			for (let i = 0; i < allclients.length; i++) {
+				let sessionClient = helpers.getPersonName(
+					req.session.allClients,
+					"client",
+					allclients[i].c_ID
+				);
+				let sessionTherapist = helpers.getPersonName(
+					req.session.allTherapists,
+					"therapist",
+					allclients[i].t_ID
+				);
+
+				let client = {
+					c_ID: allclients[i].c_ID,
+					c_first_name: sessionClient.c_first_name,
+					c_surname: sessionClient.c_surname,
+					c_phone: sessionClient.c_phone,
+					c_email: sessionClient.c_email,
+					c_therapist: allclients[i].c_therapist,
+					c_assessed_by: allclients[i].c_assessed_by,
+					c_assessment_date: allclients[i].c_assessment_date,
+					c_enquiry_date: allclients[i].c_enquiry_date,
+					c_referred_by: allclients[i].c_referred_by,
+					c_research_participation: allclients[i].c_research_participation,
+					c_low_cost_employment: allclients[i].c_low_cost_employment,
+					c_low_cost_suitable: allclients[i].c_low_cost_suitable,
+					c_details_sent_to_claire: allclients[i].c_details_sent_to_claire,
+					c_is_active: allclients[i].c_is_active,
+					t_ID: allclients[i].t_ID,
+					t_first_name:
+						allclients[i].t_ID != null
+							? sessionTherapist.t_first_name
+							: allclients[i].t_first_name,
+					t_surname:
+						allclients[i].t_ID != null
+							? sessionTherapist.t_surname
+							: allclients[i].t_surname,
+					t_colour: allclients[i].t_colour,
+					t_phone:
+						allclients[i].t_ID != null
+							? sessionTherapist.phone
+							: allclients[i].phone,
+					t_email:
+						allclients[i].t_ID != null
+							? sessionTherapist.t_email
+							: allclients[i].t_email,
+					t_fq_fee: allclients[i].t_fq_fee,
+					t_fee: allclients[i].t_fee,
+					t_is_active: allclients[i].t_is_active,
+				};
+				clients.push(client);
+			}
 
 			return res.render("templates/template.ejs", {
 				name: "All Clients",
 				page: "allclients.ejs",
 				title: "All Clients",
 				sidebar: true,
-				clients: allclients,
+				clients: clients,
 			});
 		} catch (error) {
 			console.log("allClients error", error);
@@ -32,14 +86,36 @@ class ClientController {
 
 	async getWaitingList(req, res) {
 		try {
+			let clients = [];
 			let allclients = await clientmodel.getAllClientsOnWaitingList();
+
+			console.log("allClientsOnWaitingList", allclients);
+
+			for (let i = 0; i < allclients.length; i++) {
+				let sessionClient = helpers.getPersonName(
+					req.session.allClients,
+					"client",
+					allclients[i].c_ID
+				);
+				let client = {
+					c_ID: allclients[i].c_ID,
+					c_first_name: sessionClient.c_first_name,
+					c_surname: sessionClient.c_surname,
+					c_phone: sessionClient.c_phone,
+					c_email: sessionClient.c_email,
+					c_enquiry_date: allclients[i].c_enquiry_date,
+				};
+				clients.push(client);
+			}
+
+			console.log("CLIENTS", clients);
 
 			return res.render("templates/template.ejs", {
 				name: "All Clients on Waiting List",
 				page: "waitinglist.ejs",
 				title: "All Clients on Waiting List",
 				sidebar: true,
-				clients: allclients,
+				clients: clients,
 			});
 		} catch (error) {
 			console.log("waitinglist error", error);
@@ -78,7 +154,9 @@ class ClientController {
 
 	async getNewEnquiry(req, res) {
 		try {
-			let therapists = await therapistmodel.getAllTherapists();
+			let therapists = req.session.allTherapists;
+
+			console.log("therapists*", therapists);
 			let referrers = await referrersmodel.getAllReferrers();
 			let qualifications = await qualificationsmodel.getAllQualifications();
 			console.log("qualifications", qualifications);
@@ -129,11 +207,23 @@ class ClientController {
 				c_research_participation:
 					req.body.research_participation == 1 ? 1 : 0,
 				c_low_cost_employment: req.body.low_cost == 1 ? 1 : 0,
+				c_low_cost_suitable: req.body.low_cost_suitable == 1 ? 1 : 0,
 				c_details_sent_to_claire: req.body.sent_to_claire == 1 ? 1 : 0,
 			};
 
 			let storeNewEnquiry = await clientmodel.addClient(clientData);
 			console.log("storeNewEnquiry", storeNewEnquiry);
+
+			let allClients = req.session.allClients;
+			const newClient = {
+				c_ID: newClientId,
+				c_first_name: req.body.first_name,
+				c_surname: req.body.surname,
+				c_email: req.body.email,
+				c_phone: req.body.phone,
+			};
+			allClients.push(newClient);
+			req.session.allClients = allClients;
 
 			let storeClientTherapyTypeRequests =
 				await clientmodel.storeClientTherapyTypeRequests(
@@ -165,12 +255,14 @@ class ClientController {
 
 				console.log("t_client", t_client);
 			}
-			let therapists = await therapistmodel.getAllTherapists();
+			let therapistsFromModel = await therapistmodel.getAllTherapistNames();
 			let referrers = await referrersmodel.getAllReferrers();
 			let qualifications = await qualificationsmodel.getAllQualifications();
 			let requestedTherapyTypes = await clientmodel.getRequestedTherapyTypes(
 				t_client.t_client[0].c_ID
 			);
+
+			let therapists = req.session.allTherapists;
 
 			console.log("requestedTherapyTypes", requestedTherapyTypes);
 

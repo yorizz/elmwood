@@ -18,7 +18,7 @@ class Helpers {
 				formattedPhoneNumber += phoneNumber.charAt(i);
 			}
 		}
-		return formattedPhoneNumber;
+		return formattedPhoneNumber != " " ? formattedPhoneNumber : phoneNumber;
 	}
 
 	formatDate(date) {
@@ -137,6 +137,23 @@ class Helpers {
 
 	add_week(currentWeekDate) {
 		return new Date(currentWeekDate.setDate(currentWeekDate.getDate() + 7));
+	}
+
+	getPersonName(sessionParam, type, ID) {
+		for (let i = 0; i < sessionParam.length; i++) {
+			if (type == "client") {
+				if (sessionParam[i].c_ID == ID) {
+					console.log("found client", sessionParam[i]);
+					return sessionParam[i];
+				}
+			}
+			if (type == "therapist") {
+				if (sessionParam[i].t_ID == ID) {
+					console.log("found therapist", sessionParam[i]);
+					return sessionParam[i];
+				}
+			}
+		}
 	}
 }
 

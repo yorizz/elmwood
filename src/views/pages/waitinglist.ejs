@@ -38,13 +38,13 @@
                     <%= formatDate(client.c_enquiry_date) %>
                 </div>
 				<div class="table-cell align-middle ">
-					<%= dataDecrypt(client.c_first_name) %> <%= dataDecrypt(client.c_surname) %>
+					<%= client.c_first_name %> <%= client.c_surname %>
 				</div>
 				<div class="table-cell align-middle ">
-					<%= formatPhoneNumber(dataDecrypt(client.c_phone)) %>
+					<%= client.c_phone %>
 				</div>
 				<div class="table-cell align-middle ">
-					<a href="mailto:<%= dataDecrypt(client.c_email) %>"><%= dataDecrypt(client.c_email) %></a>
+					<a href="mailto:<%= client.c_email %>"><%= client.c_email %></a>
 				</div>
 				
 				<div class="table-cell align-middle  view-single">

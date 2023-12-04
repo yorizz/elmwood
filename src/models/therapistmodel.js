@@ -33,6 +33,30 @@ class TherapistModel {
 		}
 	}
 
+	async getAllTherapistNames() {
+		let therapists = [];
+		let rv = false;
+		let qb;
+
+		try {
+			qb = await pool.get_connection();
+			const response = await qb
+				.select(["t_ID", "t_first_name", "t_surname"])
+				.get("therapists");
+
+			console.log("Query Ran: " + qb.last_query());
+
+			therapists = JSON.parse(JSON.stringify(response));
+			rv = therapists;
+
+			return rv;
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async getTherapist(therapistID) {
 		let therapists = [];
 		let therapists_rv = false;
@@ -148,6 +172,7 @@ class TherapistModel {
 			const insertID = await qb.insert("therapists", data);
 			if (insertID.affectedRows == 1) {
 				msg = "Therapist added";
+
 				// insert the qualifications
 				if (qualifications.length >= 1) {
 					for (let i = 0; i < qualifications.length; i++) {
@@ -173,7 +198,7 @@ class TherapistModel {
 				}
 			}
 
-			return msg;
+			return { msg: msg, insertID: newID };
 		} catch (error) {
 			console.log("Unable to save therapist", error);
 			msg = "Error: " + error;
@@ -416,6 +441,24 @@ class TherapistModel {
 		} catch (error) {
 			console.log("Unable to list unpaid fees per  therapist", error);
 			msg = "Error: " + error;
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async allTherapistsForSession() {
+		let qb;
+		try {
+			qb = await pool.get_connection();
+			const allTherapistsForSession = await qb
+				.select(["t_ID", "t_first_name", "t_surname", "t_email", "t_phone"])
+				.get("therapists");
+
+			console.log("Query Ran: " + qb.last_query());
+
+			return allTherapistsForSession;
+		} catch (error) {
+			return console.error("Pool Query Error: " + error);
 		} finally {
 			if (qb) qb.release();
 		}
