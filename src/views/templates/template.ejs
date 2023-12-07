@@ -3,6 +3,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
+		<meta name="robots" content="noindex">
 		<meta
 			name="viewport"
 			content="width=device-width, initial-scale=1.0"
@@ -75,7 +76,7 @@
 			<div id="wrapper">
 				<!-- Sidebar -->
 				<% if(locals.sidebar && locals.sidebar === true){ %>
-				<%-include('../particles/sidebar.ejs') %> <% } %>
+				<%-include('../partials/sidebar.ejs') %> <% } %>
 				<!-- End of Sidebar -->
 
 				<div
@@ -84,7 +85,7 @@
 				>
 					<!-- Navbar -->
 					<% if(locals.sidebar && locals.sidebar === true){ %>
-					<%-include('../particles/navbar.ejs') %> <% } %>
+					<%-include('../partials/navbar.ejs') %> <% } %>
 					<!-- End of Navbar -->
 
 					<!-- Main Content -->
@@ -101,7 +102,7 @@
 				</div>
 			</div>
 			<% if(locals.sidebar && locals.sidebar === true){ %>
-			<%-include('../particles/footer.ejs') %> <% } %>
+			<%-include('../partials/footer.ejs') %> <% } %>
 
 			<!--  end #wrapper -->
 		</div>

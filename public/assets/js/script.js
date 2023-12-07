@@ -89,32 +89,70 @@ $(document).ready(function () {
 
 	let theAppointmentID;
 	$(document).on("click", ".cancel-appointment", function () {
-		theAppointmentID = $(this).attr("data-appointment");
+		let clickedButton = $(this);
+
+		let isRecycledButtonClicked = clickedButton
+			.find("i")
+			.hasClass("bi-arrow-counterclockwise");
+
+		console.log("clicked button has a recycle icon", isRecycledButtonClicked);
+
+		theAppointmentID = clickedButton.attr("data-appointment");
 		console.log("APPOINTMENT-ID", theAppointmentID);
-		let theAppointmentHTML = $(this).parent().parent()[0].innerHTML;
 
-		$(".modal-title").text("Cancel Appointment");
-		$(".modal-body").html(theAppointmentHTML);
-		$(".modal-body .appointment-cancel-button ").remove();
-		$(".modal-body").append(
-			'<form action="/cancelappointment/' +
-				theAppointmentID +
-				'" method="POST" id="cancel-appointment-form">' +
-				'<label for="cancellation_reason" class="form-label">Reason for cancelling this appointment</label>' +
-				'<textarea class="form-control" id="cancellation_reason" name="cancellation_reason" rows="5" required="required"></textarea>' +
-				'<input type="checkbox" value="1" id="canceled_needs_payment" name="canceled_needs_payment" checked> <label for="canceed_needs_payment">Needs payment</label>' +
-				"</form>"
-		);
-		$("#submit-new-appointment")
-			.attr("id", "submit-cancel-appointment")
-			.text("Save");
+		if (isRecycledButtonClicked) {
+			//uncancel
 
-		$("#submit-cancel-appointment").attr(
-			"data-appointment-id",
-			theAppointmentID
-		);
+			$.ajax({
+				url: `/uncancelappointment/${theAppointmentID}`,
+				type: "POST",
+				dataType: "JSON",
+				success: function (data) {
+					console.log("data", data);
 
-		console.log("id changed to ", theAppointmentID);
+					clickedButton
+						.find("i")
+						.removeClass("bi-arrow-counterclockwise")
+						.addClass("bi-trash3");
+
+					clickedButton
+						.parent()
+						.parent()
+						.removeClass("cancelled-appointment");
+
+					$("#appointmentsModal").hide();
+					$(".modal-backdrop").hide();
+				},
+				error: function (error) {
+					console.log("error", error);
+				},
+			});
+		} else {
+			let theAppointmentHTML = clickedButton.parent().parent()[0].innerHTML;
+			$(".modal-title").text("Cancel Appointment");
+			$(".modal-body").html(theAppointmentHTML);
+			$(".modal-body .appointment-cancel-button ").remove();
+			$(".modal-body").append(
+				'<form action="/cancelappointment/' +
+					theAppointmentID +
+					'" method="POST" id="cancel-appointment-form">' +
+					'<label for="cancellation_reason" class="form-label">Reason for cancelling this appointment</label>' +
+					'<textarea class="form-control" id="cancellation_reason" name="cancellation_reason" rows="5" required="required"></textarea>' +
+					'<input type="checkbox" value="1" id="canceled_needs_payment" name="canceled_needs_payment" checked> <label for="canceed_needs_payment">Needs payment</label>' +
+					'<input type="checkbox" value="1" id="cancel_all_future_appointments" name="cancel_all_future_appointments"> <label for="cancel_all_future_appointments">Cancel all future appointments</label>' +
+					"</form>"
+			);
+			$("#submit-new-appointment")
+				.attr("id", "submit-cancel-appointment")
+				.text("Save");
+
+			$("#submit-cancel-appointment").attr(
+				"data-appointment-id",
+				theAppointmentID
+			);
+
+			console.log("id changed to ", theAppointmentID);
+		}
 	});
 
 	$(document).on("click", "#submit-cancel-appointment", function (event) {
@@ -141,7 +179,7 @@ $(document).ready(function () {
 				data: $("#cancel-appointment-form").serialize(),
 				success: function (data) {
 					console.log("data", data);
-					// theModal.toggle();
+
 					//find the row with the appointment ID
 					$(`[data-appointment=${theAppointmentID}]`).addClass(
 						"cancelled-appointment"

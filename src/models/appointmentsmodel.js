@@ -5,6 +5,9 @@ const QueryBuilder = require("node-querybuilder");
 const express = require("express");
 const app = express();
 
+const dayjs = require("dayjs");
+dayjs().format();
+
 const db_config = require("../utils/dbconfig");
 const helpers = require("../utils/helpers");
 
@@ -250,6 +253,25 @@ class AppointmentsModel {
 			if (qb) qb.release();
 		}
 	}
+
+	async addMultipleAppointments(appointments) {
+		console.log("appointment", appointments);
+		let qb;
+
+		try {
+			qb = await pool.get_connection();
+
+			qb.insert_batch("appointments", appointments, (err, res) => {
+				if (err) return console.error(err);
+				console.log("Query Ran: " + qb.last_query());
+			});
+		} catch (error) {
+			console.log("addAppointment", error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async updateAppointment(appointmentID, data) {
 		let qb;
 		try {
@@ -262,6 +284,57 @@ class AppointmentsModel {
 			if (qb) qb.release();
 		}
 	}
+
+	async cancelAllFutureAppointments(clientID) {
+		let qb;
+		try {
+			qb = await pool.get_connection();
+			let data = {
+				a_is_cancelled: 1,
+				a_cancellation_reason: helpers.dataEncrypt("Deactivated"),
+			};
+
+			let date = dayjs();
+
+			qb.where({
+				a_client: clientID,
+				"a_date >=": date.format("YYYY-MM-DD"),
+			})
+				.set(data)
+				.update("appointments");
+			console.log("Query Ran: " + qb.last_query());
+		} catch (error) {
+			console.log(error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async uncancelAppointment(appointmentID) {
+		let qb;
+		try {
+			qb = await pool.get_connection();
+
+			let data = {
+				a_is_cancelled: 0,
+				a_cancellation_reason: "",
+			};
+
+			let date = dayjs();
+
+			qb.where({
+				a_ID: appointmentID,
+			})
+				.set(data)
+				.update("appointments");
+			console.log("Query Ran: " + qb.last_query());
+		} catch (error) {
+			console.log(error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async removeAppointment(appointmentID) {}
 }
 

@@ -415,6 +415,12 @@ h5.category {
 	color: #fff;
 }
 
+.btn:hover {
+	background-color: var(--bs-primary-bg-subtle);
+	color: var(--bs-primary);
+	border: 1px solid var(--bs-primary);
+}
+
 .login-button {
 	background-color: var(--bs-primary);
 }
@@ -611,6 +617,10 @@ thead th {
 	text-decoration: line-through;
 	font-style: italic;
 	color: red;
+}
+
+#cancel_all_future_appointments {
+	margin-left: 40px;
 }
 
 .appointments-link {

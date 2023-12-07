@@ -207,7 +207,9 @@ async function buildAppointments(appointments) {
 				" | " +
 				appointment.a_start_time +
 				" - " +
-				appointment.a_end_time,
+				appointment.a_end_time +
+				" | Room " +
+				appointment.a_room,
 			url: "",
 			classNames: "",
 			editable: true,
@@ -225,6 +227,7 @@ async function buildAppointments(appointments) {
 			},
 			source: null,
 		};
+
 		events.push(newEvent);
 	}
 	return events;

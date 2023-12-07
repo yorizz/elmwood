@@ -89,6 +89,12 @@ router.post(
 	appointmentController.cancelAppointment
 );
 
+router.post(
+	"/uncancelappointment/:id",
+	isUserAuthenticated,
+	appointmentController.uncancelAppointment
+);
+
 //TODO add validation
 router.post(
 	"/addappointment",

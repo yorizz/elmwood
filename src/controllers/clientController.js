@@ -12,6 +12,8 @@ const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 const path = require("path");
 const fs = require("fs");
+const { appointmentsList } = require("./appointmentController");
+const appointmentsmodel = require("../models/appointmentsmodel");
 
 class ClientController {
 	async getAllClients(req, res) {
@@ -374,6 +376,8 @@ class ClientController {
 		try {
 			let clientID = req.params.id;
 			let clientDeactivated = await clientmodel.clientDeactivated(clientID);
+			let cancelAllFutureAppointments =
+				await appointmentsmodel.cancelAllFutureAppointments(clientID);
 			res.json({ msg: "client " + clientID + " deactivated" });
 		} catch (error) {
 			console.log("unable to deactivate client", error);

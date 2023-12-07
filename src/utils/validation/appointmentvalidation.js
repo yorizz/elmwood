@@ -17,6 +17,7 @@ const checkAppointmentInput = [
 		.withMessage("Please provide an end time")
 		.trim()
 		.escape(),
+	body("room").trim().escape(),
 	body("therapists")
 		.isAlphanumeric()
 		.withMessage("The therapist value cannot be a name")

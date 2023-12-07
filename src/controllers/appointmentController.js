@@ -1,6 +1,7 @@
 const appointmentsmodel = require("../models/appointmentsmodel");
 const therapistmodel = require("../models/therapistmodel");
 const clientmodel = require("../models/clientmodel");
+const dayjs = require("dayjs");
 
 const { check, validationResult } = require("express-validator");
 
@@ -76,8 +77,9 @@ class AppointmentController {
 					t_first_name: therapistDetails.t_first_name,
 					t_surname: therapistDetails.t_surname,
 					t_colour: appointment.t_colour,
+					a_room: appointment.a_room,
 				};
-				console.log("appointmentDetails", appointmentDetails);
+				// console.log("appointmentDetails", appointmentDetails);
 				allAppointments.push(appointmentDetails);
 			}
 			return res.send(allAppointments);
@@ -90,10 +92,10 @@ class AppointmentController {
 		let allAppointments = [];
 
 		try {
-			let appointments =
-				await appointmentsmodel.getAllAppointmentsBeforeToday();
+			let appointments = await appointmentsmodel.getAllAppointments();
+			console.log("appointments", appointments.length);
 
-			console.log("session clients", req.session.allClients);
+			console.log("session clients", req.session.allClients.length);
 
 			for (let i = 0; i < appointments.length; i++) {
 				let client = helpers.getPersonName(
@@ -187,20 +189,58 @@ class AppointmentController {
 
 		if (errors.isEmpty()) {
 			//no errors, try to store it in the dbase
+			let currentDate = req.body.date;
+			console.log("currentDate 1", currentDate);
 			try {
 				const appointment = {
 					a_ID: Date.now(),
 					a_client: req.body.clients,
-					a_date: req.body.date,
+					a_date: currentDate,
 					a_start_time: req.body.start_time + ":00",
 					a_end_time: req.body.end_time + ":00",
+					a_room: req.body.room,
 					a_is_paid: 0,
 					a_therapist: req.body.therapists,
 				};
+				let insertId = await appointmentsmodel.addAppointment(appointment);
 
-				const insertId = await appointmentsmodel.addAppointment(
-					appointment
-				);
+				console.log("inserted appointment with ID", insertId);
+
+				if (parseInt(req.body.repeat) >= 1) {
+					// create a new date, based on the previous one.
+					let repeatAppointments = [];
+
+					for (let i = 0; i < parseInt(req.body.repeat); i++) {
+						let newID = Date.now() + i;
+
+						let date = dayjs(currentDate).add(7, "d");
+						currentDate = date.format("YYYY-MM-DD");
+
+						console.log(currentDate);
+
+						// currentDate = new Date(
+						// 	new Date().setDate(new Date(currentDate).getDate() + 7)
+						// );
+
+						console.log(`currentDate ${i}`, currentDate);
+
+						repeatAppointments.push({
+							a_ID: newID,
+							a_client: req.body.clients,
+							a_date: currentDate,
+							a_start_time: req.body.start_time + ":00",
+							a_end_time: req.body.end_time + ":00",
+							a_room: req.body.room,
+							a_is_paid: 0,
+							a_therapist: req.body.therapists,
+						});
+					}
+
+					console.log("repeatAppointments", repeatAppointments);
+					await appointmentsmodel.addMultipleAppointments(
+						repeatAppointments
+					);
+				}
 
 				return res.send(req.body);
 			} catch (error) {
@@ -251,5 +291,24 @@ class AppointmentController {
 
 		return res.json({ msg: "cancelled" });
 	}
+
+	async uncancelAppointment(req, res) {
+		try {
+			const uncanceledAppointment =
+				await appointmentsmodel.uncancelAppointment(req.params.id);
+		} catch (error) {
+			console.log("error", error);
+		}
+		return res.json({ msg: "uncancelled" });
+	}
 }
 module.exports = new AppointmentController();
+
+function formatToSQLDate(appointmentDate) {
+	// console.log("appointmentDate", appointmentDate);
+	let year = appointmentDate.getFullYear();
+	let month = ("0" + (appointmentDate.getMonth() + 1)).slice(-2);
+	let day = ("0" + appointmentDate.getDate()).slice(-2);
+
+	return `${year}-${month}-${day}`;
+}

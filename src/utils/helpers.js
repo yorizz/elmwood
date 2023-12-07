@@ -143,13 +143,13 @@ class Helpers {
 		for (let i = 0; i < sessionParam.length; i++) {
 			if (type == "client") {
 				if (sessionParam[i].c_ID == ID) {
-					console.log("found client", sessionParam[i]);
+					// console.log("found client", sessionParam[i]);
 					return sessionParam[i];
 				}
 			}
 			if (type == "therapist") {
 				if (sessionParam[i].t_ID == ID) {
-					console.log("found therapist", sessionParam[i]);
+					// console.log("found therapist", sessionParam[i]);
 					return sessionParam[i];
 				}
 			}
