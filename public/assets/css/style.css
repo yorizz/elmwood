@@ -616,7 +616,6 @@ thead th {
 .cancelled-appointment {
 	text-decoration: line-through;
 	font-style: italic;
-	color: red;
 }
 
 #cancel_all_future_appointments {
@@ -627,6 +626,9 @@ thead th {
 	text-align: right;
 	display: block;
 	margin: 20px 0;
+}
+i.bi.bi-cash {
+	cursor: pointer;
 }
 
 #add-client-note,

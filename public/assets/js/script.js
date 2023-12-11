@@ -184,6 +184,10 @@ $(document).ready(function () {
 					$(`[data-appointment=${theAppointmentID}]`).addClass(
 						"cancelled-appointment"
 					);
+					$(`[data-appointment=${theAppointmentID}]`)
+						.find("i")
+						.removeClass("bi-trash3")
+						.addClass("bi-arrow-counterclockwise");
 					theAppointmentID = null;
 				},
 				error: function (error) {
@@ -358,6 +362,25 @@ $(document).ready(function () {
 				return myXhr;
 			},
 		});
+	});
+
+	$(document).on("click", ".appointment-paid", function () {
+		let theSpan = $(this).find("span");
+		console.log("paid clicked", theSpan.hasClass("not-paid"));
+		if (theSpan.hasClass("not-paid")) {
+			$.ajax({
+				url: `/appointment/paid/${theSpan.attr("data_id")}`,
+				type: "POST",
+				dataType: "json",
+				success: function (data) {
+					console.log("data", data);
+					theSpan.removeClass("not-paid").addClass("paid");
+				},
+				error: function (error) {
+					console.log("error changing appointment to paid");
+				},
+			});
+		}
 	});
 
 	$(document).on("click", "#save-therapist-file", function (event) {

@@ -301,6 +301,17 @@ class AppointmentController {
 		}
 		return res.json({ msg: "uncancelled" });
 	}
+
+	async appointmentPaid(req, res) {
+		try {
+			const paidAppointment = await appointmentsmodel.payAppointment(
+				req.params.id
+			);
+		} catch (error) {
+			console.log("error", error);
+		}
+		return res.json({ msg: `appointment ${req.params.id} paid` });
+	}
 }
 module.exports = new AppointmentController();
 

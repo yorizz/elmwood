@@ -320,7 +320,27 @@ class AppointmentsModel {
 				a_cancellation_reason: "",
 			};
 
-			let date = dayjs();
+			qb.where({
+				a_ID: appointmentID,
+			})
+				.set(data)
+				.update("appointments");
+			console.log("Query Ran: " + qb.last_query());
+		} catch (error) {
+			console.log(error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async payAppointment(appointmentID) {
+		let qb;
+		try {
+			qb = await pool.get_connection();
+
+			let data = {
+				a_is_paid: 1,
+			};
 
 			qb.where({
 				a_ID: appointmentID,

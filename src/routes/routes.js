@@ -103,6 +103,12 @@ router.post(
 	appointmentController.addAppointment
 );
 
+router.post(
+	"/appointment/paid/:id",
+	isUserAuthenticated,
+	appointmentController.appointmentPaid
+);
+
 /********************************************************************************************************
  *  CLIENTS
  ********************************************************************************************************/
