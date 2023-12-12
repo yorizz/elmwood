@@ -181,6 +181,7 @@ class ClientController {
 	async postNewEnquiry(req, res) {
 		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
+			console.log("new enquiry errors", errors);
 			return res.json(errors);
 		} else {
 			console.log("form payload", req.body);

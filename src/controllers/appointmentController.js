@@ -200,6 +200,7 @@ class AppointmentController {
 					a_end_time: req.body.end_time + ":00",
 					a_room: req.body.room,
 					a_is_paid: 0,
+					a_fee: req.body.client_fee,
 					a_therapist: req.body.therapists,
 				};
 				let insertId = await appointmentsmodel.addAppointment(appointment);

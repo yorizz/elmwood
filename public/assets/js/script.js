@@ -240,6 +240,7 @@ $(document).ready(function () {
 				if (data[0].c_therapist.length > 1) {
 					console.log("therapist:", data[0].c_therapist);
 					$("#new-appointment-form #therapists").val(data[0].c_therapist);
+					$("#new-appointment-form #client_fee").val(data[0].t_fee);
 				} else {
 					console.log("no therapist assigned");
 				}

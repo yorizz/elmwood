@@ -183,7 +183,7 @@ class ClientModel {
 		try {
 			qb = await pool.get_connection();
 			const ct_response = await qb
-				.select("c_therapist")
+				.select("c_therapist, t_fee")
 				.join("therapists", "c_therapist=t_ID", "left")
 				.where("c_ID", clientID)
 				.get("clients");

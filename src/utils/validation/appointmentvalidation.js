@@ -18,6 +18,7 @@ const checkAppointmentInput = [
 		.trim()
 		.escape(),
 	body("room").trim().escape(),
+	body("client_fee").isAlphanumeric().trim().escape(),
 	body("therapists")
 		.isAlphanumeric()
 		.withMessage("The therapist value cannot be a name")

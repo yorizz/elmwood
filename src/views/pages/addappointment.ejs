@@ -34,23 +34,31 @@
         <input type="date" class="form-control" id="date" name="date" value="<%= date %>">
     </div>
 
-    <div class="mb-4">
-        <label for="start_time" class="form-label">Start Time</label>
-        <input type="time" class="form-control" name="start_time" id="start_time" value="12:00">
-    </div>
-    
-    <div class="mb-4">
-        <label for="end_time" class="form-label">End Time</label>
-        <input type="time" class="form-control" id="end_time" name="end_time" value="13:00">
-    </div>
-    
-    <div class="mb-4">
-        <label for="room" class="form-label">Room</label>
-        <input type="text" class="form-control" id="room" name="room" placeholder="Room Number">
+    <div class="mb-4 d-flex justify-content-between">
+        <div class="col-6">
+            <label for="start_time" class="form-label">Start Time</label>
+            <input type="time" class="form-control" name="start_time" id="start_time" value="12:00">
+        </div>
+        
+        <div class="col-5">
+            <label for="end_time" class="form-label">End Time</label>
+            <input type="time" class="form-control" id="end_time" name="end_time" value="13:00">
+        </div>
+
+    </div> 
+    <div class="mb-4 d-flex justify-content-between">
+        <div class="col-6">
+            <label for="room" class="form-label">Room</label>
+            <input type="text" class="form-control" id="room" name="room" placeholder="Room Number">
+        </div>
+        <div class="col-5">
+            <label for="client_fee" class="form-label">Client Fee</label>
+            <input type="number" class="form-control" id="client_fee" name="client_fee" placeholder="&euro;" value="">
+        </div>
     </div>
 
     <div class="mb-4">
-        <label for="repeat" class="form-label"><i class="bi bi-repeat"></i> Repeat</label>
+        <label for="repeat" class="form-label"><i class="bi bi-repeat"></i> Repeat Weeks</label>
         <input type="number" class="form-control" id="repeat" name="repeat" placeholder="0">
     </div>
 </form>
