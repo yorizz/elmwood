@@ -1,0 +1,40 @@
+<% if(locals.profitPerTherapist) { %>
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="basic-addon2" name="search" id="search">
+        <span class="input-group-text" id="basic-addon2"><i class="bi bi-search"></i></span>
+    </div>
+
+    <h2>Search between dates</h2>
+    <div id="error" class="error hide"></div>
+    <div class="date-range">        
+        <div class="mb-2 col-3">
+            <label for="dateRangeStart" class="form-label">Start Date</label>
+            <input type="date" class="form-control" id="dateRangeStart" name="dateRangeStart">
+        </div>
+        <div class="mb-2 col-3">
+            <label for="dateRangeEnd" class="form-label">End Date</label>
+            <input type="date" class="form-control" id="dateRangeEnd" name="dateRangeEnd">
+        </div>
+        <div class="mb2"><button class="btn button" id="date_range_button"><i class="bi bi-search"></i></button></div>
+    </div>
+    
+    <div id="profits-table" class="table">
+        <div class="table-head">
+            <div class="th">therapist</div>
+            <div class="th">elmwood fee</div>
+        </div>
+        <div class="table-body">
+        <% for(therapist of profitPerTherapist) { %>
+            <div class="table-row">
+                <div class="table-cell"><a href="/therapist/<%= therapist.therapist.t_ID %>"><%= `${therapist.therapist.t_first_name} ${therapist.therapist.t_surname}` %></a></div>
+                <div class="table-cell">&euro; <span class="elmwood_fee"><%= therapist.elmwoodfee %></span></div>
+            </div>
+        <% } %>
+        </div>
+        <div class="table-head">
+            <div class="th">total</div>
+            <div class="th">&euro; <span id="elmwood_profit_total">0</span></div>
+        </div>
+    </div>
+
+<% } %>

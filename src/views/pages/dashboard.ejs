@@ -1,0 +1,283 @@
+<div class="container dashboard">
+	<div class="row gy-4">
+		<div class="col">
+			<div class="card waiting-list-card">
+				<h5 class="card-header">
+					<span>Waiting List</span>
+					<a href="/waitinglist"><i class="bi bi-list-ul"></i></a>
+				</h5>
+				<div class="card-body">
+					<p class="card-text dashboard-number">
+						<% if(locals.waitinglistsize) { %> <%= waitinglistsize %> <% }
+						%>
+					</p>
+				</div>
+			</div>
+		</div> <!-- end column -->
+
+		
+
+		<div class="col">
+			<div class="card">
+				<h5 class="card-header">
+					<span>Low Cost Clients</span>
+					<a href="/clientspertherapist"><i class="bi bi-people"></i></a>
+				</h5>
+				<div class="card-body  .table-responsive">
+					<div class="table table-responsive w-100 d-block d-md-table">
+						<div class="table-body">	
+							<% if (locals.lowCostClients){
+								for(lcc of lowCostClients){
+							%>
+								<div class="table-row">
+									<div class="table-cell therapist-name">
+										<a href="/client/<%= lcc.c_ID %>"><%= lcc.c_first_name %> <%=  lcc.c_surname %></a>
+									</div>
+									<div class="table-cell align-middle"><a href="/client/<%= lcc.c_ID %>" title="view client"><i class="bi bi-eye"></i></a></div>
+								</div> <!-- end row -->
+							<%		
+								}
+							   } 
+							%>
+						</div> <!-- end table body-->
+					</div> <!-- end table -->	
+				</div> <!-- end card-body -->
+			</div> <!-- end card -->
+		</div> <!-- end column -->
+
+	</div> <!-- end row --> 
+
+	<div class="row gy-4">
+		<div class="col">
+			<div class="card">
+				<h5 class="card-header">
+					<span>Today's Appointments</span>
+					<a href="/calendar"><i class="bi bi-calendar3"></i></a>
+				</h5>
+
+				<div class="card-body .table-responsive">
+					<div class="table table-responsive w-100 d-block d-md-table">
+						<div class="table-head">
+							<div class="th">&nbsp;</div>
+							<div class="th">Time</div>
+							<div class="th">Client</div>
+							<div class="th">Therapist</div>
+
+						</div>
+						<div class="table-body col-12">
+							<% if (locals.appointments){ 
+								for(appointment of appointments){ 
+							%>
+							<div class="table-row">
+								<div class="table-cell align-middle">
+									<span
+									class="colour-circle-sm"
+									style="background-color: <%= appointment.t_colour %>"
+									></span>
+								</div>
+								<div class="table-cell ">
+									<%= formatTime(appointment.a_start_time) %> - <%=
+									formatTime(appointment.a_end_time) %>
+								</div>
+								<div class="table-cell ">
+								<a href="/client/<%= appointment.a_client %>"><%=
+									dataDecrypt(appointment.c_first_name) %>&nbsp;<%=
+									dataDecrypt(appointment.c_surname) %> </a>
+								</div> 
+								<div class="table-cell ">
+								<a href="/therapist/<%= appointment.a_therapist %>"><%=
+								dataDecrypt(appointment.t_first_name) %>&nbsp;<%=
+								dataDecrypt(appointment.t_surname) %></a>
+								</div>
+							</div>
+							<!-- end row -->
+							<% } } %>
+						</div>
+						<!-- end table body-->
+					</div>
+					<!-- end table -->
+				</div>
+				<!-- end card-body --> %>
+				</div>
+		</div> <!-- end column -->
+
+	</div> <!-- end row --> 
+
+	<div class="row gy-4">
+		<div class="col">
+			<div class="card outstanding-fees-card">
+				<h5 class="card-header">
+					<span>Unpaid Appointments per Therapist</span>
+					<a href="/"><i class="bi bi-cash"></i></a>
+				</h5>
+				<div class="card-body">
+					<div class="table table-responsive w-100 d-block d-md-table">
+							<div class="table-head">
+								<div class="th">Therapist</div>
+								<div class="th">Fee</div>
+							</div>
+						
+							<div class="table-body">
+								<% 
+								if(locals.outstandingFeesPerTherapist) { 
+									for(fee of outstandingFeesPerTherapist){ 
+								%>
+										<div class="table-row">
+											
+											<div class="table-cell ">
+												<a href="/therapist/<%= fee.a_therapist %>"><%= fee.t_first_name %> <%= fee.t_surname %></a>
+											</div>
+											<div class="table-cell ">
+												&euro; <%= fee.unpaid %>
+											</div>
+											
+										</div> <!-- end row -->	
+							<%
+									}
+								}
+							%>
+							</div> <!-- end table body -->
+					</div> <!-- end table --> 
+				</div>
+			</div>
+		</div> <!-- end column -->	
+
+		<div class="col">
+			<div class="card outstanding-fees-card">
+				<h5 class="card-header">
+					<span>Unpaid Appointments per Client</span>
+					<a href="/"><i class="bi bi-cash"></i></a>
+				</h5>
+				
+				<div class="card-body">
+					<div class="table table-responsive w-100 d-block d-md-table">
+						<div class="table-head">
+							<div class="th">Client</div>
+							<div class="th">Fee</div>
+						</div>
+					
+						<div class="table-body">
+							<% 
+							if(locals.outstandingFeesPerClient) { 
+								for(fee of outstandingFeesPerClient){ 
+							%>
+									<div class="table-row">
+										
+										<div class="table-cell ">
+											<a href="/client/<%= fee.a_client %>"><%= fee.c_first_name %> <%= fee.c_surname  %></a>
+										</div>
+										<div class="table-cell ">
+											&euro; <%= fee.unpaid %>
+										</div>
+										
+									</div> <!-- end row -->	
+						<%
+								}
+							}
+						%>
+						</div> <!-- end table body -->
+				</div> <!-- end table --> 
+			</div> <!-- end card body -->
+		</div> <!-- end column -->
+		</div>  <!-- end column -->		
+
+	</div> <!-- end row-->
+
+
+	<div class="row gy-4">
+		<div class="col">
+			<div class="card expiring-insurance">
+				<h5 class="card-header">
+					<span>Insurance Expiring</span>
+					<a href="/"><i class="bi bi-shield-exclamation"></i></a>
+				</h5>
+				<div class="card-body">
+					<div class="table table-responsive w-100 d-block d-md-table">
+						<div class="table-head">
+							<div class="th">Therapist</div>
+							<div class="th">Insurance Exp. Date</div>
+						</div>
+						<div class="table-body">
+							<% 
+								if(locals.expiringInsurances) { 
+									for(exp of expiringInsurances){ 
+							%>
+										<div class="table-row">
+											
+											<div class="table-cell ">
+												<a href="/therapist/<%= exp.t_ID %>"><%= exp.t_first_name %> <%= exp.t_surname  %></a>
+											</div>
+
+											<% 
+												let insuranceExpired = '';
+
+												let dateParts = exp.t_insurance_expiry_date.split('/');
+												let formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+												let expirationDate = new Date(formattedDate);
+												if(expirationDate - Date.now() < 0){
+													insuranceExpired = 'insurance-expired';
+												}
+											%>
+											<div class="table-cell <%= insuranceExpired %>">
+												<%= exp.t_insurance_expiry_date %>
+											</div>
+											
+										</div> <!-- end row -->	
+							<% } } %>			
+						</div>
+					</div>		
+				
+				</div>
+			</div>
+		</div> <!-- end column -->
+		<div class="col">
+			<div class="card">
+				<h5 class="card-header">
+					<span>Clients per Therapist</span>
+					<a href="/clientspertherapist"><i class="bi bi-people"></i></a>
+				</h5>
+				<div class="card-body  .table-responsive">
+					<div class="table table-responsive w-100 d-block d-md-table">
+						<div class="table-body">	
+							<% if (locals.clientsPerTherapist){
+								for(cpt of clientsPerTherapist){
+							%>
+								<div class="table-row">
+									<div class="table-cell therapist-name">
+										<a href="/therapist/<%= cpt.t_ID %>"><%= cpt.t_first_name %> <%=  cpt.t_surname %></a>
+									</div>
+									<div class="table-cell align-middle"><%= cpt.NumberOfClients %></div>
+								</div> <!-- end row -->
+							<%		
+								}
+							   } 
+							%>
+						</div> <!-- end table body-->
+					</div> <!-- end table -->	
+				</div> <!-- end card-body -->
+			</div> <!-- end card -->
+		</div> <!-- end column -->
+		
+	</div>	<!-- end row -->  
+
+
+	<div class="row gy-4">
+		<div class="col">
+			<div class="card expiring-insurance">
+				<h5 class="card-header">
+					<span>Eye Candy </span>
+					<a href="/"><i class="bi bi-image"></i></a>
+				</h5>
+				<div class="card-body">
+					<% if(locals.photo){%>
+						<img src="<%= photo %>" alt="placeholder image" class="pexel-image" />
+					<% } %>
+					
+				</div>
+			</div>
+		</div> <!-- end column -->
+	</div>
+</div> <!-- end container -->
+
+
+

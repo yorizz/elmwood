@@ -1,0 +1,274 @@
+<form
+	action="<%=(locals.isEdit)? '/updateclient/' + t_client.t_client[0].c_ID : '/newenquiry' %>"
+	method="post"
+>	<input type="text" id="nepvraag" name="nepvraag" class="hidden" />
+	
+<% if(locals.t_client && t_client.t_client){ %>
+	<input 
+		type="hidden" 
+		id="client_ID" 
+		name="client_ID" 
+		class="hidden"
+		value="<%=(locals.isEdit) ? t_client.t_client[0].c_ID : '' %>"
+	 />
+	 <% } %>
+	<div class="mb-3">
+		<label for="first_name">First Name</label>
+		<input
+			type="text"
+			class="form-control"
+			id="first_name"
+			name="first_name"
+			placeholder="First Name"
+			value="<%=(locals.isEdit) ? dataDecrypt(t_client.t_client[0].c_first_name) : '' %>"
+			required="required"
+		/>
+	</div>
+	<div class="mb-3">
+		<label for="surname">Surname</label>
+		<input
+			type="text"
+			class="form-control"
+			id="surname"
+			name="surname"
+			placeholder="Surname"
+			value="<%=(locals.isEdit) ? dataDecrypt(t_client.t_client[0].c_surname) : '' %>"
+			required="required"
+		/>
+	</div>
+	<div class="mb-3">
+		<label
+			for="email"
+			class="form-label"
+			><i class="bi bi-envelope"></i> Email address</label
+		>
+		<input
+			type="email"
+			class="form-control"
+			id="email"
+			name="email"
+			placeholder="Email Address"
+			value="<%=(locals.isEdit) ? dataDecrypt(t_client.t_client[0].c_email) : '' %>"
+		/>
+	</div>
+	<div class="mb-3">
+		<label
+			for="phone"
+			class="form-label"
+			><i class="bi bi-phone"></i> Phone</label
+		>
+		<input
+			type="text"
+			class="form-control"
+			id="phone"
+			name="phone"
+			placeholder="Phone Number"
+			value="<%=(locals.isEdit) ? dataDecrypt(t_client.t_client[0].c_phone) : '' %>"
+		/>
+	</div>
+
+    <div class="mb-3">
+        <label for="therapists" class="form-label"><i class="bi bi-person-fill"></i> Therapist</label>
+        <select name="therapists" id="therapists" class="form-select" aria-label="Therapist">
+            <% let selectedFlag = false; %>
+			
+            <% if(locals.therapists && therapists.length >= 1) { %>
+				<% for(let i=0; i<therapists.length; i++){ 
+						let therapist = therapists[i]; 
+						let selected = '';
+						
+						if(locals.t_client){
+							if(t_client.t_client[0].c_therapist == therapist.t_ID){
+								selected = 'selected'
+								selectedFlag = true;
+							}
+						}
+					%>
+					<option value="<%= therapist.t_ID %>"  <%= selected %>><%= therapist.t_first_name + " " + therapist.t_surname %></option>
+				<% } %>
+            <% } %>
+			<option value="-1" disabled <%= (!selectedFlag) ? "selected" : "" %> >Select a therapist</option>
+			<%  selectedFlag = false; %>
+        </select>
+    </div>  
+    
+	<div class="low-cost">
+		<div class="mb-3 d-flex">
+			<div class="col-6">
+				<label for="assessed_by" class="form-label"><i class="bi bi-person-fill"></i> Assessed By</label>
+				<select name="assessed_by" id="assessed_by" class="form-select" aria-label="Assessed By">
+				
+					<% if((locals.therapists && therapists.length >= 1)){ %>
+						<% for(let i=0; i<therapists.length; i++){ 
+							let therapist = therapists[i]; 
+							let selected = '';
+								if(locals.t_client){
+									if(t_client.t_client[0].c_assessed_by == therapist.t_ID){
+										selected = 'selected';
+										selectedFlag = true;
+									}
+								}
+						%>
+							<option value="<%= therapist.t_ID %>" <%= selected %>>
+								<%= therapist.t_first_name + " " + therapist.t_surname %>
+							</option>
+						<% } %>
+					<% } %>
+					<option value="-1" disabled <%= (!selectedFlag) ? "selected" : "" %> >Select a therapist</option>
+					<%  selectedFlag = false; %>
+				</select>
+			</div>
+
+			<div class="col-6">
+				<label
+					for="assessment_date"
+					class="form-label"
+					><i class="bi bi-calendar3"></i> Assessment Date</label>
+				<input type="date" class="form-control" name="assessment_date" id="assessment_date">
+			</div>
+
+		</div>
+	</div>	
+    <div class="mb-3">
+       	<%
+		let referralSelected = '';
+		%>
+		<label for="referred_by" class="form-label"><i class="bi bi-building"></i> Referred By</label>
+        <select name="referred_by" id="referred_by" class="form-select" aria-label="Referred By">
+           
+            <% if(locals.referrers && referrers.length >= 1){ %>
+				<% for(let i=0; i<referrers.length; i++){ %>
+					<% let referrer = referrers[i]; %>
+					<% 
+						if(locals.t_client) {
+							if(t_client.t_client[0].c_referred_by == referrer.r_ID){
+								referralSelected = "selected" ;
+								selectedFlag = true;
+							}
+							else{
+								referralSelected = "" ;
+							}
+						}
+					%>
+					
+					<option value="<%= referrer.r_ID %>" <%= referralSelected %>><%= referrer.r_referral %></option>
+				<% } %>
+            <% } %>
+			<option value="-1" disabled hidden <%= (!selectedFlag) ? "selected" : "" %> >Select a referral</option>
+			<%  selectedFlag = false; %>
+        </select>
+    </div>  
+
+	<div class="mb-3">
+        <label for="therapy_types_requested" class="form-label"> Therapy Type(s) Requested</label>
+		<select class="form-select" name="therapy_types_requested" id="therapy_types_requested" data-mdb-placeholder="Type(s) of Therapy" multiple>
+			<% 
+			let requested_therapy_types = [];
+			if(locals.requestedTherapyTypes){
+				for(let i=0; i< requestedTherapyTypes.length; i++){
+					requested_therapy_types.push(requestedTherapyTypes[i].cttr_therapy_type_requested);
+				}
+			}
+			if(locals.qualifications && qualifications.length >= 1){
+				for(let i=0; i<qualifications.length; i++){ %>
+				<option value="<%= qualifications[i].q_ID %>" <%= (requested_therapy_types.includes(qualifications[i].q_ID)) ? 'selected' : '' %>><%= qualifications[i].q_qualification %></option>
+			
+			<% 
+				}
+			} 
+			%>
+
+		</select>
+	</div>
+
+
+	<div class="mb-3">
+		<% 
+		let checked = '';
+		
+		if(locals.isEdit) {
+			console.log("--- LOW COST ---", t_client.t_client[0].c_low_cost_employment);
+			if(t_client.t_client[0].c_low_cost_employment == 1){
+				checked = 'checked';
+				
+			}
+
+			
+		} %> 
+		<div class="d-flex col-12" >
+			<div class="form-check col-6">
+				<input class="form-check-input" type="checkbox" value="1" id="low_cost" name="low_cost" <%= checked %>>
+				<label class="form-check-label" for="low_cost">
+					Low Cost
+				</label>
+			</div>
+			
+		</div>
+
+		
+		<div class="low-cost">
+		<% 
+		
+		if(locals.isEdit) {
+			console.log("--- LOW COST ---", t_client.t_client[0].c_low_cost_suitable);
+			if(t_client.t_client[0].c_low_cost_suitable == 1){
+				checked = 'checked';
+				
+			}
+		} %> 
+
+		
+			<div class="form-check col-6">
+				<input class="form-check-input" type="checkbox" value="1" id="low_cost_suitable" name="low_cost_suitable" <%= checked %>>
+				<label class="form-check-label" for="low_cost_suitable">
+					Suitable
+				</label>
+			</div>
+
+			<%
+			if(locals.isEdit) {
+				if(t_client.t_client[0].c_research_participation == 1){
+					checked = 'checked';
+				}
+				else{
+					checked = '';
+				}
+			}
+			%>
+			<div class="form-check col-6">
+				<input class="form-check-input" type="checkbox" value="1" id="research_participation" name="research_participation" <%= checked %>>
+				<label class="form-check-label" for="research_participation">
+					Research Participation
+				</label>
+			</div>
+			
+			<%
+			if(locals.isEdit) {
+				console.log("--- DETAILS SENT TO CLAIRE ---", t_client.t_client[0].c_details_sent_to_claire);
+				if(t_client.t_client[0].c_details_sent_to_claire == 1){
+					checked = 'checked';
+				}
+				else{
+					checked = '';
+				}
+			}
+			%>
+			<div class="form-check col-6">
+				<input class="form-check-input" type="checkbox" value="1" id="sent_to_claire" name="sent_to_claire" <%= checked %>>
+				<label class="form-check-label" for="sent_to_claire">
+					Details Sent to Claire
+				</label>
+			</div>
+	</div>
+		
+	
+	<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+			<button
+				type="submit"
+				class="btn btn-primary form-save-button"
+			>
+				Save
+			</button>
+		</div>
+	</div>	
+</form>

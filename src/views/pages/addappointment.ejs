@@ -1,0 +1,89 @@
+
+
+<form action="/addappointment" method="post" id="new-appointment-form">
+
+   
+    <div class="forms-inputs mb-4">
+        <label for="clients" class="form-label"><i class="bi bi-person"></i> Client</label>
+        <select name="clients" id="clients" class="form-select" aria-label="Client">
+            <option value="-1" selected>Select a client</option>
+            <% if(locals.clients && clients.length >= 1){ %>
+            <% for(let i=0; i<clients.length; i++){ %>
+                <% let client = clients[i]; %>
+                <option value="<%= client.c_ID %>"><%= dataDecrypt(client.c_first_name) + " " + dataDecrypt(client.c_surname) %></option>
+            <% } %>
+            <% } %>
+        </select>
+    </div>
+
+    <div class="forms-inputs mb-4">
+        <label for="therapists" class="form-label"><i class="bi bi-person-fill"></i> Therapist</label>
+        <select name="therapists" id="therapists" class="form-select" aria-label="Therapist">
+            <option value="-1" selected>Select a therapist</option>
+            <% if(locals.therapists && therapists.length >= 1){ %>
+            <% for(let i=0; i<therapists.length; i++){ %>
+                <% let therapist = therapists[i]; %>
+                <option value="<%= therapist.t_ID %>"><%= dataDecrypt(therapist.t_first_name) + " " + dataDecrypt(therapist.t_surname) %></option>
+            <% } %>
+            <% } %>
+        </select>
+    </div>    
+
+    <div class="mb-4">
+        <label for="date" class="form-label">Date</label>
+        <input type="date" class="form-control" id="date" name="date" value="<%= date %>">
+    </div>
+
+    <div class="mb-4 d-flex justify-content-between">
+        <div class="col-6">
+            <label for="start_time" class="form-label">Start Time</label>
+            <input type="time" class="form-control" name="start_time" id="start_time" value="12:00">
+        </div>
+        
+        <div class="col-5">
+            <label for="end_time" class="form-label">End Time</label>
+            <input type="time" class="form-control" id="end_time" name="end_time" value="13:00">
+        </div>
+
+    </div> 
+    <div class="mb-4 d-flex justify-content-between">
+        <div class="col-6">
+            <label for="room" class="form-label">Room</label>
+            <input type="text" class="form-control" id="room" name="room" placeholder="Room Number">
+        </div>
+    </div>
+
+    <div class="mb-4 d-flex">
+        <div class="col-12 d-flex">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="isreferral" name="isreferral">
+                <label class="form-check-label" for="isreferral">Renter Referral</label>
+            </div>
+            <div class="col-1">&nbsp;</div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="needspayment" name="needspayment" checked>
+                <label class="form-check-label" for="needspayment">Needs Payment</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-4 d-flex justify-content-between">    
+        <div class="col-3">
+            <label for="client_fee" class="form-label">Client Fee</label>
+            <input type="number" class="form-control" id="client_fee" name="client_fee" placeholder="&euro;" value="">
+        </div>
+        <div class="col-3">
+            <label for="therapist_fee" class="form-label">Therapist Fee</label>
+            <input type="number" class="form-control" id="therapist_fee" name="therapist_fee" placeholder="&euro;" value="">
+        </div>
+        <div class="col-4">
+            <label for="elmwood_fee" class="form-label">Elmwood Fee</label>
+            <p id="elmwood_fee" name="elmwood_fee" value="">&euro;</p>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <label for="repeat" class="form-label"><i class="bi bi-repeat"></i> Repeat Weeks</label>
+        <input type="number" class="form-control" id="repeat" name="repeat" placeholder="0">
+    </div>
+</form>

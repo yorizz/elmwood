@@ -1,0 +1,62 @@
+<div class="container mt-5">
+	<div class="row d-flex justify-content-center">
+		<div class="col-md-6">
+			<% if(locals.message) { %>
+			<p class="error"><%= message.message %></p>
+			<% } %>
+			<form
+				action="login"
+				method="post"
+			>
+				<div
+					class="card px-5 py-5"
+					id="form1"
+				>
+					<h1 class="card-h1">Login</h1>
+
+					<div
+						class="form-data"
+						v-if="!submitted"
+					>
+						<div class="forms-inputs mb-4">
+							<span>Email or username</span>
+							<input
+								type="text"
+								name="username"
+								id="username"
+								placeholder="Username"
+								value="Joris"
+								required
+							/>
+						</div>
+						<div class="forms-inputs mb-4">
+							<span>Password</span>
+							<input
+								type="password"
+								name="password"
+								id="password"
+								placeholder="Password"
+								value="!Password123"
+								required
+							/>
+						</div>
+						
+						<div class="mb-3">
+
+							<button
+								type="submit"
+								class="btn button login-button"
+							>
+								Login
+							</button>
+						</div>
+					</div>
+					
+				</div>
+			</form>
+			<div class="mb-3 forgotten-password-link">
+				<a href="/forgotpassword">forgotten password</a>
+			</div>
+		</div>
+	</div>
+</div>

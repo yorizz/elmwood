@@ -1,0 +1,119 @@
+<% let pathCorrection = (locals.pathCorrection)?locals.pathCorrection:""; %>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="robots" content="noindex">
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<title><%= (locals.title)?title:'Elmwood Admin Dashboard' %></title>
+		<link
+			rel="shortcut icon"
+			href="<%= pathCorrection %>./assets/img/favicon.png"
+			type="image/x-icon"
+		/>
+		<link
+			rel="stylesheet"
+			href="<%= pathCorrection %>./assets/css/bootstrap-update.css"
+		/>
+		<link
+			rel="stylesheet"
+			href="<%= pathCorrection %>./assets/css/bootstrap-update.css.map"
+		/>
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+		/>
+		<link
+			rel="stylesheet"
+			href="<%= pathCorrection %>/assets/css/filter_multi_select.css"
+		/>
+		<link
+			rel="stylesheet"
+			href="<%= pathCorrection %>./assets/css/style.css"
+		/>
+
+		<script
+			type="text/javascript"
+			src="<%= pathCorrection %>./assets/js/bootstrap.bundle.min.js"
+		></script>
+		<script
+			type="text/javascript"
+			src="https://code.jquery.com/jquery-1.11.3.js"
+		></script>
+		<script
+			type="text/javascript"
+			src="<%= pathCorrection %>/assets/js/filter-multi-select-bundle.min.js"
+		></script>
+		<script
+			type="text/javascript"
+			src="<%= pathCorrection %>/assets/js/filter-multi-select-script.js"
+		></script>
+
+		<% if(locals.calendar){ %>
+		<!-- CALENDAR scripts -->
+		<script src="/assets/js/calendar.js"></script>
+		<script
+			src="/assets/js/calendar_script.js"
+			type="module"
+		></script>
+		<!-- End CALENDAR scripts -->
+		<% } %>
+		<script
+			type="text/javascript"
+			src="<%= pathCorrection %>./assets/js/script.js"
+		></script>
+		<script
+			type="text/javascript"
+			src="<%= pathCorrection %>./assets/js/mottie.github.io_tablesorter_js_jquery.tablesorter.combined.js"
+		></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<div id="wrapper">
+				<!-- Sidebar -->
+				<% if(locals.sidebar && locals.sidebar === true){ %>
+				<%-include('../partials/sidebar.ejs') %> <% } %>
+				<!-- End of Sidebar -->
+
+				<div
+					id="content-wrapper"
+					class="d-flex flex-column"
+				>
+					<!-- Navbar -->
+					<% if(locals.sidebar && locals.sidebar === true){ %>
+					<%-include('../partials/navbar.ejs') %> <% } %>
+					<!-- End of Navbar -->
+
+					<!-- Main Content -->
+					<div id="content col-md-9">
+						<div class="container-fluid">
+							<div class="row">
+								<% if(locals.sidebar && locals.sidebar === true){ %>
+									
+									<h1><%= title %></h1>
+									<% if (locals.subtitle){ %>
+										<h2><%= subtitle %></h2>
+									<% } %> 
+
+									<% if(locals.clientNav  && locals.clientNav === true){ %>
+										<%-include('../partials/clientnav.ejs') %>
+									<%	} %>
+								<% } %> <% let path = '../pages/'+page %>
+								<%-include(path) %>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<% if(locals.sidebar && locals.sidebar === true){ %>
+			<%-include('../partials/footer.ejs') %> <% } %>
+
+			<!--  end #wrapper -->
+		</div>
+			<div id="theModal"	class="modal"></div>
+	</body>
+</html>

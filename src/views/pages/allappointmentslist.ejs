@@ -1,0 +1,132 @@
+<% if(locals.appointments) { %>
+<div class="input-group mb-3">
+	<input
+		type="text"
+		class="form-control"
+		placeholder="Search"
+		aria-label="Search"
+		aria-describedby="basic-addon2"
+		name="search"
+		id="search"
+	/>
+	<span
+		class="input-group-text"
+		id="basic-addon2"
+		><i class="bi bi-search"></i
+	></span>
+</div>
+
+
+<div class="table-responsive">
+	<table
+		id="appointments-table"
+		class="table"
+	>
+		<thead class="table-head">
+			<tr>
+				<th class="th">&nbsp;</th>
+				<th class="th" id="appointment-date">Date &amp; Time</th>
+				<th class="th">Client</th>
+				<th class="th">Therapist</th>
+				<th class="th">Fee</th>
+				<th class="th">Paid</th>
+				<th class="th">&nbsp;</th>
+			</tr>
+		</thead>
+		<!-- End Table Head-->
+
+		<tbody class="table-body">
+			<% for(appointment of appointments) { %>
+                
+			<tr class="table-row <%= (appointment.a_is_cancelled == 1) ? "cancelled-appointment" : ""%>" data-appointment="<%= appointment.a_ID %>"> 
+				<td class="table-cell align-middle appointment-colour">
+					<div
+						class="colour-circle"
+						style="background-color: <%= appointment.t_colour %>"
+                        <% if(appointment.a_is_cancelled == 1) { %>
+                       data-bs-toggle="tooltip" data-bs-title="Cancelled:  <%= dataDecrypt(appointment.a_cancellation_reason) %>"
+                        <% } %>
+					>
+						&nbsp;
+					</div>
+				</td>
+				<td class="table-cell align-middle appointment-date sorter-shortDate" data-date-format="ddmmyyyy">
+					<div class="">
+						<%= formatDate(appointment.a_date) %> <%=
+						formatTime(appointment.a_start_time) %>&nbsp;-&nbsp;<%=
+						formatTime(appointment.a_end_time)%>
+					</div>
+				</td>
+				<td class="table-cell align-middle appointment-client">
+					<a href="/client/<%= appointment.a_client %>"><%= appointment.c_first_name %> <%=
+					 appointment.c_surname  %></a>
+				</td>
+				<td class="table-cell align-middle appointment-therapist">
+					<a href="/therapist/<%= appointment.a_therapist %>"><%= appointment.t_first_name %> <%=
+					 appointment.t_surname %></a>
+				</td>
+				<td class="table-cell align-middle appointment-fee">
+					&euro;<%= formatCurrency(appointment.a_client_fee) %>
+				</td>
+				<td class="table-cell align-middle appointment-paid">
+					<%
+					if(appointment.a_is_paid == 1){ %>
+					<!-- <span class="paid">✔</span> -->
+					<span class="paid" title="paid"><i class="bi bi-cash"></i></span>
+					<% } else { %>
+					<!-- <span class="not-paid" title="not paid">✘</span> -->
+					<span class="not-paid" data_id="<%= appointment.a_ID %>"><i class="bi bi-cash"></i></span>
+					<% } %>
+				</td>
+
+				<td class="table-cell align-middle appointment-cancel-button view-single">
+					<% let id=appointment.a_ID.replace(/"|'/g, ''); %>
+					<button
+						type="button"
+						class="btn btn-primary cancel-appointment"
+						href="/appointment/<%=(appointment.a_is_cancelled == 0) ? 'cancel': 'uncancel'%>/<%= id %>"
+						data-bs-toggle="modal"
+						data-bs-target="#appointmentsModal"
+						data-appointment="<%= id %>"
+					>
+						<% if(appointment.a_is_cancelled == 1){ %>
+							<i class="bi bi-arrow-counterclockwise"></i>
+						<%} else { %>	
+						<i class="bi bi-trash3"></i>
+						<% } %>
+					</button>
+				</td>
+			</tr>
+			<% } %>
+		</tbody>
+		<!-- End table body-->
+	</table>
+</div>
+<!-- End Table-->
+<% } %>
+
+
+<div class="modal" id="appointmentsModal"  aria-hidden="true" style="display: none;">
+  <div class="modal-dialog  modal-lg modal-dialog-centered">
+    <div class="modal-content">
+
+     
+      <div class="modal-header">
+        <h4 class="modal-title">Add File</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+   
+      <div class="modal-body">
+         
+      </div>
+
+   
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="submit-cancel-appointment" data-bs-dismiss="modal">Save</button>
+      </div>
+
+    </div>
+  </div>
+</div>

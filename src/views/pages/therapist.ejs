@@ -1,0 +1,244 @@
+<% if(locals.therapist) { %> <% const tp = therapist[0]; %>
+<div class="row t-row d-flex justify-content-between">
+	<h3 class="col-4">
+		<%= dataDecrypt(tp.t_first_name) %> <%= dataDecrypt(tp.t_surname) %> <span class="colour-circle" style="display: inline-block; margin: 10px; background-color: <%= tp.t_colour %>;">&nbsp;</span>
+	</h3>
+    <h3 class="col-3"><button class="btn btn-primary" id="availability" data-therapist="<%= tp.t_ID %>"><i class="bi bi-clock"></i> Availability</button></h3>
+    <h3 class="col-2 "><button id="therapist-activation" class="btn <%=  (tp.t_is_active == 1) ? 'btn-primary' : 'btn-secondary' %>" value="<%= tp.t_ID  %>" data-bs-original-title="<%=  (tp.t_is_active == 1) ? 'Deactivate' : 'Activate' %>"><i class="bi <%=  (tp.t_active == 1) ? 'bi-person-fill-check' : "bi-person-fill-x" %>"></i> <%=  (tp.t_is_active == 1) ? 'Active' : 'Inactive' %></button></h3>
+	<h3 class="col-2 edit-icon">
+		<a href="/therapist/<%= tp.t_ID %>/edit"> <i class="bi bi-pencil"></i></a>
+	</h3>
+</div>
+<div class="row t-row d-flex justify-content-between">
+    <p class="col-3"><strong>Phone</strong>: <%= dataDecrypt(tp.t_phone) %></p>
+    <p class="col-3"><strong>Email</strong>: <a href="mailto:<%= dataDecrypt(tp.t_email) %>"><%= dataDecrypt(tp.t_email) %></a></p>
+    <p class="col-3"><strong>Insurance Expiry Date</strong>: <%= (tp.t_insurance_expiry_date != null) ? formatDate(tp.t_insurance_expiry_date) : '__/__/__' %></p>
+</div>
+
+<div class="row t-row d-flex justify-content-between">
+	<h3>Qualifications</h3> 
+    
+    <div class="row">
+        <ul class="qualifications"><% if(locals.qualifications){ %>
+            <%  for(let i=0; i<qualifications.length; i++){ %>
+            <li> <%= qualifications[i].q_qualification %>  <%= (qualifications[i].q_fully_qualified == 1)?' : Fully Qualified' : '' %> </li>
+            <% } %>
+        </ul>
+         <% } %>
+    </div>
+   
+</div>
+
+<div class="row t-row d-flex justify-content-between">
+	<h3>Fees &amp; Contract types</h3>
+    <div class="row d-flex justify-content-between">
+        <p class="col-4"><strong>Therapist Fee (FQ)</strong>: <span class="fee">&euro;<%= formatCurrency(tp.t_fq_fee); %></span></p>
+        <p class="col-6"><strong>Client Fee</strong>: <span class="fee"> &euro;<%= formatCurrency(tp.t_fee) %></span></p>
+    </div>
+    <hr>
+    <div class="row d-flex justify-content-between">
+        <% if(locals.contracts){ %>
+            <%  for(let i=0; i<contracts.length; i++){ %>
+                <div class="col-3 align-items-center">
+                    <i class="bi bi-check"></i> <%= contracts[i].ct_contract_type %> 
+                </div>
+            <% } %>    
+        <% } %>   
+    </div>
+    
+</div>
+
+
+<div class="row t-row d-flex justify-content-between">
+    <h3>Accreditations</h3>
+
+    <div class="row d-flex justify-content-between">
+        <% if(locals.accreditations){ %>
+            <ul class="accreditations">
+                <%  for(let i=0; i<accreditations.length; i++){ %>
+                <li> <%= accreditations[i].a_accreditation %></li>
+                <% } %>
+            </ul>
+        <% } %>
+    </div>
+</div>
+
+
+<% if(locals.clients && clients.length >= 1) { %>
+<div class="row t-row d-flex justify-content-between">
+    <h3>Clients</h3>
+    <div
+    id="clients-table"
+    class="table table-responsive w-100 d-block d-md-table"
+    >
+    <div class="table-head">
+        <div class="th">Name</div>
+        <div class="th">Phone</div>
+        <div class="th">Email</div>
+        <div class="th">Assigned to</div>
+        <div class="th">&nbsp;</div>
+    </div>
+    <!-- End Table Head-->
+
+    <div class="table-body">
+        <% for(client of clients) { console.log("client", client);%>
+
+
+
+        <div class="table-row <%= (client.c_is_active == 0) ? 'inactive' : '' %>">
+            <div class="table-cell  align-middle ">
+                <%= client.c_first_name %> <%= client.c_surname %>
+            </div>
+            <div class="table-cell  align-middle ">
+                <%= formatPhoneNumber(client.c_phone) %>
+            </div>
+            <div class="table-cell  align-middle ">
+                <a href="mailto:<%= client.c_email %>"><%= client.c_email %></a>
+            </div>
+            <div class="table-cell  align-middle ">
+                <% if(client.t_first_name != null){ %>
+                <%= client.t_first_name %> <%= client.t_surname %>
+                <%}%>
+            </div>
+            <div class="table-cell  align-middle  view-single">
+                <a
+                    href="/client/<%= client.c_ID %>"
+                    title="view client"
+                    ><i class="bi bi-eye"></i
+                ></a>
+            </div>
+        </div>
+
+        <% } %>
+    </div>
+    <!-- End table body-->
+    </div>
+    <!-- End Table-->
+</div>
+<% } %>
+
+<div class="row t-row d-flex justify-content-between">
+    <h3 class="col-6">Files</h3>
+    <h3 class="edit-icon col-3">
+        <a href="<%=tp.t_ID%>"  id="open-file-modal" data-bs-toggle="modal" data-bs-target="#filesModal"><i class="bi bi-file-earmark-plus"></i></a>
+    </h3>
+   
+        <% if(locals.files){ %>
+            
+                <div class="table files-table table-responsive w-100 d-block d-md-table">
+                    <div class="table-head">
+                        <div class="th">File name</div>
+                        <div class="th">Date</div>
+                    </div>
+                    <div class="table-body">
+                        
+                    <%  for(let i=0; i<files.length; i++){ %>
+
+                        <% let uploadDate = formatDate(files[i].tf_file_upload_date); %>
+                        <div class="table-row">
+                            <div class="table-cell">
+                                <a href="/file/therapists/<%= tp.t_ID %>/<%= files[i].tf_file_name %>"><%- formatFileType(files[i].tf_file_name) %> <%= files[i].tf_file_name %></a>   
+                            </div> 
+                            <div class="table-cell upload-date">  
+                                <%= uploadDate %>
+                            </div> 
+                        </div>    
+                            
+                    <% } %>   
+                        
+                    </div> 
+                </div>
+          
+        <% } %>   
+   
+    
+</div>
+
+<div class="row t-row d-flex justify-content-between">
+    <h3 class="col-6">Notes</h3>
+    <h3 class="edit-icon col-3">
+        <a href="<%=tp.t_ID%>"  id="open-note-modal" data-bs-toggle="modal" data-bs-target="#notesModal"><i class="bi bi-sticky"></i></a>
+    </h3>
+
+    <% if(locals.notes){ %>
+            
+        <div class="table notes-table table-responsive w-100 d-block d-md-table">
+            <div class="table-head">
+                <div class="th">Note</div>
+                <div class="th">Date</div>
+            </div>
+            <div class="table-body">
+                
+            <%  for(let i=0; i<notes.length; i++){ %>
+
+                <% let noteDate = formatDate(notes[i].tn_date); %>
+                <div class="table-row">
+                    <div class="table-cell">
+                        <%= htmlUnescape(dataDecrypt(notes[i].tn_note)) %>
+                    </div> 
+                    <div class="table-cell upload-date">  
+                        <%= noteDate %>
+                    </div> 
+                </div>    
+                    
+            <% } %>   
+                
+            </div> 
+        </div>
+  
+<% } %>   
+    
+</div>
+<!-- <div data-bs-toggle="tooltip" data-bs-title="<%=  (tp.t_active == 1) ? 'Deactivate' : 'Activate' %>"></div> -->
+<% } %>
+
+<div class="modal" id="notesModal"  aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+       
+        <div class="modal-header">
+          <h4 class="modal-title">Add Note</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+  
+     
+        <div class="modal-body">
+          <%- include('./addtherapistnote'); %>
+        </div>
+  
+     
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="save-therapist-note" data-bs-dismiss="modal">Save</button>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal" id="filesModal"  aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+       
+        <div class="modal-header">
+          <h4 class="modal-title">Add File</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+  
+     
+        <div class="modal-body">
+          <%- include('./addtherapistfile'); %>
+        </div>
+  
+     
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="save-therapist-file" data-bs-dismiss="modal">Save</button>
+        </div>
+  
+      </div>
+    </div>
+  </div>

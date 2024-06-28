@@ -1,0 +1,12 @@
+<h2>encrypted therapist</h2>
+
+<% if(locals.therapists) { %>
+<ul>
+	<% for(therapist of therapists) { %>
+	<li>
+		<%= therapist.t_ID %> <%= therapist.t_first_name %> <%=
+		therapist.t_surname %>
+	</li>
+	<% } %>
+</ul>
+<% } %>

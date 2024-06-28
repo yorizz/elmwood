@@ -1,0 +1,301 @@
+
+
+<form
+	action="<%=(locals.isEdit)? '/updatetherapist/' + therapist.therapist[0].t_ID : '/newtherapist' %>"
+	method="post"
+>
+	<% if(locals.errors){ %> 
+		<% let msg = checkError(errors, "nepvraag").msg; %>
+		<% if(msg!=null){ %>
+			<div class="form-text error"><%= msg %></div>
+		<% } %> 
+	<% } %>
+	<input
+		type="text"
+		id="nepvraag"
+		name="nepvraag"
+		class="hidden"
+	/>
+
+	<% if(locals.therapist && therapist.therapist){ %>
+	<input
+		type="hidden"
+		id="therapist_ID"
+		name="therapist_ID"
+		class="hidden"
+		value="<%=(locals.isEdit) ? therapist.therapist[0].t_ID : '' %>"
+	/>
+	<% } %>
+
+	<div class="mb-3">
+		<label for="first_name">First Name</label>
+		<% if(locals.errors){ %> <% let msg = checkError(errors,"first_name").msg; %> 
+			<% if(msg!=null){ %>
+				<div class="form-text error"><%= msg %></div>
+			<% } %> 
+		<% } %> 
+		<% let firstNameValue = (locals.post) ? post.first_name :''; %>
+		<% if(locals.isEdit){ firstNameValue = (locals.therapist) ? dataDecrypt(therapist.therapist[0].t_first_name) : ""; } %>
+
+		<input
+			type="text"
+			class="form-control"
+			id="first_name"
+			name="first_name"
+			placeholder="First Name"
+			value="<%= firstNameValue %>"
+			required="required"
+		/>
+	</div>
+
+	<div class="mb-3">
+		<label for="surname">Surname</label>
+		<% if(locals.errors){ %> 
+			<% let msg = checkError(errors, "surname").msg; %> 
+			<% if(msg!=null){ %>
+				<div class="form-text error"><%= msg %></div>
+			<% } %> 
+		<% } %> 
+		<% let surnameValue = (locals.post) ? post.surname : ''; %>
+		<% if(locals.isEdit){ surnameValue = (locals.therapist) ? dataDecrypt(therapist.therapist[0].t_surname) : ""; } %>
+
+		<input
+			type="text"
+			class="form-control"
+			id="surname"
+			name="surname"
+			placeholder="Surname"
+			value="<%= surnameValue %>"
+			required="required"
+		/>
+	</div>
+
+	<div class="mb-3">
+		<label
+			for="email"
+			class="form-label"
+			><i class="bi bi-envelope"></i> Email address</label
+		>
+		<% if(locals.errors){ %> 
+			<% let msg = checkError(errors, "email").msg; %>
+			<% if(msg!=null){ %>
+				<div class="form-text error"><%= msg %></div>
+			<% } %> 
+		<% } %> 
+		<% let emailValue = (locals.post) ? post.email : ''; %>
+		<% if(locals.isEdit){ emailValue = (locals.therapist) ?	dataDecrypt(therapist.therapist[0].t_email) : ""; } %>
+
+		<input
+			type="email"
+			class="form-control"
+			id="email"
+			name="email"
+			placeholder="Email Address"
+			value="<%= emailValue %>"
+			required="required"
+		/>
+	</div>
+
+	<div class="mb-3">
+		<label
+			for="phone"
+			class="form-label"
+			><i class="bi bi-phone"></i> Phone</label
+		>
+		<% if(locals.errors){ %> 
+			<% let msg = checkError(errors, "phone").msg; %>
+			<% if(msg!=null){ %>
+				<div class="form-text error"><%= msg %></div>
+			<% } %> 
+		<% } %> 
+		
+		<% let phoneValue = (locals.post) ? post.phone : ''; %>
+			<% if(locals.isEdit){ phoneValue = (locals.therapist) ?	dataDecrypt(therapist.therapist[0].t_phone) : ""; } %>
+
+		<input
+			type="text"
+			class="form-control"
+			id="phone"
+			name="phone"
+			placeholder="Phone Number"
+			value="<%= phoneValue %>"
+			required="required"
+		/>
+	</div>
+
+	<div class="mb-3">
+		<label
+			for="fee_fq"
+			class="form-label"
+			><i class="bi bi-currency-euro"></i> Therapist Fee (FQ)</label
+		>
+
+		<% let feeFQValue = (locals.post) ? post.fee_fq : ''; %> 
+		<% if(locals.isEdit){ feeFQValue = (locals.therapist) ? therapist.therapist[0].t_fq_fee : ""; }	%>
+
+		<input
+			type="number"
+			step="0.01"
+			class="form-control"
+			id="fee_fq"
+			name="fee_fq"
+			placeholder="&euro;"
+			value="<%= feeFQValue %>"
+			required="required"
+		/>
+	</div>
+	<div class="mb-3">
+		<label
+			for="fee"
+			class="form-label"
+			><i class="bi bi-currency-euro"></i>Client Fee</label
+		>
+
+		<% let feeValue = (locals.post) ? post.fee : ''; %>
+			<% if(locals.isEdit){ feeValue = (locals.therapist) ? therapist.therapist[0].t_fee : ""; } %>
+
+		<input
+			type="number"
+			step="0.01"
+			class="form-control"
+			id="fee"
+			name="fee"
+			placeholder="&euro;"
+			value="<%= feeValue %>"
+			required="required"
+		/>
+	</div>
+
+	<div class="t-row">
+		<h5 class="category">Types of Therapy</h5>
+		<div class="qualifications d-md-flex justify-content-between">
+			<div class="fully-qualified">
+				<% if(locals.qualifications && qualifications.length >= 1){ %> 
+					<% for(qualification of qualifications){ %> 
+						<% if(qualification.q_fully_qualified == 1) { %>
+							<div class="qualification">
+								<input class="form-check-input" 
+									   type="checkbox" 
+									   value="<%= qualification.q_ID %>"
+									   id="<%= formatAttribute(qualification.q_qualification) %>"
+									   name="qualification_<%= formatAttribute(qualification.q_qualification) %>" 
+									   <%= (locals.therapist) ? isChecked(qualification.q_ID, therapist.therapist_qualifications, 'q_ID') : '' %> />
+								<label
+									class="form-check-label"
+									for="<%= formatAttribute(qualification.q_qualification) %>"
+								>
+									<%= qualification.q_qualification %>
+								</label>
+							</div>
+						<% } %> 
+					<% } %>
+				<% } %>
+			</div>
+
+			<div class="not-fully-qualified">
+				<% if(locals.qualifications && qualifications.length >= 1){ %> 
+					<% for(qualification of qualifications){ %>
+						<% if(qualification.q_fully_qualified == 0) { %>
+							<div class="qualification">
+								<input class="form-check-input" 
+									   type="checkbox" 
+									   value="<%= qualification.q_ID %>" 
+									   id="<%= formatAttribute(qualification.q_qualification) %>"
+									   name="qualification_<%= formatAttribute(qualification.q_qualification) %>" 
+									   <%= (locals.therapist) ? isChecked(qualification.q_ID, therapist.therapist_qualifications, 'q_ID') : '' %> />
+								<label
+									class="form-check-label"
+									for="<%= formatAttribute(qualification.q_qualification) %>"
+								>
+									<%= qualification.q_qualification %>
+								</label>
+							</div>
+						<% } %> 
+					<% } %> 
+				<% } %>
+			</div>
+		</div>
+	</div>
+	<div class="t-row">
+		<h5 class="category">Accreditations</h5>
+		<div class="accreditations d-md-flex justify-content-between">
+			<% if(locals.accreditations && accreditations.length >= 1){ %> 
+				<% for(accreditation of accreditations){ %> 	
+					<div class="accreditation">
+						<input
+							class="form-check-input"
+							type="checkbox"
+							value="<%= accreditation.a_ID %>"
+							id="accreditation_<%= formatAttribute(accreditation.a_accreditation) %>"
+							name="accreditation_<%= formatAttribute(accreditation.a_accreditation) %>"
+							<%= (locals.therapist) ? isChecked(accreditation.a_ID, therapist.therapist_accreditations, 'a_ID') : '' %> 
+						/>
+						<label
+							class="form-check-label"
+							for="accreditation_<%= formatAttribute(accreditation.a_accreditation) %>"
+						>
+							<%= accreditation.a_accreditation %>
+						</label>
+					</div>
+				<% } %> 
+			<% } %>
+		</div>
+	</div>
+
+	<div class="t-row">
+		<h5 class="category">Contract Types</h5>
+		<div class="contract-types d-md-flex justify-content-between">
+			<% if(locals.contract_types && contract_types.length >= 1){ %>
+				<% for(contract_type of contract_types){ %>
+					<div class="contract-type">
+						<input class="form-check-input" 
+								type="checkbox" 
+								value="<%= contract_type.ct_ID %>" 
+								id="<%=	formatAttribute(contract_type.ct_contract_type) %>"
+								name="contract_type_<%=	formatAttribute(contract_type.ct_contract_type) %>" 
+								<%= (locals.therapist) ? isChecked(contract_type.ct_ID, therapist.therapist_contracts, 'ct_ID') : '' %> />
+						<label
+							class="form-check-label"
+							for="<%= formatAttribute(contract_type.ct_contract_type) %>"
+						>
+							<%= contract_type.ct_contract_type %>
+						</label>
+					</div>
+			<% } } %>
+		</div>
+	</div>
+
+	<div class="t-row">
+		
+		<h5 class="category">Insurance Expiry Date</h5>
+
+
+		<% 
+			let insurance_expiry_date = '';
+			if(locals.therapist) {
+			 	let ied = new Date(therapist.therapist[0].t_insurance_expiry_date); 
+				insurance_expiry_date =  formatDatePickerDate(ied);
+				console.log("@@@ Insurance Expiry Date ", insurance_expiry_date, "@@@");
+			}
+		 %>
+
+		<input
+			class="form-control"
+			type="date"
+			name="insurance_expiry"
+			id="insurance_expiry"
+			value="<%= insurance_expiry_date %>" 
+			placeholder="<%= insurance_expiry_date %>" 
+		/>
+	</div>
+	<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+		<button
+			type="submit"
+			class="btn btn-primary form-save-button"
+		>
+			Save
+		</button>
+	</div>
+</form>
+
+

@@ -1,0 +1,13 @@
+<div class="modal-dialog modal-dialog-centered">
+    <% if(locals.therapist) { %> <% const tp = therapist[0]; %>
+    <form action="/therapist/<%= tp.c_ID %>/addfile"  id="add-therapist-file"  method="post" enctype="multipart/form-data" >
+        <input type="hidden" name="nepvraag" id="nepvraag">
+
+        <input type="hidden" name="therapistID" id="therapistID" value="<%= tp.c_ID %>">
+
+        <label for="therapist_file">file</label>
+        <input type="file" name="therapist_file" id="therapist_file" class="form-control form-control-file" >
+
+    </form>
+    <% } %>
+</div>

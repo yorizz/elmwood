@@ -1,0 +1,68 @@
+<% if(locals.therapists) { %>
+<div class="input-group mb-3">
+	<input
+		type="text"
+		class="form-control"
+		placeholder="Search"
+		aria-label="Search"
+		aria-describedby="basic-addon2"
+		name="search"
+		id="search"
+	/>
+	<span
+		class="input-group-text"
+		id="basic-addon2"
+		><i class="bi bi-search"></i
+	></span>
+</div>
+
+<div
+	id="therapists-table"
+	class="table"
+>
+	<div class="table-head">
+		<div class="th">Calendar Colour</div>
+		<div class="th">Name</div>
+		<div class="th">&nbsp;</div>
+		<div class="th">&nbsp;</div>
+	</div>
+	<!-- End Table Head-->
+
+	<div class="table-body">
+		<% for(therapist of therapists) { %>
+		<div class="table-row <%= therapist.t_is_active == 0 ? 'inactive' : '' %>">
+			<div
+				class="table-cell align-middle"
+				style="border-left: 4px solid <%= therapist.t_colour %>"
+			>
+				<div
+					class="colour-circle"
+					style="background-color: <%= therapist.t_colour %>"
+				>
+					&nbsp;
+				</div>
+			</div>
+			<div class="table-cell align-middle">
+				<%= therapist.t_first_name %> <%=
+				therapist.t_surname %>
+			</div>
+			<div class="table-cell align-middle view-single">
+				<a
+					href="/viewavailability/<%= therapist.t_ID %>"
+					title="view therapist availability"
+					><i class="bi bi-calendar2-check"></i></a>
+			</div>
+			<div class="table-cell align-middle view-single">
+				<a
+					href="/therapist/<%= therapist.t_ID %>"
+					title="view therapist"
+					><i class="bi bi-eye"></i
+				></a>
+			</div>
+		</div>
+		<% } %>
+	</div>
+	<!-- End table body-->
+</div>
+<!-- End Table-->
+<% } %>

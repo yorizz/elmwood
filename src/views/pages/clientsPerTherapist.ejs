@@ -1,0 +1,68 @@
+ 
+  
+   <!-- <ul class="cpt">
+    <% 
+        let currentTherapist = 0;
+        if(locals.clientsPerTherapist){
+            
+            for(cpt of clientsPerTherapist){
+                let therapistName = dataDecrypt(cpt.t_first_name) + " " + dataDecrypt(cpt.t_surname);
+                let clientName = dataDecrypt(cpt.c_first_name) + " " + dataDecrypt(cpt.c_surname);
+                console.log("currentTherapist now", currentTherapist, therapistName, clientName);
+                
+                if(cpt.t_ID != currentTherapist){
+                    currentTherapist=cpt.t_ID
+                    %>
+                    <li class="cpt-therapist"><strong><%= therapistName %></strong> <a href="/therapist/<%= cpt.t_ID %>" title="view therapist"><i class="bi bi-eye"></i></a></li> 
+                     
+                    
+                    <%
+                
+                }%>
+            <li class="cpt-client"><%= clientName %> <a href="/client/<%= cpt.c_ID %>" title="view client"><i class="bi bi-eye"></i></a></li>
+            <%
+        }
+    }
+    %>
+</ul> -->
+
+
+
+<div class="table table-responsive w-100 d-block d-md-table cpt">
+    <div class="table-body">
+        <% 
+            currentTherapist = 0;
+            if(locals.clientsPerTherapist){
+                
+                for(cpt of clientsPerTherapist){
+                    let therapistName = dataDecrypt(cpt.t_first_name) + " " + dataDecrypt(cpt.t_surname);
+                    let clientName = dataDecrypt(cpt.c_first_name) + " " + dataDecrypt(cpt.c_surname);
+                    console.log("currentTherapist now", currentTherapist, therapistName, clientName);
+                    
+                    if(cpt.t_ID != currentTherapist){
+                        currentTherapist=cpt.t_ID
+                        %>
+                        <div class="table-row cpt-therapist">
+                            <div class="th align-middle">
+                                <div class="colour-circle" style="background-color: <%= cpt.t_colour %>">&nbsp;</div>
+                            </div>
+                            <div class="th"><%= therapistName %></div> 
+                            <div class="th"><a href="/therapist/<%= cpt.t_ID %>" title="view therapist"><i class="bi bi-eye"></i></a></div>
+                        </div> 
+                        
+                        
+                        <%
+                    
+                    }%>
+                <div class="table-row">
+                    <div class="table-cell">&nbsp;</div>
+                    <div class="table-cell"><i class="bi bi-person"></i><%= clientName %></div> 
+                    <div class="table-cell"><a href="/client/<%= cpt.c_ID %>" title="view client"><i class="bi bi-eye"></i></a></div>
+                </div>
+                
+                <%
+            }
+        }
+        %>
+    </div>
+</div>

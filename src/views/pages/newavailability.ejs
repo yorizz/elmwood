@@ -1,0 +1,42 @@
+<h2><%=  (locals.therapist) ? ' for '+ therapist.t_first_name + ' ' + therapist.t_surname : ''  %></h2>
+
+<form action="/addavailability" method="post">
+
+<% if(locals.therapistId)   { %>
+        
+    <input type="hidden" name="ta_therapist" value="<%= therapistId %>">
+
+    <div class="mb-3">
+        <label for="ta_day">Day</label>
+        <select name="ta_day" id="ta_day" class="form-control">
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="ta_time">Time</label>
+        <input type="time" name="ta_time" id="ta_time" class="form-control" placeholder="Time" >
+    </div>
+
+    <div class="mb-3">
+        <label for="ta_note">Note</label>
+        <textarea name="ta_note" id="ta_note" class="form-control"></textarea>
+    </div>
+
+
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+		<button type="submit" class="btn btn-primary form-save-button">
+			Save
+		</button>
+	</div>
+   
+
+<% } %>
+
+</form>

@@ -1,0 +1,42 @@
+<h2><%=  (locals.therapist) ? ' for '+ therapist.t_first_name + ' ' + therapist.t_surname : ''  %></h2>
+<form action="/upateavailability" method="post">
+
+<% if(locals.availability)   { %>
+        
+    <input type="hidden" name="ta_id" value="<%= availability[0].ta_ID %>">
+    <input type="hidden" name="ta_therapist" value="<%= availability[0].ta_therapist %>">
+
+    <div class="mb-3">
+        <label for="ta_day">Day</label>
+        <select name="ta_day" id="ta_day" class="form-control">
+            <option value="Monday"  <%= (availability[0].ta_available_day == 'Monday') ? 'selected' : ''  %>>Monday</option>
+            <option value="Tuesday" <%= (availability[0].ta_available_day == 'Tuesday') ? 'selected' : ''  %>>Tuesday</option>
+            <option value="Wednesday" <%= (availability[0].ta_available_day == 'Wednesday') ? 'selected' : ''  %>>Wednesday</option>
+            <option value="Thursday"  <%= (availability[0].ta_available_day == 'Thursday') ? 'selected' : ''  %>>Thursday</option>
+            <option value="Friday"  <%= (availability[0].ta_available_day == 'Friday') ? 'selected' : ''  %>>Friday</option>
+            <option value="Saturday"  <%= (availability[0].ta_available_day == 'Saturday') ? 'selected' : ''  %>>Saturday</option>
+            <option value="Sunday"  <%= (availability[0].ta_available_day == 'Sunday') ? 'selected' : ''  %>>Sunday</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="ta_time">Time</label>
+        <input type="time" name="ta_time" id="ta_time" class="form-control" placeholder="Time" value="<%= availability[0].ta_available_time %>">
+    </div>
+
+    <div class="mb-3">
+        <label for="ta_note">Note</label>
+        <textarea name="ta_note" id="ta_note" class="form-control"><%= availability[0].ta_note %></textarea>
+    </div>
+
+
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+		<button type="submit" class="btn btn-primary form-save-button">
+			Save
+		</button>
+	</div>
+   
+
+<% } %>
+
+</form>

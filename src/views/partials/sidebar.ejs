@@ -1,0 +1,183 @@
+<% let pathCorrection = ""; %> <% if(locals.pathCorrection){ %> <%
+pathCorrection = locals.pathCorrection; %> <% } %>
+
+<ul
+	class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion col-md-3"
+	id="accordionSidebar"
+>
+	<!-- Sidebar - Brand -->
+
+	<a
+		class="sidebar-brand d-flex align-items-center justify-content-start"
+		href="/"
+	>
+		<div class="sidebar-brand-icon">
+			<img
+				src="<%= pathCorrection %>assets/img/elmwood.svg"
+				alt="Elmwood"
+				width="46"
+			/>
+		</div>
+		<div class="sidebar-brand-text mx-3"></div>
+	</a>
+
+	<!-- Divider -->
+	<hr class="sidebar-divider" />
+
+	<!-- Nav Item - Dashboard -->
+	<li class="nav-item">
+		<a
+			class="nav-link"
+			href="/dashboard"
+		>
+			<i class="bi bi-speedometer"></i>
+			<span>Dashboard</span></a
+		>
+	</li>
+
+	<!-- Divider -->
+	<hr class="sidebar-divider" />
+
+	<!-- Nav Item - Calendar -->
+	<li class="nav-item">
+		<a
+			class="nav-link"
+			href="/calendar"
+		>
+			<i class="bi bi-calendar3"></i>
+			<span>Calendar</span>
+		</a>
+	</li>
+
+	<!-- Nav Item - Appointments List -->
+	<li class="nav-item">
+		<a
+			class="nav-link"
+			href="/allappointmentslist"
+		>
+			<i class="bi bi-calendar3"></i>
+			<span>Appointments</span>
+		</a>
+	</li>
+
+	<hr class="sidebar-divider" />
+
+	<!-- Heading -->
+	<div class="sidebar-heading">Clients</div>
+
+	<!-- Nav Item - Waiting List -->
+	<li class="nav-item">
+		<a
+			href="/waitinglist"
+			class="nav-link"
+		>
+			<i class="bi bi-list-ul"></i>
+			<span>Waiting List</span>
+		</a>
+	</li>
+
+	<!-- Nav Item - View Clients -->
+	<li class="nav-item">
+		<a
+			class="nav-link"
+			href="/allclients"
+		>
+			<i class="bi bi-person"></i>
+			<span>View Clients</span>
+		</a>
+	</li>
+
+	<!-- Nav Item - Add Client -->
+	<li class="nav-item">
+		<a
+			class="nav-link"
+			href="/newenquiry"
+		>
+			<i class="bi bi-person-add"></i>
+			<span>New Enquiry</span>
+		</a>
+	</li>
+
+	<!-- Divider -->
+	<hr class="sidebar-divider" />
+
+	<!-- Heading -->
+	<div class="sidebar-heading">Therapists</div>
+
+	<!-- Nav Item - View Therapists -->
+	<li class="nav-item">
+		<a
+			class="nav-link"
+			href="/alltherapists"
+		>
+			<i class="bi bi-person-fill"></i>
+			<span>View Therapists</span>
+		</a>
+	</li>
+
+	<!-- Nav Item - Add Therapist -->
+	<li class="nav-item">
+		<a
+			class="nav-link"
+			href="/newtherapist"
+		>
+			<i class="bi bi-person-fill-add"></i>
+			<span>New Therapist</span></a
+		>
+	</li>
+
+	<hr class="sidebar-divider" />
+
+	<!-- Heading -->
+	<div class="sidebar-heading">RENTER REFERRALS</div>
+
+
+	<!-- Nav Item - Renter Referral -->
+	<li class="nav-item">
+		<a
+			class="nav-link"
+			href="/referrals"
+		>
+			<i class="bi bi-chevron-double-right"></i>
+			<span>Renter Referral</span></a
+		>
+	</li>
+	
+	<!-- Nav Item - Profit per Therapist -->
+	<li class="nav-item">
+		<a
+			class="nav-link"
+			href="/profitpertherapist"
+		>
+			<i class="bi bi-cash"></i>
+			<span>Profits</span></a
+		>
+	</li>
+
+	<!-- Nav Item - Therapist Availability List -->
+<!-- 
+	<li class="nav-item">
+		<a
+			href="/therapistsavailable"
+			class="nav-link"
+		>
+			<i class="bi bi-calendar2-check"></i>
+			<span>Availability</span>
+		</a>
+	</li> -->
+
+	<!-- Divider -->
+	<hr class="sidebar-divider d-none d-md-block" />
+
+	<!-- Sidebar Toggler (Sidebar) -->
+	<div class="text-center d-none d-md-inline">
+		<button id="sidebarToggle">
+			<i class="bi bi-arrow-left-circle"></i>
+		</button>
+	</div>
+
+	<!-- Sidebar Message -->
+	<!-- <div class="sidebar-card d-none d-lg-flex dev-cred">
+		<p class="mb-2">Designed and developed by Freakovation, Dublin.</p>
+	</div> -->
+</ul>

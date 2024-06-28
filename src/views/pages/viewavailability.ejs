@@ -1,0 +1,41 @@
+
+
+<div class="row t-row d-flex justify-content-between"></div>
+    <h3 class="col-9">Add Availability  <%=  (locals.therapist) ? ' for '+ therapist.t_first_name + ' ' + therapist.t_surname : ''  %></h3>
+    <h3 class="edit-icon col-3">
+        <a href="<%= (locals.therapist) ? "/addavailability/"+therapist.t_ID:'' %>" title="Add Availability"><i class="bi bi-calendar2-plus"></i></a>
+    </h3>
+</div>
+
+
+
+
+<div id="availability-table" class="table">
+    <div class="table-head">
+        <div class="th">Day</div>
+        <div class="th">Time</div>
+        <div class="th">Note</div>
+        <div class="th">&nbsp;</div>
+    </div>
+    <div class="table-body">
+
+        <% if(locals.availability){ 
+            for(a of availability){ %>
+                <div class="table-row available">
+            
+                    <div class="table-cell"><%= a.ta_available_day %></div>
+                    <div class="table-cell"><%= a.ta_available_time %></div>
+                    <div class="table-cell"><%= a.ta_note %></div>
+                    <div class="table-cell">
+                        <span class="edit"><a href="/availability/edit/<%=a.ta_ID %>" data-record="<%=a.ta_ID %>" id="edit_availability" title="edit"><i class="bi bi-pencil"></i></a></span>
+                        <span class="delete"><a href="#" data-record="<%=a.ta_ID %>" id="delete_availability" title="delete"><i class="bi bi-trash3"></i></a></span>
+                    </div>
+                </div> 
+        <% } } %>
+    </div>    
+</div>
+
+
+
+
+       

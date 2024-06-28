@@ -1,0 +1,119 @@
+<% if(locals.referrals) { %>
+<div class="input-group mb-3">
+	<input
+		type="text"
+		class="form-control"
+		placeholder="Search"
+		aria-label="Search"
+		aria-describedby="basic-addon2"
+		name="search"
+		id="search"
+	/>
+	<span
+		class="input-group-text"
+		id="basic-addon2"
+		><i class="bi bi-search"></i
+	></span>
+</div>
+
+
+<div class="table-responsive">
+	<table
+		id="referrals-table"
+		class="table"
+	>
+		<thead class="table-head">
+			<tr>
+				<th class="th">&nbsp;</th>
+				<th class="th" id="appoitment-date">Date &amp; Time</th>
+				<th class="th">Client</th>
+				<th class="th">Therapist</th>
+				<th class="th">Fee</th>
+				<th class="th">Client Paid</th>
+                <th class="th">Therapist Paid</th>
+				
+			</tr>
+		</thead>
+		<!-- End Table Head-->
+
+		<tbody class="table-body">
+			<% for(referral of referrals) { %>
+                
+			<tr class="table-row <%= (referral.a_is_cancelled == 1) ? "cancelled-appointment" : ""%>" data-appointment="<%= referral.a_ID %>"> 
+				<td class="table-cell align-middle referral-colour">
+					
+				</td>
+				<td class="table-cell align-middle referral-date sorter-shortDate" data-date-format="ddmmyyyy">
+					<div class="">
+						<%= formatDate(referral.a_date) %> <%=
+						formatTime(referral.a_start_time) %>&nbsp;-&nbsp;<%=
+						formatTime(referral.a_end_time)%>
+					</div>
+				</td>
+				<td class="table-cell align-middle referral-client">
+					<a href="/client/<%= referral.a_client %>"><%= referral.c_first_name %> <%=
+					 referral.c_surname  %></a>
+				</td>
+				<td class="table-cell align-middle referral-therapist">
+					<a href="/therapist/<%= referral.a_therapist %>"><%= dataDecrypt(referral.t_first_name) %> <%=
+					 dataDecrypt(referral.t_surname) %></a>
+				</td>
+				<td class="table-cell align-middle referral-fee">
+					&euro;<%= formatCurrency(referral.a_client_fee) %>
+				</td>
+				<td class="table-cell align-middle appointment-paid">
+					<%
+					if(referral.a_is_paid == 1){ %>
+					<!-- <span class="paid">✔</span> -->
+					<span class="paid" title="paid"><i class="bi bi-cash"></i></span>
+					<% } else { %>
+					<!-- <span class="not-paid" title="not paid">✘</span> -->
+					<span class="not-paid" data_id="<%= referral.a_ID %>"><i class="bi bi-cash"></i></span>
+					<% } %>
+				</td>
+                <td class="table-cell align-middle referral-therapist-paid">
+					<%
+					if(referral.a_is_referral_paid == 1){ %>
+					<!-- <span class="paid">✔</span> -->
+					<span class="paid" title="paid"><i class="bi bi-cash"></i></span>
+					<% } else { %>
+					<!-- <span class="not-paid" title="not paid">✘</span> -->
+					<span class="not-paid" data_id="<%= referral.a_ID %>"><i class="bi bi-cash"></i></span>
+					<% } %>
+				</td>
+
+				
+			</tr>
+			<% } %>
+		</tbody>
+		<!-- End table body-->
+	</table>
+</div>
+<!-- End Table-->
+<% } %>
+
+
+<div class="modal" id="referralsModal"  aria-hidden="true" style="display: none;">
+  <div class="modal-dialog  modal-lg modal-dialog-centered">
+    <div class="modal-content">
+
+     
+      <div class="modal-header">
+        <h4 class="modal-title">Add File</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+   
+      <div class="modal-body">
+         
+      </div>
+
+   
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="submit-cancel-referral" data-bs-dismiss="modal">Save</button>
+      </div>
+
+    </div>
+  </div>
+</div>
