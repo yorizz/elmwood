@@ -4,6 +4,7 @@ module.exports = {
 	host: process.env.EMAIL_HOST,
 	port: process.env.EMAIL_PORT,
 	secure: process.env.EMAIL_SECURE,
+	requireTLS: true,
 	tls: {
 		ciphers: "SSLv3",
 		rejectUnauthorized: false,

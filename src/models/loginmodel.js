@@ -91,7 +91,7 @@ class LoginModel {
 		const transporter = nodemailer.createTransport(EMAILCONFIG);
 
 		const messageInfo = {
-			from: '"Elmwood" <noreply@elmwoodcentre.com>',
+			from: '"The Elmwood Centre" <info@elmwoodcentre.com>',
 			to: emailAddress,
 			subject: "Reset your password",
 			text: `To reset your password for the Elmwood Admin app please follow copy and paste the this address in your browser\'s address bar: http:localhost:8080/resetpassword/${token}`,
