@@ -2,3 +2,4 @@
 node_modules/
 .prettierignore
 my_cookie.txt
+.DS_Store

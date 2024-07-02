@@ -522,6 +522,49 @@ class ClientController {
 		}
 	}
 
+	async getIndividualClientsOnWaitingList(req, res) {
+		try {
+			let clients = [];
+			let allclients = await clientmodel.waitingListQuery(
+				process.env.PSYCHOTHERAPIST_IND
+			);
+
+			console.log("getIndividualClients", allclients);
+
+			for (let i = 0; i < allclients.length; i++) {
+				let sessionClient = helpers.getPersonName(
+					req.session.allClients,
+					"client",
+					allclients[i].c_ID
+				);
+				let client = {
+					c_ID: allclients[i].c_ID,
+					c_first_name: sessionClient.c_first_name,
+					c_surname: sessionClient.c_surname,
+					c_phone: sessionClient.c_phone,
+					c_email: sessionClient.c_email,
+					c_enquiry_date: allclients[i].c_enquiry_date,
+					c_low_cost_employment: allclients[i].c_low_cost_employment,
+				};
+				clients.push(client);
+			}
+
+			console.log("CLIENTS", clients);
+
+			return res.render("templates/template.ejs", {
+				name: "All Clients INDIVIDUALS",
+				page: "waitinglist.ejs",
+				title: "All Clients On Waitinglist for INDIVIDUAL",
+				sidebar: true,
+				clients: clients,
+				clientNav: true,
+				individuals: true,
+			});
+		} catch (error) {
+			console.log("waitinglist individuals error", error);
+		}
+	}
+
 	async getLowCostTraineeClientsOnWaitingList(req, res) {
 		try {
 			let clients = [];

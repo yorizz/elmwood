@@ -133,6 +133,11 @@ router.get(
 	clientController.getContractClientsOnWaitingList
 );
 router.get(
+	"/clients_individuals",
+	isUserAuthenticated,
+	clientController.getIndividualClientsOnWaitingList
+);
+router.get(
 	"/clients_low_cost_trainees",
 	isUserAuthenticated,
 	clientController.getLowCostTraineeClientsOnWaitingList
