@@ -36,6 +36,10 @@ class Helpers {
 		});
 	}
 
+	formatDateTime(dateTime) {
+		return new Date(dateTime).toLocaleString("en-IE");
+	}
+
 	formatSQLDate(date) {
 		return new Date(date).toISOString();
 	}
@@ -46,6 +50,13 @@ class Helpers {
 			rv = time.slice(0, 5);
 		}
 		return rv;
+	}
+
+	formatSessionTime(date) {
+		let sessionTime = date.toString().split("T");
+		sessionTime = sessionTime[1].split(":");
+		sessionTime = sessionTime[0] + ":" + sessionTime[1];
+		return sessionTime;
 	}
 
 	formatAttribute(attribute) {

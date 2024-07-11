@@ -1,0 +1,39 @@
+<% if(locals.sessionData){ %>
+    <div class="row t-row d-flex justify-content-between align-items-baseline">
+        <h3 class="col-4">Supervisor: <a href="/therapists/<%= sessionData[0].sup_supervisor.t_ID %>"><%= sessionData[0].sup_supervisor.t_first_name %> <%= sessionData[0].sup_supervisor.t_surname %></a></h3> 
+        <p class="col-3">Date:  <%= formatDate(sessionData[0].sup_date) %> </p>
+        <p class="col-3">Time: <%= formatSessionTime(sessionData[0].sup_date) %></p>
+    </div>
+
+
+    <hr class="sidebar-divider">
+    
+        <div
+		id="clients-table"
+		class="table table-responsive w-100 d-block d-md-table"
+	>
+            <div class="table-head">
+                <div class="th">Attendee</div>
+                <div class="th">Present</div>                
+            </div>
+            <!-- End Table Head-->
+
+            <div class="table-body">
+                
+                <% for(let i=0; i<sessionData.length; i++){ %>
+                    <div class="table-row"> 
+                        <div class="table-cell"><a href="/therapist/<%= sessionData[i].ssm_attendee.t_ID%>"><%= sessionData[i].ssm_attendee.t_first_name %> <%= sessionData[i].ssm_attendee.t_surname %></a></div>
+                        <div class="table-cell"><input type="checkbox" name="present" id="present<%= sessionData[i].ssm_ID%>" class="present" <%= (sessionData[i].ssm_attendee_present)?'checked':'' %> value="<%= sessionData[i].ssm_ID%>"></div>
+                    </div>
+                <%  }  %>
+            </div>
+            <!-- End Table Body -->
+
+        </div> 
+        <!-- End Table -->
+
+       
+        
+       
+
+<% } %>

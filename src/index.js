@@ -8,7 +8,6 @@ const path = require("path");
 const flash = require("express-flash");
 const { v4: uuidv4 } = require("uuid");
 const session = require("express-session");
-// var FileStore = require("session-file-store")(session);
 const MongoDBStore = require("connect-mongodb-session")(session);
 
 const fileUpload = require("express-fileupload");
@@ -29,6 +28,7 @@ app.locals.formatPhoneNumber = helper.formatPhoneNumber;
 app.locals.formatDate = helper.formatDate;
 app.locals.formatDatePickerDate = helper.formatDatePickerDate;
 app.locals.formatTime = helper.formatTime;
+app.locals.formatSessionTime = helper.formatSessionTime;
 app.locals.formatFileType = helper.formatFileType;
 app.locals.formatCurrency = helper.formatCurrency;
 app.locals.formatAttribute = helper.formatAttribute;
@@ -48,8 +48,6 @@ const bcrypt = require("bcrypt");
 
 // const hash = bcrypt.hashSync(myPlaintextPassword, saltRounds);
 // console.log("bcrypting ", hash);
-
-//console.log(">>>>>>>", bcrypt.hashSync("!Elmwood32Lombard", 10));
 
 const logger = winston.createLogger({
 	format: format.combine(

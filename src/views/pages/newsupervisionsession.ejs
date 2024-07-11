@@ -1,0 +1,103 @@
+<form
+	action=""
+	method="post"
+>	<input type="text" id="nepvraag" name="nepvraag" class="hidden" />
+	
+
+	<div class="mb-3 d-flex justify-content-between">
+        <div class="col-6">
+            <div class="card">
+                <h5 class="card-header">
+                    <span>Session Date</span>
+                    <a href="/clientspertherapist"><i class="bi bi-people"></i></a>
+                </h5>
+                <div class="card-body  .table-responsive">
+                    <label for="date">Date</label>
+                    <input
+                        type="date"
+                        class="form-control"
+                        id="date"
+                        name="date"
+                        value=""
+                        required="required"
+                    />
+                </div> <!-- end card-body -->
+            </div> <!-- end card -->
+        </div> <!-- end col -->
+        
+        <div class="col-5">
+            <div class="card">
+                <h5 class="card-header">
+                    <span>Session Time</span>
+                    <a href="/clientspertherapist"><i class="bi bi-people"></i></a>
+                </h5>
+                <div class="card-body  .table-responsive">
+                    <label for="time">Time</label>
+                    <input
+                        type="time"
+                        class="form-control"
+                        id="time"
+                        name="time"
+                        value=""
+                        required="required"
+                    />
+                </div> <!-- end card-body -->
+            </div> <!-- end card -->
+        </div> <!-- end col -->
+    </div>
+
+    <div class="mb-3">
+        <label for="supervisor" class="form-label"><i class="bi bi-person-fill"></i> Supervising Therapist</label>
+        <select name="supervisor" id="supervisor" class="form-select" aria-label="Therapist">
+            <% let selectedFlag = false; %>
+			
+            <% if(locals.supervisors && supervisors.length >= 1) { %>
+				<% for(let i=0; i<supervisors.length; i++){ 
+						let supervisor = supervisors[i];				
+						
+					%>
+					<option value="<%= supervisor.t_ID %>"><%= supervisor.t_first_name + " " + supervisor.t_surname %></option>
+				<% } %>
+            <% } %>
+			<option value="-1" disabled <%= (!selectedFlag) ? "selected" : "" %> >Select a therapist</option>
+			<%  selectedFlag = false; %>
+        </select>
+    </div>  
+
+
+    <div class="mb-3">
+        <label for="trainees" class="form-label"> Trainees Required</label>
+		<select class="form-select" name="trainees" id="trainees" data-mdb-placeholder="Trainees Required" multiple>
+			<% 
+			
+			if(locals.trainees && trainees.length >= 1){
+				for(let i=0; i<trainees.length; i++){ %>
+				<option value="<%= trainees[i].t_ID %>"><%= trainees[i].t_first_name %> <%= trainees[i].t_surname %></option>
+			
+			<% 
+				}
+			} 
+			%>
+
+		</select>
+    </div>
+    
+	
+    
+	
+
+	
+			
+			
+		
+	
+	<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+			<button
+				type="submit"
+				class="btn btn-primary form-save-button"
+			>
+				Save
+			</button>
+		</div>
+	</div>	
+</form>

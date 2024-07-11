@@ -1,0 +1,57 @@
+ 
+	<div class="input-group mb-3">
+				<input
+					type="text"
+					class="form-control"
+					placeholder="Search"
+					aria-label="Search"
+					aria-describedby="basic-addon2"
+					name="search"
+					id="search"
+				/>
+				<span
+					class="input-group-text"
+					id="basic-addon2"
+					><i class="bi bi-search"></i
+				></span>
+			</div>
+	<div
+		id="clients-table"
+		class="table table-responsive w-100 d-block d-md-table"
+	>
+		<div class="table-head">
+			<div class="th">Date</div>
+            <div class="th">Therapist</div>
+			<div class="th">Attendance</div>
+			<div class="th">&nbsp;</div>
+		</div>
+		<!-- End Table Head-->
+
+		<div class="table-body">
+			<% if(locals.supervisorSessions) { %>
+                <% for(let i=0; i<supervisorSessions.length; i++){ %>
+                    <div class="table-row ">
+                        <div class="table-cell  align-middle ">
+                            <%= supervisorSessions[i].sup_date %>
+                        </div>
+                        <div class="table-cell  align-middle ">
+                           <a href="/therapist/<%= supervisorSessions[i].sup_supervisor.t_ID %>"> <%= supervisorSessions[i].sup_supervisor.t_first_name %> <%= supervisorSessions[i].sup_supervisor.t_surname %> </a>
+                        </div>
+                        <div class="table-cell  align-middle">
+                           <span class="<%= (supervisorSessions[i].present != supervisorSessions[i].total)?'attendance-error':'' %>"><%= supervisorSessions[i].present %></span>/<%= supervisorSessions[i].total %>
+                        </div>
+                        
+                        <div class="table-cell  align-middle  view-single">
+                            <a
+                                href="/viewsupervisionsession/<%= supervisorSessions[i].sup_ID %>"
+                                title="view client"
+                                ><i class="bi bi-eye"></i
+                            ></a>
+                        </div>
+                    </div>
+                <% } %>
+			<% } %>
+		</div>
+		<!-- End table body-->
+	</div>
+	<!-- End Table-->

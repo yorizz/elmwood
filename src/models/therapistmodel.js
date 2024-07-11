@@ -745,6 +745,51 @@ class TherapistModel {
 			if (qb) qb.release();
 		}
 	}
+
+	/**
+	 * @params type = 'exclude' || 'only'
+	 * @params categories = the therapist qualification types to in- or exclude
+	 */
+	async getSupervisionTherapists(type, categories) {
+		let therapists = [];
+		let rv = false;
+
+		let qb;
+
+		try {
+			qb = await pool.get_connection();
+
+			let response;
+
+			if (type == "only") {
+				response = await qb
+					.distinct()
+					.select("t_ID, t_first_name, t_surname")
+					.from("therapists")
+					.join("therapist_qualifications", "t_ID=tq_therapist")
+					.where_in("tq_qualification", categories)
+					.get();
+			} else if (type == "exclude") {
+				response = await qb
+					.distinct()
+					.select("t_ID, t_first_name, t_surname")
+					.from("therapists")
+					.join("therapist_qualifications", "t_ID=tq_therapist")
+					.where_not_in("tq_qualification", categories)
+					.get();
+			}
+
+			console.log("Query Ran: " + qb.last_query());
+
+			rv = JSON.parse(JSON.stringify(response));
+
+			return rv;
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
 }
 
 module.exports = new TherapistModel();

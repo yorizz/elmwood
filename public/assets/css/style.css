@@ -281,6 +281,11 @@ i.bi {
 	color: var(--bs-gray-500) !important;
 }
 
+.attendance-error {
+	color: var(--bs-danger);
+	font-weight: bold;
+}
+
 /**
  * Toggle switch
  */

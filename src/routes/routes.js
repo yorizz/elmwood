@@ -10,6 +10,7 @@ const calendarController = require("../controllers/calendarController");
 const appointmentController = require("../controllers/appointmentController");
 const clientController = require("../controllers/clientController");
 const therapistController = require("../controllers/therapistController");
+const supervisionController = require("../controllers/supervisionController");
 
 const {
 	checkAppointmentInput,
@@ -20,6 +21,7 @@ const checkNewEnquiryValidation = require("../utils/validation/clientvalidation"
 const checkClientNoteValidation = require("../utils/validation/clientnotevalidation");
 const checkTherapistNoteValidation = require("../utils/validation/therapistnotevalidation");
 const checkNewPasswordValidation = require("../utils/validation/loginvalidation");
+const checkNewSupervisionSessionValidation = require("../utils/validation/supervisionsessionvalidation");
 
 const bodyParser = require("body-parser");
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -354,15 +356,52 @@ router.post(
 	isUserAuthenticated,
 	therapistController.updateAvailability
 );
-/**
- * end Therapists
- */
 
 router.get(
 	"/viewavailability/:id",
 	isUserAuthenticated,
 	therapistController.viewAvailability
 );
+
+/**
+ * end Therapists
+ */
+
+/********************************************************************************************************
+ *  SUPERVISION SESSIONS
+ ********************************************************************************************************/
+router.get(
+	"/supervisionsessionlist",
+	isUserAuthenticated,
+	supervisionController.viewSupervisionSessionsList
+);
+router
+	.route("/addsupervisionsession")
+	.get(isUserAuthenticated, supervisionController.addSupervisionSession)
+	.post(
+		isUserAuthenticated,
+		checkNewSupervisionSessionValidation,
+		supervisionController.storeNewSupervisionSession
+	);
+
+router.get(
+	"/viewsupervisionsession/:id",
+	isUserAuthenticated,
+	supervisionController.viewSingleSupervisionSession
+);
+router
+	.route("/updatesupervisionsession/:id")
+	.post(isUserAuthenticated, supervisionController.updateSupervisionSession);
+
+router.post(
+	"/updatesupervisionattendance/:id/:present",
+	isUserAuthenticated,
+	supervisionController.updateAttendance
+);
+
+/**
+ * end Supervision sessions
+ */
 
 router.get("/file/:type/:owner/:filename", (req, res) => {
 	console.log("baseurl", req.baseUrl);

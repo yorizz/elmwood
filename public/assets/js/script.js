@@ -581,6 +581,24 @@ $(document).ready(function () {
 			},
 		});
 	});
+
+	$(document).on("click", ".present", function () {
+		let present = 0;
+		if ($(this).is(":checked")) {
+			present = 1;
+		}
+		$.ajax({
+			url: "/updatesupervisionattendance/" + $(this).val() + "/" + present,
+			type: "post",
+			dataType: "json",
+			success: function (data) {
+				console.log("data", data);
+			},
+			error: function (error) {
+				console.log("error", error);
+			},
+		});
+	});
 }); // end ducument ready
 
 function setProfitTotal() {
