@@ -55,7 +55,6 @@ class AppointmentController {
 				selectedMonth
 			);
 
-			console.log("appointments", appointments);
 			if (appointments != undefined) {
 				for (let appointment of appointments) {
 					let clientDetails = helpers.getPersonName(
