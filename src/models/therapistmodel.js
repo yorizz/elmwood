@@ -33,6 +33,31 @@ class TherapistModel {
 		}
 	}
 
+	async getAllActiveTherapists() {
+		let therapists = [];
+		let rv = false;
+		let qb;
+
+		try {
+			qb = await pool.get_connection();
+			const response = await qb
+				.where("t_is_active", 1)
+				.select("*")
+				.get("therapists");
+
+			// console.log("Query Ran: " + qb.last_query());
+
+			therapists = JSON.parse(JSON.stringify(response));
+			rv = therapists;
+
+			return rv;
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async getAllTherapistNames() {
 		let therapists = [];
 		let rv = false;

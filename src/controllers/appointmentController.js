@@ -55,34 +55,37 @@ class AppointmentController {
 				selectedMonth
 			);
 
-			for (let appointment of appointments) {
-				let clientDetails = helpers.getPersonName(
-					req.session.allClients,
-					"client",
-					appointment.c_ID
-				);
-				let therapistDetails = helpers.getPersonName(
-					req.session.allTherapists,
-					"therapist",
-					appointment.t_ID
-				);
+			console.log("appointments", appointments);
+			if (appointments != undefined) {
+				for (let appointment of appointments) {
+					let clientDetails = helpers.getPersonName(
+						req.session.allClients,
+						"client",
+						appointment.c_ID
+					);
+					let therapistDetails = helpers.getPersonName(
+						req.session.allTherapists,
+						"therapist",
+						appointment.t_ID
+					);
 
-				let appointmentDetails = {
-					a_ID: appointment.a_ID,
-					a_date: appointment.a_date,
-					a_start_time: appointment.a_start_time,
-					a_end_time: appointment.a_end_time,
-					c_first_name: clientDetails.c_first_name,
-					c_surname: clientDetails.c_surname,
-					t_first_name: therapistDetails.t_first_name,
-					t_surname: therapistDetails.t_surname,
-					t_colour: appointment.t_colour,
-					a_room: appointment.a_room,
-				};
-				// console.log("appointmentDetails", appointmentDetails);
-				allAppointments.push(appointmentDetails);
+					let appointmentDetails = {
+						a_ID: appointment.a_ID,
+						a_date: appointment.a_date,
+						a_start_time: appointment.a_start_time,
+						a_end_time: appointment.a_end_time,
+						c_first_name: clientDetails.c_first_name,
+						c_surname: clientDetails.c_surname,
+						t_first_name: therapistDetails.t_first_name,
+						t_surname: therapistDetails.t_surname,
+						t_colour: appointment.t_colour,
+						a_room: appointment.a_room,
+					};
+					// console.log("appointmentDetails", appointmentDetails);
+					allAppointments.push(appointmentDetails);
+				}
+				return res.send(allAppointments);
 			}
-			return res.send(allAppointments);
 		} catch (error) {
 			console.log("allAppointments error", error);
 		}
@@ -170,12 +173,12 @@ class AppointmentController {
 		let therapists =
 			req.session.allTherapists >= 1
 				? req.session.allTherapists
-				: await therapistmodel.getAllTherapists();
+				: await therapistmodel.getAllActiveTherapists();
 
 		let clients =
 			req.session.allClients >= 1
 				? req.session.allClients
-				: await clientmodel.getAllClients();
+				: await clientmodel.getAllActiveClients();
 
 		return res.render("pages/addappointment.ejs", {
 			date: req.params.date,

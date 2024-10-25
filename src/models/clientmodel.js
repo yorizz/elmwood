@@ -36,6 +36,33 @@ class ClientModel {
 		}
 	}
 
+	async getAllActiveClients() {
+		let clients = [];
+		let rv = false;
+
+		let qb;
+
+		try {
+			qb = await pool.get_connection();
+			const response = await qb
+				.where("c_is_active", 1)
+				.select("*")
+				.join("therapists", "c_therapist=t_ID", "left")
+				.get("clients");
+
+			// console.log("Query Ran: " + qb.last_query());
+
+			clients = JSON.parse(JSON.stringify(response));
+			rv = clients;
+
+			return rv;
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async getAllClientsOnWaitingList() {
 		let clients = [];
 		let rv = false;

@@ -10,6 +10,17 @@ class SupervisionModel {
 		let qb;
 
 		try {
+			qb = await pool.get_connection();
+
+			const response = await qb
+				.select("*")
+				.join("therapists", "sup_supervisor=t_ID", "left")
+				.get("supervision_sesseions");
+
+			console.log("Query Ran: " + qb.last_query());
+
+			clients = JSON.parse(JSON.stringify(response));
+			rv = clients;
 			return rv;
 		} catch (err) {
 			return console.error("Pool Query Error: " + err);
@@ -20,11 +31,15 @@ class SupervisionModel {
 
 	async getNumberOfSupervisionSessionAttendees() {
 		let qb;
+
+		const sqlMode =
+			"SET sql_mode = (SELECT REPLACE(@@sql_mode, 'ONLY_FULL_GROUP_BY', ''));";
 		const sql =
 			"SELECT  `sup_ID`, `sup_date`, `sup_supervisor`, sum(`ssm_attendee_present`) present, count(*) as total FROM `supervision_sessions_mgmt` JOIN `supervision_sessions` ON `ssm_sup_ID` = `sup_ID`JOIN `therapists` ON `t_ID`=`sup_supervisor` GROUP BY `ssm_sup_ID` ORDER BY `sup_date` DESC;";
 
 		try {
 			qb = await pool.get_connection();
+			// const setSqlMode = await qb.query(sqlMode);
 			const response = await qb.query(sql);
 			console.log(
 				"getNumberOfSupervisionSessionAttendees Query Ran: " +

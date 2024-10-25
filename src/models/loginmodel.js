@@ -94,7 +94,7 @@ class LoginModel {
 			from: '"The Elmwood Centre" <info@elmwoodcentre.com>',
 			to: emailAddress,
 			subject: "Reset your password",
-			text: `To reset your password for the Elmwood Admin app please follow copy and paste the this address in your browser\'s address bar: http:localhost:8080/resetpassword/${token}`,
+			text: `To reset your password for the Elmwood Admin app please follow or copy and paste the this address in your browser\'s address bar: http:localhost:8080/resetpassword/${token}`,
 			html: `<p>To reset your password for the Elmwood Admin app please click on the link below:</p><p>http://localhost:8080/resetpassword/${token}</p><p>If that doesn\'t work, please follow copy and paste the this address in your browser\'s address bar: http:localhost:8080/resetpassword/${token}</p>`,
 		};
 
