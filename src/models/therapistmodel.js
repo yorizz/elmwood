@@ -50,6 +50,8 @@ class TherapistModel {
 			therapists = JSON.parse(JSON.stringify(response));
 			rv = therapists;
 
+			console.log("All active therapists", rv);
+
 			return rv;
 		} catch (err) {
 			return console.error("Pool Query Error: " + err);

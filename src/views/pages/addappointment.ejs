@@ -86,4 +86,8 @@
         <label for="repeat" class="form-label"><i class="bi bi-repeat"></i> Repeat Weeks</label>
         <input type="number" class="form-control" id="repeat" name="repeat" placeholder="0">
     </div>
+
+    <% if(locals.saveButton){ %>
+        <button  type="button" class="btn btn-primary"  id="submit-new-appointment">Save</button>
+    <% } %>
 </form>

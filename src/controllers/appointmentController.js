@@ -179,11 +179,25 @@ class AppointmentController {
 				? req.session.allClients
 				: await clientmodel.getAllActiveClients();
 
-		return res.render("pages/addappointment.ejs", {
-			date: req.params.date,
-			clients: clients,
-			therapists: therapists,
-		});
+		if (req.params.date) {
+			return res.render("pages/addappointment.ejs", {
+				date: req.params.date,
+				clients: clients,
+				therapists: therapists,
+			});
+		} else {
+			return res.render("templates/template.ejs", {
+				date: new Date(),
+				name: "Appointments",
+				page: "addappointment.ejs",
+				title: "New Appointment",
+				clients: clients,
+				therapists: therapists,
+				calendar: false,
+				sidebar: true,
+				saveButton: true,
+			});
+		}
 	}
 
 	async addAppointment(req, res) {

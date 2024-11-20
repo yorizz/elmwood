@@ -31,7 +31,7 @@ label {
 }
 
 .sidebar {
-	width: 14rem !important;
+	width: 14.5rem !important;
 	min-height: 96.97vh;
 	background-color: var(--bs-primary);
 	color: #fff;
@@ -90,8 +90,18 @@ a.sidebar-brand {
 	font-size: 2em;
 }
 
+.nav-link {
+	cursor: pointer;
+}
+
 .sidebar.toggled .nav-link i {
 	margin-left: 18px;
+}
+
+li.nav-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
 
 .dashboard .row {

@@ -256,7 +256,7 @@ $(document).ready(function () {
 		});
 	});
 
-	$(document).on("focus", "#therapists, #assessed-by", function () {
+	$(document).on("focus", "select", function () {
 		sortSelect($(this));
 	});
 

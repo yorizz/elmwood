@@ -85,6 +85,12 @@ router.get(
 	appointmentController.addAppointmentForDate
 );
 
+router.get(
+	"/newappointment",
+	isUserAuthenticated,
+	appointmentController.addAppointmentForDate
+);
+
 router.post(
 	"/cancelappointment/:id",
 	isUserAuthenticated,
