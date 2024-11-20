@@ -22,10 +22,18 @@ class Helpers {
 				if (i == 6) {
 					formattedPhoneNumber += " ";
 				}
+
+				console.log("adding", phoneNumber.charAt(i));
 				formattedPhoneNumber += phoneNumber.charAt(i);
 			}
 		}
-		return formattedPhoneNumber != " " ? formattedPhoneNumber : phoneNumber;
+		console.log(
+			"Formatted Phone Number",
+			formattedPhoneNumber,
+			"givennumber",
+			phoneNumber
+		);
+		return formattedPhoneNumber != "" ? formattedPhoneNumber : phoneNumber;
 	}
 
 	formatDate(date) {

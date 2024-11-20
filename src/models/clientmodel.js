@@ -74,7 +74,7 @@ class ClientModel {
 
 			const appointments = await qb.select("a_client").get("appointments");
 
-			let apptmts = [];
+			let apptmts = [1];
 			for (let i = 0; i < appointments.length; i++) {
 				apptmts.push(appointments[i].a_client);
 			}
@@ -93,7 +93,7 @@ class ClientModel {
 				.order_by("c_enquiry_date", "desc")
 				.get("clients");
 
-			// console.log("Query Ran: " + qb.last_query());
+			console.log("Query Ran: " + qb.last_query());
 
 			clients = JSON.parse(JSON.stringify(response));
 			// console.log("waitinglist", response);
