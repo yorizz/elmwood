@@ -1,9 +1,9 @@
 $(document).ready(function () {
 	// Use the plugin once the DOM has been loaded.
-	console.log("loading script");
+	// console.log("loading script");
 
 	let loc = window.location.href;
-	console.log("loc", loc, loc.indexOf("/newenquiry"));
+	// console.log("loc", loc, loc.indexOf("/newenquiry"));
 	if (
 		loc.indexOf("/newenquiry") >= 1 ||
 		(loc.indexOf("client") >= 1 && loc.indexOf("edit") >= 1)

@@ -33,7 +33,7 @@ label {
 }
 
 .sidebar {
-	width: 14.5rem !important;
+	width: 15.5rem !important;
 	min-height: 96.97vh;
 	background-color: var(--bs-primary);
 	color: #fff;
@@ -223,6 +223,10 @@ i.bi {
 .files-table .table-cell {
 	padding: 5px 10px !important;
 	vertical-align: middle;
+}
+
+.table-responsive {
+	overflow-x: visible !important;
 }
 
 #wrapper {
@@ -517,7 +521,7 @@ footer a:hover {
 	text-transform: uppercase;
 	font-size: 1em;
 	letter-spacing: 0.15em;
-	padding-left: 5.8vw;
+	padding-left: 85px;
 	padding-top: 3vh;
 }
 
@@ -759,6 +763,10 @@ i.bi.bi-cash {
 
 .insurance-expired {
 	color: var(--bs-danger) !important;
+}
+
+.toggle > .toggle-group > .btn {
+	padding-top: 0.8rem;
 }
 
 /* SPINNER SPINNER */

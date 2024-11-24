@@ -876,6 +876,43 @@ class ClientController {
 			console.log("error rendering Renter Referrals", error);
 		}
 	}
+
+	async getOutstandingFeesPerClient(req, res) {
+		const outstandingFeesPerClient =
+			await clientmodel.getOutstandingFeesPerClient();
+
+		let ofClients = [];
+
+		for (let i = 0; i < req.session.allClients.length; i++) {
+			for (let j = 0; j < outstandingFeesPerClient.length; j++) {
+				if (
+					req.session.allClients[i].c_ID ==
+					outstandingFeesPerClient[j].a_client
+				) {
+					let therapistToAdd = {
+						c_ID: req.session.allClients[i].c_ID,
+						c_first_name: req.session.allClients[i].c_first_name,
+						c_surname: req.session.allClients[i].c_surname,
+						unpaid: outstandingFeesPerClient[j].unpaid,
+					};
+					ofClients.push(therapistToAdd);
+				}
+			}
+		}
+
+		ofClients.sort((a, b) => b.unpaid - a.unpaid);
+
+		console.log("ofClients", ofClients);
+
+		return res.render("templates/template.ejs", {
+			name: "Elmwood Outstanding Fees per Client",
+			page: "outstandingfeesperclient.ejs",
+			title: "Elmwood Outstanding Fees per Client ",
+			pathCorrection: "../../",
+			sidebar: true,
+			outstandingfees: ofClients,
+		});
+	}
 }
 
 module.exports = new ClientController();

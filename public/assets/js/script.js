@@ -49,7 +49,7 @@ $(document).ready(function () {
 					: "";
 			console.log("elipsisClass", elipsisClass);
 			$(this).append(
-				`<div class="lds-ellipsis ${elipsisClass}"><div></div><div></div><div></div><div></div></div>`
+				` <div class="spinner-grow spinner-grow-sm text-light" role="status"></div>`
 			);
 		}
 	);
@@ -404,6 +404,76 @@ $(document).ready(function () {
 		}
 	});
 
+	$(document).on("click", ".payment-type-select li button", function () {
+		const PENDING = 0;
+		const BANK = 1;
+		const CARD = 2;
+		const LINK = 3;
+
+		let paymentTypeClass = $(this).find("i")[0].className;
+		let paymentType = paymentTypeClass.replace("bi bi-", "");
+
+		let appointmentId = $(this).attr("data-appointment");
+
+		let paymentTypeValue = 0;
+
+		switch (paymentType) {
+			case "hourglass":
+				paymentTypeValue = PENDING;
+				break;
+			case "bank":
+				paymentTypeValue = BANK;
+				break;
+			case "credit-card":
+				paymentTypeValue = CARD;
+				break;
+			case "link":
+				paymentTypeValue = LINK;
+				break;
+			default:
+				break;
+		}
+
+		console.log("appointment_id", appointmentId);
+		console.log("menu item clicked", paymentType, paymentTypeValue);
+
+		$.ajax({
+			url: `/appointmentpaymenttypeupdate/${appointmentId}/${paymentTypeValue}`,
+			type: "post",
+			dataType: "json",
+			success: function (data) {
+				console.log("updated payment type", data);
+			},
+			error: function (error) {
+				console.log(
+					"unable to update payment type for appointment",
+					appointmentId,
+					error
+				);
+			},
+		});
+
+		$(this).parent().parent().prev().find("i")[0].className =
+			paymentTypeClass;
+	});
+
+	$(document).on("change", ".toggle input[type=checkbox]", function () {
+		let therapistPaid = $(this).prop("checked") ? 1 : 0;
+		let appointmentID = $(this).attr("data-appointment-id");
+
+		$.ajax({
+			url: `/appointmenttherapistpaidupdate/${appointmentID}/${therapistPaid}`,
+			type: "post",
+			dataType: "json",
+			success: function (data) {
+				console.log(data);
+			},
+			error: function (error) {
+				console.log("unable to set is Therapist paid", appointmentID);
+			},
+		});
+	});
+
 	$(document).on("click", ".referral-therapist-paid", function () {
 		let theSpan = $(this).find("span");
 		console.log("referral paid clicked", theSpan.hasClass("not-paid"));
@@ -598,6 +668,14 @@ $(document).ready(function () {
 				console.log("error", error);
 			},
 		});
+	});
+
+	$(document).on("click", ".card-header a i", function () {
+		$(this).replaceWith(`
+		<div
+			class="spinner-grow text-primary"
+			role="status"
+		></div>`);
 	});
 }); // end ducument ready
 

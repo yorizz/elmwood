@@ -124,6 +124,8 @@ class AppointmentController {
 					a_needs_payment: appointments[i].a_needs_payment,
 					a_cancellation_reason: appointments[i].a_cancellation_reason,
 					a_cancellation_date: appointments[i].a_cancellation_date,
+					a_payment_type: appointments[i].a_payment_type,
+					a_is_therapist_paid: appointments[i].a_is_therapist_paid,
 					c_ID: appointments[i].c_ID,
 					c_first_name: client.c_first_name,
 					c_surname: client.c_surname,
@@ -334,6 +336,36 @@ class AppointmentController {
 			console.log("error", error);
 		}
 		return res.json({ msg: `appointment ${req.params.id} paid` });
+	}
+
+	async updateAppointmentType(req, res) {
+		try {
+			const appointmentPaymentType =
+				await appointmentsmodel.updateAppointmentPaymentType(
+					req.params.appointmentId,
+					req.params.paymentType
+				);
+		} catch (error) {
+			console.log("error", error);
+		}
+		return res.json({
+			msg: `appointment ${req.params.appointmentId} payment type updated`,
+		});
+	}
+
+	async updateAppointmentIsTherapistPaid(req, res) {
+		try {
+			const appointmentTherapistPaid =
+				await appointmentsmodel.updateAppointmentIsTherapistPaid(
+					req.params.appointmentID,
+					req.params.therapistPaid
+				);
+		} catch (error) {
+			console.log("error", error);
+		}
+		return res.json({
+			msg: `appointment ${req.params.appointmentId} is therapist paid updated`,
+		});
 	}
 
 	async appointmentReferralPaid(req, res) {

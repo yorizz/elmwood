@@ -8,6 +8,7 @@ const path = require("path");
 const fs = require("fs");
 const { clientDeactivated } = require("../models/clientmodel");
 const clientmodel = require("../models/clientmodel");
+const session = require("express-session");
 
 class TherapistController {
 	async getAllTherapists(req, res) {
@@ -651,6 +652,43 @@ class TherapistController {
 		} catch (error) {
 			console.log("Can't show profit per therapist", error);
 		}
+	}
+
+	async getOutstandingFeesPerTherapist(req, res) {
+		const outstandingFeesPerTherapist =
+			await therapistmodel.getOutstandingFeesPerTherapist();
+
+		let ofTherapists = [];
+
+		for (let i = 0; i < req.session.allTherapists.length; i++) {
+			for (let j = 0; j < outstandingFeesPerTherapist.length; j++) {
+				if (
+					req.session.allTherapists[i].t_ID ==
+					outstandingFeesPerTherapist[j].a_therapist
+				) {
+					let therapistToAdd = {
+						t_ID: req.session.allTherapists[i].t_ID,
+						t_first_name: req.session.allTherapists[i].t_first_name,
+						t_surname: req.session.allTherapists[i].t_surname,
+						unpaid: outstandingFeesPerTherapist[j].unpaid,
+					};
+					ofTherapists.push(therapistToAdd);
+				}
+			}
+		}
+
+		ofTherapists.sort((a, b) => b.unpaid - a.unpaid);
+
+		console.log("ofTherapists", ofTherapists);
+
+		return res.render("templates/template.ejs", {
+			name: "Elmwood Outstanding Fees per Therapist",
+			page: "outstandingfeespertherapist.ejs",
+			title: "Elmwood Outstanding Fees per Therapist ",
+			pathCorrection: "../../",
+			sidebar: true,
+			outstandingfees: ofTherapists,
+		});
 	}
 }
 

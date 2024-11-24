@@ -127,34 +127,37 @@ class SupervisionController {
 		);
 
 		let supervisorSessions = [];
+		try {
+			for (let i = 0; i < numberOfSupervisionSessionAttendees.length; i++) {
+				let supervisionSession = {
+					sup_ID: numberOfSupervisionSessionAttendees[i].sup_ID,
+					sup_date: helpers.formatDateTime(
+						numberOfSupervisionSessionAttendees[i].sup_date
+					),
+					sup_supervisor: helpers.getPersonName(
+						req.session.allTherapists,
+						"therapist",
+						numberOfSupervisionSessionAttendees[i].sup_supervisor
+					),
+					present: numberOfSupervisionSessionAttendees[i].present,
+					total: numberOfSupervisionSessionAttendees[i].total,
+				};
 
-		for (let i = 0; i < numberOfSupervisionSessionAttendees.length; i++) {
-			let supervisionSession = {
-				sup_ID: numberOfSupervisionSessionAttendees[i].sup_ID,
-				sup_date: helpers.formatDateTime(
-					numberOfSupervisionSessionAttendees[i].sup_date
-				),
-				sup_supervisor: helpers.getPersonName(
-					req.session.allTherapists,
-					"therapist",
-					numberOfSupervisionSessionAttendees[i].sup_supervisor
-				),
-				present: numberOfSupervisionSessionAttendees[i].present,
-				total: numberOfSupervisionSessionAttendees[i].total,
-			};
+				supervisorSessions.push(supervisionSession);
+			}
 
-			supervisorSessions.push(supervisionSession);
+			console.log("supervisorSessions", supervisorSessions);
+
+			return res.render("templates/template.ejs", {
+				name: "All Supervision Sessions",
+				page: "allsupervisionsessions.ejs",
+				title: "All Supervision Sessions",
+				supervisorSessions: supervisorSessions,
+				sidebar: true,
+			});
+		} catch (error) {
+			console.log("error", error);
 		}
-
-		console.log("supervisorSessions", supervisorSessions);
-
-		return res.render("templates/template.ejs", {
-			name: "All Supervision Sessions",
-			page: "allsupervisionsessions.ejs",
-			title: "All Supervision Sessions",
-			supervisorSessions: supervisorSessions,
-			sidebar: true,
-		});
 	}
 
 	async storeNewSupervisionSession(req, res) {
@@ -233,6 +236,8 @@ class SupervisionController {
 				ssm_sup_ID: newId,
 				trainees: req.body.trainees,
 			};
+
+			console.log("trainees", trainees);
 
 			let supervisionSessionsStored =
 				await supervisionmodel.storeTraineesForSupervisionSession(trainees);

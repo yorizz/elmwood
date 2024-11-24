@@ -85,6 +85,18 @@ router.get(
 	appointmentController.addAppointmentForDate
 );
 
+router.post(
+	"/appointmentpaymenttypeupdate/:appointmentId/:paymentType",
+	isUserAuthenticated,
+	appointmentController.updateAppointmentType
+);
+
+router.post(
+	"/appointmenttherapistpaidupdate/:appointmentID/:therapistPaid",
+	isUserAuthenticated,
+	appointmentController.updateAppointmentIsTherapistPaid
+);
+
 router.get(
 	"/newappointment",
 	isUserAuthenticated,
@@ -239,6 +251,12 @@ router
 	.post(isUserAuthenticated, urlencodedParser, clientController.storeFile);
 
 router.get(
+	"/outstandingfeesperclient",
+	isUserAuthenticated,
+	clientController.getOutstandingFeesPerClient
+);
+
+router.get(
 	"/referrals",
 	isUserAuthenticated,
 	clientController.getRenterReferrals
@@ -367,6 +385,12 @@ router.get(
 	"/viewavailability/:id",
 	isUserAuthenticated,
 	therapistController.viewAvailability
+);
+
+router.get(
+	"/outstandingfeespertherapist",
+	isUserAuthenticated,
+	therapistController.getOutstandingFeesPerTherapist
 );
 
 /**

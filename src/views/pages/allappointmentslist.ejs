@@ -30,6 +30,8 @@
 				<th class="th">Therapist</th>
 				<th class="th">Fee</th>
 				<th class="th">Paid</th>
+				<th class="th">Payment Type</th>
+				<th class="th">Therapist Paid</th>
 				<th class="th">&nbsp;</th>
 			</tr>
 		</thead>
@@ -70,14 +72,60 @@
 				</td>
 				<td class="table-cell align-middle appointment-paid">
 					<%
-					if(appointment.a_is_paid == 1){ %>
-					<!-- <span class="paid">✔</span> -->
-					<span class="paid" title="paid"><i class="bi bi-cash"></i></span>
-					<% } else { %>
-					<!-- <span class="not-paid" title="not paid">✘</span> -->
-					<span class="not-paid" data_id="<%= appointment.a_ID %>"><i class="bi bi-cash"></i></span>
-					<% } %>
+					let paidClass = (appointment.a_is_paid == 1)? 'paid': "not-paid";					
+					%>
+					
+					<span class="<%=paidClass%>" title="paid" data_id="<%= appointment.a_ID %>"><i class="bi bi-cash"></i></span>
+					
 				</td>
+
+				
+				<td class="table-cell align-middle payment-type">
+					<div class="dropdown">
+						<button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+							<% 
+								let icon = 'hourglass';
+								console.log("appointment.a_payment_type", appointment.a_payment_type,process.env.BANK );
+
+								switch(appointment.a_payment_type){
+									case parseInt(process.env.BANK):
+										icon='bank';
+										break;
+									case parseInt(process.env.CARD):
+										icon='credit-card';
+										break;
+									case parseInt(process.env.LINK):
+										icon='link';
+										break;	
+									default:
+										break;
+								}
+							%>
+							<i class="bi bi-<%=icon%>"></i>
+						</button>
+						<ul class="dropdown-menu payment-type-select">
+						  <li><button class="dropdown-item" type="button" data-appointment="<%=appointment.a_ID %>"><i class="bi bi-bank"></i> Bank</button></li>
+						  <li><button class="dropdown-item" type="button" data-appointment="<%=appointment.a_ID %>"><i class="bi bi-credit-card"></i> Credit Card</button></li>
+						  <li><button class="dropdown-item" type="button" data-appointment="<%=appointment.a_ID %>"><i class="bi bi-link"></i> Link</button></li>
+						  <li><button class="dropdown-item" type="button" data-appointment="<%=appointment.a_ID %>"><i class="bi bi-hourglass"></i> Pending</button></li>
+						</ul>
+					  </div>
+						
+							
+							
+				</td>
+				
+				<td class="table-cell align-middle is-therapist-paid">
+
+					<% 
+						let checked = '';
+						if(appointment.a_is_therapist_paid == 1){checked = 'checked'}
+					%>
+					
+					<input type="checkbox" <%=checked%> data-appointment-id="<%=appointment.a_ID%>" data-toggle="toggle" data-onlabel="yes" data-offlabel="no" data-onstyle="primary" data-offstyle="danger">
+				</td>
+
+
 
 				<td class="table-cell align-middle appointment-cancel-button view-single">
 					<% let id=appointment.a_ID.replace(/"|'/g, ''); %>

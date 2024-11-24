@@ -8,21 +8,20 @@
             for(cpt of clientsPerTherapist){
                 let therapistName = dataDecrypt(cpt.t_first_name) + " " + dataDecrypt(cpt.t_surname);
                 let clientName = dataDecrypt(cpt.c_first_name) + " " + dataDecrypt(cpt.c_surname);
-                console.log("currentTherapist now", currentTherapist, therapistName, clientName);
-                
+               
                 if(cpt.t_ID != currentTherapist){
                     currentTherapist=cpt.t_ID
-                    %>
+                   
+                %>
                     <li class="cpt-therapist"><strong><%= therapistName %></strong> <a href="/therapist/<%= cpt.t_ID %>" title="view therapist"><i class="bi bi-eye"></i></a></li> 
                      
-                    
-                    <%
-                
-                }%>
-            <li class="cpt-client"><%= clientName %> <a href="/client/<%= cpt.c_ID %>" title="view client"><i class="bi bi-eye"></i></a></li>
-            <%
+                <%
+                }
+                %>
+                <li class="cpt-client"><%= clientName %> <%-(cpt.c_low_cost_employment==1)?'&#x2713;':''%><a href="/client/<%= cpt.c_ID %>" title="view client"><i class="bi bi-eye"></i></a></li>
+    <%
+            }
         }
-    }
     %>
 </ul> -->
 
@@ -37,7 +36,6 @@
                 for(cpt of clientsPerTherapist){
                     let therapistName = dataDecrypt(cpt.t_first_name) + " " + dataDecrypt(cpt.t_surname);
                     let clientName = dataDecrypt(cpt.c_first_name) + " " + dataDecrypt(cpt.c_surname);
-                    console.log("currentTherapist now", currentTherapist, therapistName, clientName);
                     
                     if(cpt.t_ID != currentTherapist){
                         currentTherapist=cpt.t_ID
@@ -47,6 +45,7 @@
                                 <div class="colour-circle" style="background-color: <%= cpt.t_colour %>">&nbsp;</div>
                             </div>
                             <div class="th"><%= therapistName %></div> 
+                            <div class="th">Low Cost</div>
                             <div class="th"><a href="/therapist/<%= cpt.t_ID %>" title="view therapist"><i class="bi bi-eye"></i></a></div>
                         </div> 
                         
@@ -57,6 +56,7 @@
                 <div class="table-row">
                     <div class="table-cell">&nbsp;</div>
                     <div class="table-cell"><i class="bi bi-person"></i><%= clientName %></div> 
+                    <div class="table-cell"><%-(cpt.c_low_cost_employment)?'<span class="tick">&#x2713;</span>':''%></div>
                     <div class="table-cell"><a href="/client/<%= cpt.c_ID %>" title="view client"><i class="bi bi-eye"></i></a></div>
                 </div>
                 

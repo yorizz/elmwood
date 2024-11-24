@@ -412,6 +412,7 @@ class TherapistModel {
 						"c_ID",
 						"c_first_name",
 						"c_surname",
+						"c_low_cost_employment",
 					],
 					null,
 					false
@@ -423,7 +424,7 @@ class TherapistModel {
 
 			console.log("Clients per Therapist Query", qb.last_query());
 
-			// console.log("clients per therapist", response);
+			console.log("clients per therapist", response);
 			return JSON.parse(JSON.stringify(response));
 		} catch (error) {
 			console.log("Unable to list clients per therapist therapist", error);
@@ -512,16 +513,10 @@ class TherapistModel {
 			qb = await pool.get_connection();
 			const response = await qb
 				.select(
-					[
-						`a_therapist`,
-						`t_first_name`,
-						`t_surname`,
-						"SUM(`a_client_fee`) AS `unpaid`",
-					],
+					[`a_therapist`, "SUM(`a_therapist_fee`) AS `unpaid`"],
 					null,
 					false
 				)
-				.join("therapists", "a_therapist=t_ID", "inner")
 				.where({
 					a_is_paid: 0,
 					"`a_date`<": Date.now(),
@@ -535,6 +530,33 @@ class TherapistModel {
 			console.log("Unpaid fees per Therapist Query", qb.last_query());
 
 			// console.log("Unpaid fees per therapist", response);
+			return JSON.parse(JSON.stringify(response));
+		} catch (error) {
+			console.log("Unable to list unpaid fees per  therapist", error);
+			msg = "Error: " + error;
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async getTotalOutstandingTherapistFees() {
+		let qb;
+		let msg = "";
+		try {
+			qb = await pool.get_connection();
+			const response = await qb
+				.select(["SUM(`a_therapist_fee`) AS `unpaid`"], null, false)
+				.join("therapists", "a_therapist=t_ID", "inner")
+				.where({
+					a_is_paid: 0,
+					"`a_date`<": Date.now(),
+					a_needs_payment: 1,
+					"`a_client_fee`>": 0,
+				})
+				.get("appointments");
+
+			console.log("Total Unpaid fees per Therapist Query", qb.last_query());
+
 			return JSON.parse(JSON.stringify(response));
 		} catch (error) {
 			console.log("Unable to list unpaid fees per  therapist", error);
@@ -614,7 +636,7 @@ class TherapistModel {
 			qb = await pool.get_connection();
 			//SELECT * FROM `therapists` WHERE DATEDIFF(DATE(`t_insurance_expiry_date`), NOW()) < 30;
 			const response = await qb.query(
-				"SELECT * FROM `therapists` WHERE DATEDIFF(DATE(`t_insurance_expiry_date`), NOW()) < 30 OR DATE(`t_insurance_expiry_date`) < NOW() ORDER BY `t_insurance_expiry_date` ASC"
+				"SELECT `t_ID`, `t_first_name`, `t_surname`, `t_insurance_expiry_date` FROM `therapists` WHERE DATEDIFF(DATE(`t_insurance_expiry_date`), NOW()) < 30 OR DATE(`t_insurance_expiry_date`) < NOW() ORDER BY `t_insurance_expiry_date` ASC"
 			);
 
 			let therapists = JSON.parse(JSON.stringify(response));

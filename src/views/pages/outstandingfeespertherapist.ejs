@@ -1,0 +1,31 @@
+<div class="table-responsive">
+    <table class="table">
+    
+        <thead class="table-head">
+            <tr class="table-row">
+                <th class="th">Therapist</th>
+                <th class="th text-end">Oustanding</th>
+            </tr>
+        </thead>
+        <!-- End Table Head-->
+    
+    
+        <tbody class="table-body">
+    
+            <% if(locals.outstandingfees){ %>
+                    <% for(let i=0; i< outstandingfees.length; i++){ %>
+                        <tr class="table-row">
+                            <td class="table-cell align-middle">
+    
+                                <a href="/therapist/<%=outstandingfees[i].t_ID%>"><%=outstandingfees[i].t_first_name%> <%=outstandingfees[i].t_surname%></a>
+                            </td>
+                            <td class="table-cell align-middle text-end">
+                               &euro;<%=new Intl.NumberFormat('en-IE').format(outstandingfees[i].unpaid)%>
+                            </td>
+                        </tr>
+                    <% } %>
+            <% } %>
+        </tbody> <!-- end table body -->
+    
+    </table> <!-- end table  -->
+</div>

@@ -502,6 +502,34 @@ class ClientModel {
 		}
 	}
 
+	async getTotalOutstandingClientFees() {
+		let qb;
+		let msg = "";
+		try {
+			qb = await pool.get_connection();
+			const response = await qb
+				.select(["SUM(`a_client_fee`) AS `unpaid`"], null, false)
+				.join("clients", "a_client=c_ID", "inner")
+				.where({
+					a_is_paid: 0,
+					"`a_date`<": Date.now(),
+					a_needs_payment: 1,
+					"`a_client_fee`>": 0,
+				})
+				.get("appointments");
+
+			console.log("Unpaid fees per client Query", qb.last_query());
+
+			// console.log("Unpaid fees per client", response);
+			return JSON.parse(JSON.stringify(response));
+		} catch (error) {
+			console.log("Unable to list unpaid fees per client ", error);
+			msg = "Error: " + error;
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async allClientsForSession() {
 		let qb;
 		try {
@@ -610,7 +638,7 @@ class ClientModel {
 		}
 	}
 
-	async getLowCostTraineeClients() {
+	async getLowCostTraineeClients(limit = 999999) {
 		let clients = [];
 		let rv = false;
 
@@ -635,6 +663,7 @@ class ClientModel {
 				)
 				.where("tq_qualification", 7)
 				.order_by("c_enquiry_date", "desc")
+				.limit(limit)
 				.get("clients");
 
 			// console.log("Query Ran: " + qb.last_query());
@@ -649,7 +678,7 @@ class ClientModel {
 			if (qb) qb.release();
 		}
 	}
-	async getLowCostPrecredClients() {
+	async getLowCostPrecredClients(limit = 999999) {
 		let clients = [];
 		let rv = false;
 
@@ -670,9 +699,10 @@ class ClientModel {
 				.join("therapist_qualifications", "c_therapist=tq_therapist")
 				.where("tq_qualification", 8)
 				.order_by("c_enquiry_date", "desc")
+				.limit(limit)
 				.get("clients");
 
-			// console.log("Query Ran: " + qb.last_query());
+			console.log("Query Ran: " + qb.last_query());
 
 			clients = JSON.parse(JSON.stringify(response));
 			rv = clients;
@@ -831,6 +861,29 @@ class ClientModel {
 			if (qb) qb.release();
 		}
 	}
+
+	async getNumberOfLowCostClients() {
+		let qb;
+
+		try {
+			qb = await pool.get_connection();
+			const response = await qb
+				.select(["COUNT(*) AS `totalLCC`"], null, false)
+				.where({
+					c_low_cost_employment: 0,
+				})
+				.get("clients");
+
+			console.log("getNumberOfLowCostClients Query", qb.last_query());
+
+			return JSON.parse(JSON.stringify(response));
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async getLowCostTraineeClientsOnWaitingList() {
 		let clients = [];
 		let rv = false;
@@ -1079,6 +1132,39 @@ class ClientModel {
 			return console.error(
 				"getRenterReferrals Query Pool Query Error: " + error
 			);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async getOutstandingFeesPerClient() {
+		let qb;
+		let msg = "";
+		try {
+			qb = await pool.get_connection();
+			const response = await qb
+				.select(
+					[`a_client`, "SUM(`a_client_fee`) AS `unpaid`"],
+					null,
+					false
+				)
+				.where({
+					a_is_paid: 0,
+					"`a_date`<": Date.now(),
+					a_needs_payment: 1,
+					"`a_client_fee`>": 0,
+				})
+				.group_by("a_client")
+				.order_by("unpaid", "desc")
+				.get("appointments");
+
+			console.log("Unpaid fees per Client Query", qb.last_query());
+
+			// console.log("Unpaid fees per therapist", response);
+			return JSON.parse(JSON.stringify(response));
+		} catch (error) {
+			console.log("Unable to list unpaid fees per client", error);
+			msg = "Error: " + error;
 		} finally {
 			if (qb) qb.release();
 		}

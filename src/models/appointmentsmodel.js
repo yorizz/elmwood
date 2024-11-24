@@ -32,7 +32,7 @@ class AppointmentsModel {
 				.get();
 
 			console.log("Query Ran: " + qb.last_query());
-			// console.log("db response for appointments", response);
+			console.log("db response for appointments", response);
 
 			appointments = JSON.parse(JSON.stringify(response));
 
@@ -349,6 +349,50 @@ class AppointmentsModel {
 
 			qb.where({
 				a_ID: appointmentID,
+			})
+				.set(data)
+				.update("appointments");
+			console.log("Query Ran: " + qb.last_query());
+		} catch (error) {
+			console.log(error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async updateAppointmentPaymentType(appointmentId, paymentType) {
+		let qb;
+		try {
+			qb = await pool.get_connection();
+
+			let data = {
+				a_payment_type: paymentType,
+			};
+
+			qb.where({
+				a_ID: appointmentId,
+			})
+				.set(data)
+				.update("appointments");
+			console.log("Query Ran: " + qb.last_query());
+		} catch (error) {
+			console.log(error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async updateAppointmentIsTherapistPaid(appointmentId, isTherpistPaid) {
+		let qb;
+		try {
+			qb = await pool.get_connection();
+
+			let data = {
+				a_is_therapist_paid: isTherpistPaid,
+			};
+
+			qb.where({
+				a_ID: appointmentId,
 			})
 				.set(data)
 				.update("appointments");

@@ -51,8 +51,6 @@ class DashboardController {
 			req.session.allClients = clients4sesion;
 		}
 
-		// console.log("SESSION:", req.session);
-
 		let clientsPerTherapist = [];
 		const clientsPerTherapistFromModel =
 			await clientmodel.getClientsPerTherapist();
@@ -71,57 +69,23 @@ class DashboardController {
 			};
 			clientsPerTherapist.push(therapist);
 		}
-		//console.log("cpt", clientsPerTherapist);
 
 		const appointments = await appointmentsmodel.getTodaysAppointments();
-		// console.log("appts", appointments);
+
 		const waitinglistsize =
 			await clientmodel.getNumberOfClientsOnWaitingList();
 
-		let outstandingFeesPerTherapist = [];
 		const outstandingFeesPerTherapistFromModel =
-			await therapistmodel.getOutstandingFeesPerTherapist();
-
-		for (let i = 0; i < outstandingFeesPerTherapistFromModel.length; i++) {
-			let sessionTherapist = helpers.getPersonName(
-				req.session.allTherapists,
-				"therapist",
-				outstandingFeesPerTherapistFromModel[i].a_therapist
-			);
-
-			let therapist = {
-				a_therapist: outstandingFeesPerTherapistFromModel[i].a_therapist,
-				t_first_name: sessionTherapist.t_first_name,
-				t_surname: sessionTherapist.t_surname,
-				unpaid: outstandingFeesPerTherapistFromModel[i].unpaid,
-			};
-			outstandingFeesPerTherapist.push(therapist);
-		}
-
-		let outstandingFeesPerClient = [];
+			await therapistmodel.getTotalOutstandingTherapistFees();
+		let outstandingFeesPerTherapist = outstandingFeesPerTherapistFromModel[0];
 
 		const outstandingFeesPerClientFromModel =
-			await clientmodel.getOutstandingFeesPerClient();
-
-		for (let i = 0; i < outstandingFeesPerClientFromModel.length; i++) {
-			let sessionClient = helpers.getPersonName(
-				req.session.allClients,
-				"client",
-				outstandingFeesPerClientFromModel[i].a_client
-			);
-
-			let client = {
-				a_client: outstandingFeesPerClientFromModel[i].a_client,
-				c_first_name: sessionClient.c_first_name,
-				c_surname: sessionClient.c_surname,
-				unpaid: outstandingFeesPerClientFromModel[i].unpaid,
-			};
-			outstandingFeesPerClient.push(client);
-		}
+			await clientmodel.getTotalOutstandingClientFees();
+		let outstandingFeesPerClient = outstandingFeesPerClientFromModel[0];
 
 		let lowCostClients = [];
-		let lowCostTraineeClients = await clientmodel.getLowCostTraineeClients();
-		let lowCostPrecredClients = await clientmodel.getLowCostPrecredClients();
+		let lowCostTraineeClients = await clientmodel.getLowCostTraineeClients(5);
+		let lowCostPrecredClients = await clientmodel.getLowCostPrecredClients(5);
 
 		for (let i = 0; i < lowCostTraineeClients.length; i++) {
 			lowCostClients.push(lowCostTraineeClients[i]);
@@ -149,6 +113,11 @@ class DashboardController {
 
 		console.log("lowCostClients", lowCostClients);
 
+		let totalNumberOfLowCostClients =
+			await clientmodel.getNumberOfLowCostClients();
+
+		console.log("totalNumberOfLowCostClients", totalNumberOfLowCostClients);
+
 		let expiringInsurancesPerTherapist = [];
 		const expiringInsurances = await therapistmodel.getExpiringInsurances();
 
@@ -169,8 +138,6 @@ class DashboardController {
 			};
 			expiringInsurancesPerTherapist.push(therapist);
 		}
-
-		// console.log(">>> SESSION", req.session);
 
 		let photos = [
 			"assets/img/photos/photo_1.jpg",
@@ -194,6 +161,7 @@ class DashboardController {
 			sidebar: true,
 			appointments: appointments,
 			waitinglistsize: waitinglistsize,
+			totalNumberOfLowCostClients: totalNumberOfLowCostClients,
 			clientsPerTherapist: clientsPerTherapist,
 			outstandingFeesPerTherapist: outstandingFeesPerTherapist,
 			outstandingFeesPerClient: outstandingFeesPerClient,

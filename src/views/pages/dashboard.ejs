@@ -20,8 +20,8 @@
 		<div class="col">
 			<div class="card">
 				<h5 class="card-header">
-					<span>Low Cost Clients</span>
-					<a href="/clientspertherapist"><i class="bi bi-people"></i></a>
+					<span>Low Cost Clients <%=(locals.totalNumberOfLowCostClients)?totalNumberOfLowCostClients[0].totalLCC:''%> </span>
+					<a href="/clientspertherapist"><i class="bi bi-people" id="low-cost-clients-icon"></i></a>
 				</h5>
 				<div class="card-body  .table-responsive">
 					<div class="table table-responsive w-100 d-block d-md-table">
@@ -107,37 +107,11 @@
 		<div class="col">
 			<div class="card outstanding-fees-card">
 				<h5 class="card-header">
-					<span>Unpaid Appointments per Therapist</span>
-					<a href="/"><i class="bi bi-cash"></i></a>
+					<span>Outstanding Therapist Fees</span>
+					<a href="/outstandingfeespertherapist"><i class="bi bi-cash"></i></a>
 				</h5>
-				<div class="card-body">
-					<div class="table table-responsive w-100 d-block d-md-table">
-							<div class="table-head">
-								<div class="th">Therapist</div>
-								<div class="th">Fee</div>
-							</div>
-						
-							<div class="table-body">
-								<% 
-								if(locals.outstandingFeesPerTherapist) { 
-									for(fee of outstandingFeesPerTherapist){ 
-								%>
-										<div class="table-row">
-											
-											<div class="table-cell ">
-												<a href="/therapist/<%= fee.a_therapist %>"><%= fee.t_first_name %> <%= fee.t_surname %></a>
-											</div>
-											<div class="table-cell ">
-												&euro; <%= fee.unpaid %>
-											</div>
-											
-										</div> <!-- end row -->	
-							<%
-									}
-								}
-							%>
-							</div> <!-- end table body -->
-					</div> <!-- end table --> 
+				<div class="card-body d-flex align-items-center justify-content-center">
+					<h2>&euro;<%= (locals.outstandingFeesPerTherapist) ? outstandingFeesPerTherapist.unpaid:0 %> </h2>
 				</div>
 			</div>
 		</div> <!-- end column -->	
@@ -145,41 +119,15 @@
 		<div class="col">
 			<div class="card outstanding-fees-card">
 				<h5 class="card-header">
-					<span>Unpaid Appointments per Client</span>
-					<a href="/"><i class="bi bi-cash"></i></a>
+					<span>Outstanding Client Fees</span>
+					<a href="/outstandingfeesperclient"><i class="bi bi-cash"></i></a>
 				</h5>
 				
-				<div class="card-body">
-					<div class="table table-responsive w-100 d-block d-md-table">
-						<div class="table-head">
-							<div class="th">Client</div>
-							<div class="th">Fee</div>
-						</div>
-					
-						<div class="table-body">
-							<% 
-							if(locals.outstandingFeesPerClient) { 
-								for(fee of outstandingFeesPerClient){ 
-							%>
-									<div class="table-row">
-										
-										<div class="table-cell ">
-											<a href="/client/<%= fee.a_client %>"><%= fee.c_first_name %> <%= fee.c_surname  %></a>
-										</div>
-										<div class="table-cell ">
-											&euro; <%= fee.unpaid %>
-										</div>
-										
-									</div> <!-- end row -->	
-						<%
-								}
-							}
-						%>
-						</div> <!-- end table body -->
-				</div> <!-- end table --> 
-			</div> <!-- end card body -->
-		</div> <!-- end column -->
-		</div>  <!-- end column -->		
+				<div class="card-body d-flex align-items-center justify-content-center">
+						<h2>&euro;<%= (locals.outstandingFeesPerClient) ? outstandingFeesPerClient.unpaid:0 %> </h2>
+				</div> <!-- end card body -->
+			</div> <!-- end card -->
+		</div>  <!-- end column -->	
 
 	</div> <!-- end row-->
 
