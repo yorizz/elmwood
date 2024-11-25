@@ -95,21 +95,15 @@ class AppointmentController {
 
 		try {
 			let appointments = await appointmentsmodel.getAllAppointments();
-			console.log("appointments", appointments.length);
-
-			console.log("session clients", req.session.allClients.length);
 
 			for (let i = 0; i < appointments.length; i++) {
-				let client = helpers.getPersonName(
-					req.session.allClients,
-					"client",
-					appointments[i].a_client
+				let client = req.session.allClients.find(
+					({ c_ID }) => c_ID === appointments[i].a_client
 				);
-				let therapist = helpers.getPersonName(
-					req.session.allTherapists,
-					"therapist",
-					appointments[i].a_therapist
+				let therapist = req.session.allTherapists.find(
+					({ t_ID }) => t_ID === appointments[i].a_therapist
 				);
+
 				const appointment = {
 					a_ID: appointments[i].a_ID,
 					a_client: appointments[i].a_client,
@@ -118,40 +112,18 @@ class AppointmentController {
 					a_start_time: appointments[i].a_start_time,
 					a_end_time: appointments[i].a_end_time,
 					a_client_fee: appointments[i].a_client_fee,
-					a_therapist_fee: appointments[i].a_therapist_fee,
 					a_is_paid: appointments[i].a_is_paid,
 					a_is_cancelled: appointments[i].a_is_cancelled,
 					a_needs_payment: appointments[i].a_needs_payment,
-					a_cancellation_reason: appointments[i].a_cancellation_reason,
-					a_cancellation_date: appointments[i].a_cancellation_date,
 					a_payment_type: appointments[i].a_payment_type,
 					a_is_therapist_paid: appointments[i].a_is_therapist_paid,
-					c_ID: appointments[i].c_ID,
 					c_first_name: client.c_first_name,
 					c_surname: client.c_surname,
-					c_phone: appointments[i].c_phone,
-					c_email: appointments[i].c_email,
-					c_therapist: appointments[i].c_therapist,
-					c_assessed_by: appointments[i].c_assessed_by,
-					c_assessment_date: appointments[i].c_assessment_date,
-					c_enquiry_date: appointments[i].c_enquiry_date,
-					c_referred_by: appointments[i].c_referred_by,
-					c_research_participation:
-						appointments[i].c_research_participation,
-					c_low_cost_employment: appointments[i].c_low_cost_employment,
-					c_low_cost_suitable: appointments[i].c_low_cost_suitable,
-					c_details_sent_to_claire:
-						appointments[i].c_details_sent_to_claire,
-					c_is_active: appointments[i].c_is_active,
-					t_ID: appointments[i].t_ID,
+
 					t_first_name: therapist.t_first_name,
 					t_surname: therapist.t_surname,
 					t_colour: appointments[i].t_colour,
-					t_phone: appointments[i].t_phone,
-					t_email: appointments[i].t_email,
 					t_fq_fee: appointments[i].t_fq_fee,
-					t_fee: appointments[i].t_fee,
-					t_is_active: appointments[i].t_is_active,
 				};
 				allAppointments.push(appointment);
 			}
@@ -171,15 +143,8 @@ class AppointmentController {
 	}
 
 	async addAppointmentForDate(req, res) {
-		let therapists =
-			req.session.allTherapists >= 1
-				? req.session.allTherapists
-				: await therapistmodel.getAllActiveTherapists();
-
-		let clients =
-			req.session.allClients >= 1
-				? req.session.allClients
-				: await clientmodel.getAllActiveClients();
+		let therapists = req.session.allTherapists;
+		let clients = req.session.allClients;
 
 		if (req.params.date) {
 			return res.render("pages/addappointment.ejs", {

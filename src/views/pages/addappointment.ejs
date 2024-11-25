@@ -10,7 +10,7 @@
             <% if(locals.clients && clients.length >= 1){ %>
             <% for(let i=0; i<clients.length; i++){ %>
                 <% let client = clients[i]; %>
-                <option value="<%= client.c_ID %>"><%= dataDecrypt(client.c_first_name) + " " + dataDecrypt(client.c_surname) %></option>
+                <option value="<%= client.c_ID %>"><%= client.c_first_name + " " + client.c_surname %></option>
             <% } %>
             <% } %>
         </select>
@@ -23,7 +23,7 @@
             <% if(locals.therapists && therapists.length >= 1){ %>
             <% for(let i=0; i<therapists.length; i++){ %>
                 <% let therapist = therapists[i]; %>
-                <option value="<%= therapist.t_ID %>"><%= dataDecrypt(therapist.t_first_name) + " " + dataDecrypt(therapist.t_surname) %></option>
+                <option value="<%= therapist.t_ID %>"><%= therapist.t_first_name + " " + therapist.t_surname %></option>
             <% } %>
             <% } %>
         </select>

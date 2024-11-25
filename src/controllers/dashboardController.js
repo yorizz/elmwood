@@ -24,6 +24,7 @@ class DashboardController {
 					),
 					t_phone: helpers.dataDecrypt(allTherapistsForSession[i].t_phone),
 					t_email: helpers.dataDecrypt(allTherapistsForSession[i].t_email),
+					t_colour: allTherapistsForSession[i].t_colour,
 				});
 			}
 
@@ -71,6 +72,35 @@ class DashboardController {
 		}
 
 		const appointments = await appointmentsmodel.getTodaysAppointments();
+
+		let dashboardAppointments = [];
+
+		for (let i = 0; i < appointments.length; i++) {
+			let therapist = req.session.allTherapists.find(
+				({ t_ID }) => t_ID === appointments[i].a_therapist
+			);
+
+			let client = req.session.allClients.find(
+				({ c_ID }) => c_ID === appointments[i].a_client
+			);
+
+			let a = {
+				a_ID: appointments[i].a_ID,
+				a_date: appointments[i].a_date,
+				a_start_time: appointments[i].a_start_time,
+				a_end_time: appointments[i].a_end_time,
+				c_first_name: client.c_first_name,
+				c_surname: client.c_surname,
+				a_therapist: appointments[i].a_therapist,
+				t_first_name: therapist.t_first_name,
+				t_surname: therapist.t_surname,
+				t_colour: therapist.t_colour,
+			};
+
+			dashboardAppointments.push(a);
+		}
+
+		console.log("dashboardAppointments", dashboardAppointments);
 
 		const waitinglistsize =
 			await clientmodel.getNumberOfClientsOnWaitingList();
@@ -159,7 +189,7 @@ class DashboardController {
 			page: "dashboard.ejs",
 			title: "Dashboard",
 			sidebar: true,
-			appointments: appointments,
+			appointments: dashboardAppointments,
 			waitinglistsize: waitinglistsize,
 			totalNumberOfLowCostClients: totalNumberOfLowCostClients,
 			clientsPerTherapist: clientsPerTherapist,

@@ -42,10 +42,10 @@ class TherapistModel {
 			qb = await pool.get_connection();
 			const response = await qb
 				.where("t_is_active", 1)
-				.select("*")
+				.select("t_ID")
 				.get("therapists");
 
-			// console.log("Query Ran: " + qb.last_query());
+			console.log("Query Ran: " + qb.last_query());
 
 			therapists = JSON.parse(JSON.stringify(response));
 			rv = therapists;
@@ -571,7 +571,14 @@ class TherapistModel {
 		try {
 			qb = await pool.get_connection();
 			const allTherapistsForSession = await qb
-				.select(["t_ID", "t_first_name", "t_surname", "t_email", "t_phone"])
+				.select([
+					"t_ID",
+					"t_first_name",
+					"t_surname",
+					"t_email",
+					"t_phone",
+					"t_colour",
+				])
 				.get("therapists");
 
 			// console.log("Query Ran: " + qb.last_query());

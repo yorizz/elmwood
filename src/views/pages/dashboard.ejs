@@ -81,13 +81,13 @@
 								</div>
 								<div class="table-cell ">
 								<a href="/client/<%= appointment.a_client %>"><%=
-									dataDecrypt(appointment.c_first_name) %>&nbsp;<%=
-									dataDecrypt(appointment.c_surname) %> </a>
+									appointment.c_first_name %>&nbsp;<%=
+									appointment.c_surname %> </a>
 								</div> 
 								<div class="table-cell ">
 								<a href="/therapist/<%= appointment.a_therapist %>"><%=
-								dataDecrypt(appointment.t_first_name) %>&nbsp;<%=
-								dataDecrypt(appointment.t_surname) %></a>
+								appointment.t_first_name %>&nbsp;<%=
+								appointment.t_surname %></a>
 								</div>
 							</div>
 							<!-- end row -->

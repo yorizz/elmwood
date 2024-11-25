@@ -457,7 +457,7 @@ $(document).ready(function () {
 			paymentTypeClass;
 	});
 
-	$(document).on("change", ".toggle input[type=checkbox]", function () {
+	$(document).on("change", ".toggle-switch", function () {
 		let therapistPaid = $(this).prop("checked") ? 1 : 0;
 		let appointmentID = $(this).attr("data-appointment-id");
 

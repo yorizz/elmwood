@@ -46,11 +46,11 @@ class ClientModel {
 			qb = await pool.get_connection();
 			const response = await qb
 				.where("c_is_active", 1)
-				.select("*")
+				.select("c_ID,t_ID")
 				.join("therapists", "c_therapist=t_ID", "left")
 				.get("clients");
 
-			// console.log("Query Ran: " + qb.last_query());
+			console.log("Query Ran: " + qb.last_query());
 
 			clients = JSON.parse(JSON.stringify(response));
 			rv = clients;
@@ -406,16 +406,7 @@ class ClientModel {
 		try {
 			const ct_response = await qb
 				.limit(5)
-				.select(
-					[
-						"t_ID",
-						"t_first_name",
-						"t_surname",
-						"COUNT(`c_ID`) as `NumberOfClients`",
-					],
-					null,
-					false
-				)
+				.select(["t_ID", "COUNT(`c_ID`) as `NumberOfClients`"], null, false)
 				.join("clients", "c_therapist=t_ID", "inner")
 				.where("t_is_active", 1)
 				.where("c_is_active", 1)
@@ -537,8 +528,6 @@ class ClientModel {
 			const allTherapistsForSession = await qb
 				.select(["c_ID", "c_first_name", "c_surname", "c_phone", "c_email"])
 				.get("clients");
-
-			// console.log("Query Ran: " + qb.last_query());
 
 			return allTherapistsForSession;
 		} catch (error) {

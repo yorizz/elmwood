@@ -25,7 +25,7 @@
 		<thead class="table-head">
 			<tr>
 				<th class="th">&nbsp;</th>
-				<th class="th" id="appointment-date">Date &amp; Time</th>
+				<th class="th" id="appointment-date">Date&nbsp;&amp;&nbsp;Time</th>
 				<th class="th">Client</th>
 				<th class="th">Therapist</th>
 				<th class="th">Fee</th>
@@ -85,7 +85,7 @@
 						<button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
 							<% 
 								let icon = 'hourglass';
-								console.log("appointment.a_payment_type", appointment.a_payment_type,process.env.BANK );
+								
 
 								switch(appointment.a_payment_type){
 									case parseInt(process.env.BANK):
@@ -121,8 +121,9 @@
 						let checked = '';
 						if(appointment.a_is_therapist_paid == 1){checked = 'checked'}
 					%>
-					
-					<input type="checkbox" <%=checked%> data-appointment-id="<%=appointment.a_ID%>" data-toggle="toggle" data-onlabel="yes" data-offlabel="no" data-onstyle="primary" data-offstyle="danger">
+					<div class="form-check form-switch">
+						<input class="form-check-input toggle-switch" type="checkbox" role="switch"  data-appointment-id="<%=appointment.a_ID%>" <%=checked%>>
+					</div>
 				</td>
 
 

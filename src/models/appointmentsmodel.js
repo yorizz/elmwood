@@ -32,7 +32,6 @@ class AppointmentsModel {
 				.get();
 
 			console.log("Query Ran: " + qb.last_query());
-			console.log("db response for appointments", response);
 
 			appointments = JSON.parse(JSON.stringify(response));
 
@@ -193,9 +192,12 @@ class AppointmentsModel {
 		try {
 			qb = await pool.get_connection();
 
+			// .select(
+			// 	"a_ID,a_date,a_client,a_start_time, a_end_time, c_first_name, c_surname, a_therapist, t_first_name, t_surname, t_colour"
+			// )
 			const response = await qb
 				.select(
-					"a_ID,a_date,a_client,a_start_time, a_end_time, c_first_name, c_surname, a_therapist, t_first_name, t_surname, t_colour"
+					"a_ID,a_date,a_client,a_start_time, a_end_time, a_therapist"
 				)
 				.from("appointments")
 				.join("clients", "a_client=c_ID")
@@ -207,10 +209,8 @@ class AppointmentsModel {
 				.get();
 
 			console.log("Query Ran: " + qb.last_query());
-			console.log("db response for appointments", response);
 
 			appointments = JSON.parse(JSON.stringify(response));
-
 			rv = appointments;
 
 			return rv;
