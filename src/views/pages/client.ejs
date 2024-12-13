@@ -85,6 +85,104 @@
         </div>
     <% } %>
     
+        <% if(locals.appointments && appointments.length >= 1){ %>
+    <div class="row t-row d-flex justify-content-between">
+        <h3 class="col-6">Appointments</h3>    
+        <div class="table-responsive">
+            <table
+                id="appointments-table"
+                class="table"
+            >
+                <thead class="table-head">
+                    <tr>
+                        <th class="th">&nbsp;</th>
+                        <th class="th" id="appointment-date">Date&nbsp;&amp;&nbsp;Time</th>
+                        <th class="th">Fee</th>
+                        <th class="th">Paid</th>
+                        <th class="th">Payment Type</th>
+                    </tr>
+                </thead>
+                
+
+                <tbody class="table-body">
+                    <% for(appointment of appointments) { %>
+                        
+                    <tr class="table-row <%= (appointment.a_is_cancelled == 1) ? "cancelled-appointment" : ""%>" data-appointment="<%= appointment.a_ID %>"> 
+                        <td class="table-cell align-middle appointment-colour">
+                            <div
+                                data-id="<%= appointment.a_ID %>"
+                                class="colour-circle"
+                                style="background-color: <%= appointment.t_colour %>"
+                                <% if(appointment.a_is_cancelled == 1) { %>
+                            data-bs-toggle="tooltip" data-bs-title="Cancelled:  Cancelled"
+                                <% } %>
+                            >
+                            <i class="bi bi-eye"></i>
+                            </div>
+                        </td>
+                        <td class="table-cell align-middle appointment-date sorter-shortDate" data-date-format="ddmmyyyy">
+                            <div class="">
+                                <%= formatDate(appointment.a_date) %> <%=
+                                appointment.a_start_time %>&nbsp;-&nbsp;<%=
+                                appointment.a_end_time%>
+                            </div>
+                        </td>
+                        <td class="table-cell align-middle appointment-fee">
+                            &euro;<%= appointment.a_client_fee %>
+                        </td>
+                        <td class="table-cell align-middle appointment-paid">
+                            <%
+                            let paidClass = (appointment.a_is_paid == 1)? 'paid': "not-paid";					
+                            %>
+                            <span class="<%=paidClass%>" title="paid" data_id="<%= appointment.a_ID %>"><i class="bi bi-cash"></i></span>
+                        </td>
+
+                        
+                        <td class="table-cell align-middle payment-type">
+                            
+                               
+                                    <% 
+                                        let icon = 'hourglass';
+                                        
+
+                                        switch(appointment.a_payment_type){
+                                            case parseInt(process.env.BANK):
+                                                icon='bank';
+                                                break;
+                                            case parseInt(process.env.CARD):
+                                                icon='credit-card';
+                                                break;
+                                            case parseInt(process.env.LINK):
+                                                icon='link';
+                                                break;	
+                                            default:
+                                                break;
+                                        }
+                                    %>
+                                    <i class="bi bi-<%=icon%>"></i>
+                               
+                               
+                           
+                                
+                                    
+                                    
+                        </td>
+                        
+                       
+                        
+
+
+                        
+                    </tr>
+                    <% } %>
+                </tbody>
+                <!-- End table body-->
+            </table>
+        </div>
+        <!-- End Table-->    
+    </div>
+        <% } %> 
+
     <div class="row t-row d-flex justify-content-between">
         <h3 class="col-6">Files</h3>
         <h3 class="edit-icon col-3">
@@ -121,6 +219,8 @@
        
         
     </div>
+
+
     
     <div class="row t-row d-flex justify-content-between">
         <h3 class="col-6">Notes</h3>

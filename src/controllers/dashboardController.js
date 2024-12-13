@@ -9,6 +9,7 @@ const helpers = require("../utils/helpers");
 class DashboardController {
 	async buildDashboard(req, res) {
 		if (!req.session.allTherapits || req.session.allTherapists.length <= 0) {
+			console.log("getting Therapists for session");
 			const allTherapistsForSession =
 				await therapistmodel.allTherapistsForSession();
 
@@ -32,6 +33,7 @@ class DashboardController {
 		}
 
 		if (!req.session.allClients || req.session.allClients.length <= 0) {
+			console.log("getting clients for session");
 			const allClientsForSession = await clientmodel.allClientsForSession();
 
 			let clients4sesion = [];

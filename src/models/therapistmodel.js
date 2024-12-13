@@ -288,7 +288,7 @@ class TherapistModel {
 				t_surname: therapist.t_surname,
 				t_phone: therapist.t_phone,
 				t_email: therapist.t_email,
-				t_fq_fee: therapist.t_fee_fq,
+				t_fq_fee: therapist.t_fq_fee,
 				t_fee: therapist.t_fee,
 				t_insurance_expiry_date: therapist.t_insurance_expiry_date,
 			};

@@ -14,6 +14,7 @@ const path = require("path");
 const fs = require("fs");
 const { appointmentsList } = require("./appointmentController");
 const appointmentsmodel = require("../models/appointmentsmodel");
+const appointmentController = require("./appointmentController");
 
 class ClientController {
 	async getAllClients(req, res) {
@@ -140,6 +141,12 @@ class ClientController {
 				console.log("requested therapy types", requestedTherapyTypes);
 			}
 
+			let appointments = await appointmentsmodel.getClientAppointments(
+				req.params.id
+			);
+
+			console.log("Appointments for client", appointments);
+
 			return res.render("templates/template.ejs", {
 				name: "Client",
 				page: "client.ejs",
@@ -149,6 +156,7 @@ class ClientController {
 				t_client: t_client.t_client,
 				t_client_assessed_by: t_client.client_assessed_by,
 				requestedTherapyTypes: requestedTherapyTypes,
+				appointments: appointments,
 				files: t_client.client_files,
 				notes: t_client.client_notes,
 			});

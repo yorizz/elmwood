@@ -43,13 +43,14 @@
 			<tr class="table-row <%= (appointment.a_is_cancelled == 1) ? "cancelled-appointment" : ""%>" data-appointment="<%= appointment.a_ID %>"> 
 				<td class="table-cell align-middle appointment-colour">
 					<div
+						data-id="<%= appointment.a_ID %>"
 						class="colour-circle"
 						style="background-color: <%= appointment.t_colour %>"
                         <% if(appointment.a_is_cancelled == 1) { %>
-                       data-bs-toggle="tooltip" data-bs-title="Cancelled:  <%= dataDecrypt(appointment.a_cancellation_reason) %>"
+                       data-bs-toggle="tooltip" data-bs-title="Cancelled:  Cancelled"
                         <% } %>
 					>
-						&nbsp;
+					<i class="bi bi-eye"></i>
 					</div>
 				</td>
 				<td class="table-cell align-middle appointment-date sorter-shortDate" data-date-format="ddmmyyyy">

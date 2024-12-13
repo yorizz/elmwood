@@ -119,7 +119,6 @@ class AppointmentController {
 					a_is_therapist_paid: appointments[i].a_is_therapist_paid,
 					c_first_name: client.c_first_name,
 					c_surname: client.c_surname,
-
 					t_first_name: therapist.t_first_name,
 					t_surname: therapist.t_surname,
 					t_colour: appointments[i].t_colour,
@@ -165,6 +164,148 @@ class AppointmentController {
 				saveButton: true,
 			});
 		}
+	}
+
+	async editAppointment(req, res) {
+		let appointmentID = req.params.id;
+
+		let appointments = await appointmentsmodel.editAppointment(appointmentID);
+
+		let appointmentDetails = [];
+
+		for (let i = 0; i < appointments.length; i++) {
+			const appointment = {
+				a_ID: appointments[i].a_ID,
+				a_client: appointments[i].a_client,
+				a_therapist: appointments[i].a_therapist,
+				a_date: appointments[i].a_date,
+				a_start_time: appointments[i].a_start_time,
+				a_end_time: appointments[i].a_end_time,
+				a_client_fee: appointments[i].a_client_fee,
+				a_is_paid: appointments[i].a_is_paid,
+				a_is_cancelled: appointments[i].a_is_cancelled,
+				a_needs_payment: appointments[i].a_needs_payment,
+				a_payment_type: appointments[i].a_payment_type,
+				a_is_therapist_paid: appointments[i].a_is_therapist_paid,
+				a_room: appointments[i].a_room,
+				a_client_fee: appointments[i].a_client_fee,
+				a_therapist_fee: appointments[i].a_therapist_fee,
+				a_is_referral: appointments[i].a_is_referral,
+				a_needs_payment: appointments[i].a_needs_payment,
+				a_cancellation_reason: helpers.dataDecrypt(
+					appointments[i].a_cancellation_reason
+				),
+				a_cancellation_date: appointments[i].a_cancellation_date,
+				a_is_therapist_paid: appointments[i].a_is_therapist_paid,
+				a_payment_type: appointments[i].a_payment_type,
+			};
+			appointmentDetails.push(appointment);
+		}
+
+		console.log("appointment details", appointmentDetails);
+
+		return res.render("templates/template.ejs", {
+			name: "Edit Appointment",
+			page: "editappointment.ejs",
+			title: "Edit Appointment",
+			pathCorrection: "../../",
+			sidebar: true,
+			therapists: req.session.allTherapists,
+			clients: req.session.allClients,
+			appointmentDetails: appointmentDetails,
+			saveButton: true,
+		});
+	}
+
+	async updateAppointment(req, res) {
+		console.log("Updating appointment", req.body);
+		const errors = validationResult(req);
+
+		if (errors.isEmpty()) {
+			//no errors, try to update the dbase
+			try {
+				const currentTime =
+					helpers.formatYYYYMMDDDate(new Date(Date.now()), "-") +
+					" " +
+					helpers.formatTime(new Date(Date.now()));
+				const appointment = {};
+
+				appointment.a_client = req.body.clients;
+				appointment.a_therapist = req.body.therapist;
+				appointment.a_date = req.body.date;
+				appointment.a_start_time = req.body.start_time;
+				appointment.a_end_time = req.body.end_time;
+				appointment.a_room = req.body.room;
+				appointment.a_client_fee = req.body.client_fee;
+				appointment.a_therapist_fee = req.body.therapist_fee;
+
+				appointment.a_is_referral = req.body.isreferral == "on" ? 1 : 0;
+				appointment.a_needs_payment = req.body.needspayment == "on" ? 1 : 0;
+				if (req.body.cancellation_reason.length >= 1) {
+					appointment.a_cancellation_reason = helpers.dataEncrypt(
+						req.body.cancellation_reason
+					);
+					appointment.a_is_cancelled = 1;
+
+					appointment.a_cancellation_date = currentTime;
+				}
+
+				let updatedAppointment = await appointmentsmodel.updateAppointment(
+					req.body.appointmentID,
+					appointment
+				);
+
+				console.log("updated appointment with ID", req.body.appointmentID);
+
+				if (req.body.cancel_all_future_appointments == 1) {
+					const futureAppointmentsToCancel =
+						await appointmentsmodel.cancelAllFutureAppointments(
+							req.body.appointmentID,
+							req.body.client,
+							req.body.therapist
+						);
+
+					console.log(
+						"FUTURE APPOINTMENTS TO CANCEL:",
+						futureAppointmentsToCancel
+					);
+
+					let data = {
+						a_is_cancelled: 1,
+						a_cancellation_reason: helpers.dataEncrypt(
+							req.body.cancellation_reason
+						),
+						a_needs_payment: req.body.canceled_needs_payment == 1 ? 1 : 0,
+						a_cancellation_date: currentTime,
+					};
+
+					for (let i = 0; i < futureAppointmentsToCancel.length; i++) {
+						let apt = futureAppointmentsToCancel[i];
+						await appointmentsmodel.updateAppointment(apt.a_ID, data);
+					}
+				}
+
+				return res.send(req.body);
+			} catch (error) {
+				console.error(error);
+			}
+		} else {
+			req.session.sessionFlash = {
+				type: "error",
+				message: "Your details are not correct.",
+				errors: errors.array(),
+			};
+		}
+	}
+
+	async deleteAppointment(req, res) {
+		console.log("Appointment to delete", req.body.a_ID);
+
+		let appointmentDeleted = await appointmentsmodel.deleteAppointment(
+			req.body.a_ID
+		);
+		let deleted = appointmentDeleted == 1 ? "deleted" : "not deleted";
+		return res.json({ msg: `${req.body.a_ID} ${deleted}` });
 	}
 
 	async addAppointment(req, res) {
@@ -251,6 +392,8 @@ class AppointmentController {
 			helpers.formatYYYYMMDDDate(new Date(Date.now()), "-") +
 			" " +
 			helpers.formatTime(new Date(Date.now()));
+		let allappointments = [];
+
 		try {
 			const errors = validationResult(req);
 			console.log("needs payment:", req.body.canceled_needs_payment);
@@ -270,6 +413,21 @@ class AppointmentController {
 					data
 				);
 
+				if (req.body.cancel_all_future_appointments == 1) {
+					const futureAppointmentsToCancel =
+						await appointmentsmodel.cancelAllFutureAppointments(
+							req.params.id,
+							req.body.client,
+							req.body.therapist
+						);
+
+					for (let i = 0; i < futureAppointmentsToCancel.length; i++) {
+						let apt = futureAppointmentsToCancel[i];
+						allappointments.push(apt.a_ID);
+						await appointmentsmodel.updateAppointment(apt.a_ID, data);
+					}
+				}
+
 				console.log(
 					"updated appointment ",
 					req.params.id,
@@ -279,7 +437,7 @@ class AppointmentController {
 			}
 		} catch (error) {}
 
-		return res.json({ msg: "cancelled" });
+		return res.json({ msg: "cancelled", appointments: allappointments });
 	}
 
 	async uncancelAppointment(req, res) {

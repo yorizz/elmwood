@@ -97,10 +97,28 @@ router.post(
 	appointmentController.updateAppointmentIsTherapistPaid
 );
 
+router.post(
+	"/updateappointment",
+	isUserAuthenticated,
+	appointmentController.updateAppointment
+);
+
 router.get(
 	"/newappointment",
 	isUserAuthenticated,
 	appointmentController.addAppointmentForDate
+);
+
+router.get(
+	"/editappointment/:id",
+	isUserAuthenticated,
+	appointmentController.editAppointment
+);
+
+router.post(
+	"/deleteappointment",
+	isUserAuthenticated,
+	appointmentController.deleteAppointment
 );
 
 router.post(

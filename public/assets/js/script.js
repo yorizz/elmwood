@@ -1,4 +1,7 @@
-console.log("opening page", window.document.location.href);
+//console.log("opening page", window.document.location.href);
+
+// const { error } = require("winston");
+// const { formatAttribute } = require("../../../src/utils/helpers");
 
 $(document).ready(function () {
 	console.log("page loaded");
@@ -29,12 +32,30 @@ $(document).ready(function () {
 		}
 	});
 
+	$(document).on("click", ".colour-circle", function () {
+		if ($(this).attr("data-id")) {
+			window.location.href = "/editappointment/" + $(this).attr("data-id");
+		} else {
+			console.log("no location");
+		}
+	});
+
+	$(document).on("click", "#toTop", function () {
+		$(window).scrollTop(0);
+	});
+
 	if (
 		window.location.href.indexOf("/calendar") >= 1 ||
 		window.location.href.indexOf("/therapist") >= 1
 	) {
 		console.log("calling tooltip");
 		getTooltip();
+	}
+
+	if (window.location.href.indexOf("editappointment") >= 1) {
+		if ($("#cancel-appointment-button").text() == "Uncancel") {
+			$(".appointment-cancelled").removeClass("hide");
+		}
 	}
 
 	$(document).on(
@@ -134,6 +155,7 @@ $(document).ready(function () {
 			});
 		} else {
 			let theAppointmentHTML = clickedButton.parent().parent()[0].innerHTML;
+			console.log("theAppointmentHTML", theAppointmentHTML);
 			$(".modal-title").text("Cancel Appointment");
 			$(".modal-body").html(theAppointmentHTML);
 			$(".modal-body .appointment-cancel-button ").remove();
@@ -145,6 +167,12 @@ $(document).ready(function () {
 					'<textarea class="form-control" id="cancellation_reason" name="cancellation_reason" rows="5" required="required"></textarea>' +
 					'<input type="checkbox" value="1" id="canceled_needs_payment" name="canceled_needs_payment" checked> <label for="canceed_needs_payment">Needs payment</label>' +
 					'<input type="checkbox" value="1" id="cancel_all_future_appointments" name="cancel_all_future_appointments"> <label for="cancel_all_future_appointments">Cancel all future appointments</label>' +
+					'<input type="hidden" name="client" value="' +
+					findId('href="/client/', theAppointmentHTML) +
+					'">' +
+					'<input type="hidden" name="therapist" value="' +
+					findId('href="/therapist/', theAppointmentHTML) +
+					'">' +
 					"</form>"
 			);
 			$("#submit-new-appointment")
@@ -158,6 +186,46 @@ $(document).ready(function () {
 
 			console.log("id changed to ", theAppointmentID);
 		}
+	});
+
+	$(document).on("click", "#cancel-appointment-button", function () {
+		let clickedButton = $(this);
+
+		let theAppointmentID = clickedButton.attr("data-id");
+		if (clickedButton.text() == "Uncancel") {
+			console.log("uncancel clicked");
+			$.ajax({
+				url: `/uncancelappointment/${theAppointmentID}`,
+				type: "POST",
+				dataType: "JSON",
+				success: function (data) {
+					console.log("data", data);
+					clickedButton.text("Cancel");
+				},
+				error: function (error) {
+					console.log("error", error);
+				},
+			});
+		} else {
+			console.log("cancel clicked");
+			$(".appointment-cancelled").removeClass("hide");
+		}
+	});
+
+	$(document).on("click", "#submit-update-appointment", function (event) {
+		event.preventDefault();
+
+		$.ajax({
+			url: "/updateappointment",
+			type: "post",
+			data: $("#update-appointment-form").serialize(),
+			success: function (data) {
+				console.log("data", data);
+			},
+			error: function (error) {
+				console.log("error", error);
+			},
+		});
 	});
 
 	$(document).on("click", "#submit-cancel-appointment", function (event) {
@@ -184,6 +252,18 @@ $(document).ready(function () {
 				data: $("#cancel-appointment-form").serialize(),
 				success: function (data) {
 					console.log("data", data);
+
+					if (data.appointments.length >= 1) {
+						for (let i = 0; i < data.appointments.length; i++) {
+							$(`[data-appointment=${data.appointments[i]}]`).addClass(
+								"cancelled-appointment"
+							);
+							$(`[data-appointment=${data.appointments[i]}]`)
+								.find("i")
+								.removeClass("bi-trash3")
+								.addClass("bi-arrow-counterclockwise");
+						}
+					}
 
 					//find the row with the appointment ID
 					$(`[data-appointment=${theAppointmentID}]`).addClass(
@@ -626,6 +706,11 @@ $(document).ready(function () {
 
 	setProfitTotal();
 
+	$(document).on("click", ".appointment-buttons button", function (event) {
+		event.preventDefault();
+		console.log("not going anywhere");
+	});
+
 	$(document).on("keyup", "#search", function () {
 		setProfitTotal();
 	});
@@ -676,6 +761,40 @@ $(document).ready(function () {
 			class="spinner-grow text-primary"
 			role="status"
 		></div>`);
+	});
+
+	if (window.location.href.indexOf("editappointment") >= 0) {
+		let elmwood_fee = (
+			parseFloat($("#client_fee").val()) -
+			parseFloat($("#therapist_fee").val())
+		).toFixed(2);
+		$("#elmwood_fee").html(`&euro; ${elmwood_fee}`);
+	}
+
+	$(document).on("click", ".delete", function (event) {
+		event.preventDefault();
+		$(".alert").removeClass("hide");
+	});
+
+	$(document).on("click", "#delete-appointment", function (event) {
+		event.preventDefault();
+
+		let appointment_ID = $(this).attr("data-id");
+		console.log("appointment_ID", appointment_ID);
+		$.ajax({
+			url: "/deleteappointment",
+			data: { a_ID: appointment_ID },
+			type: "post",
+			success: function (data) {
+				console.log(data.msg);
+				if (data.msg == `${appointment_ID} deleted`) {
+					window.location.href = "/allappointmentslist";
+				}
+			},
+			error: function (error) {
+				console.log("error", error);
+			},
+		});
 	});
 }); // end ducument ready
 
@@ -802,4 +921,10 @@ function formatYYYYMMDDDate(date, separator) {
 		this.padTo2Digits(date.getMonth() + 1),
 		this.padTo2Digits(date.getDate()),
 	].join(separator);
+}
+
+function findId(needle, haystack) {
+	let findNeedle = haystack.indexOf(needle) + needle.length;
+	let foundId = haystack.substring(findNeedle, findNeedle + 13); //13 is the number of characters in milliseconds
+	return foundId;
 }

@@ -277,12 +277,33 @@ class AppointmentsModel {
 		}
 	}
 
-	async updateAppointment(appointmentID, data) {
+	async cancelAllFutureAppointments(
+		firstAppointmentID,
+		clientID,
+		therapistID
+	) {
 		let qb;
+
+		let sql =
+			"SELECT `a_ID` FROM `appointments` " +
+			"WHERE `a_therapist`= " +
+			therapistID +
+			" " +
+			"AND `a_client`= " +
+			clientID +
+			" " +
+			"AND `a_date` > ( SELECT `a_date` FROM `appointments` WHERE `a_ID` = " +
+			firstAppointmentID +
+			" );";
+
+		console.log("sql", sql);
+
 		try {
 			qb = await pool.get_connection();
-			qb.where("a_ID", appointmentID).set(data).update("appointments");
+			const response = await qb.query(sql);
 			console.log("Query Ran: " + qb.last_query());
+
+			return JSON.parse(JSON.stringify(response));
 		} catch (error) {
 			console.log(error);
 		} finally {
@@ -290,26 +311,29 @@ class AppointmentsModel {
 		}
 	}
 
-	async cancelAllFutureAppointments(clientID) {
+	async editAppointment(appointmentID) {
 		let qb;
+		let rv;
+
 		try {
 			qb = await pool.get_connection();
-			let data = {
-				a_is_cancelled: 1,
-				a_cancellation_reason: helpers.dataEncrypt("Deactivated"),
-			};
 
-			let date = dayjs();
+			const response = await qb
+				.select("*")
+				.from("appointments")
+				.where("a_ID", appointmentID)
+				.get();
 
-			qb.where({
-				a_client: clientID,
-				"a_date >=": date.format("YYYY-MM-DD"),
-			})
-				.set(data)
-				.update("appointments");
 			console.log("Query Ran: " + qb.last_query());
-		} catch (error) {
-			console.log(error);
+			console.log("db response for appointments", response);
+
+			let appointments = JSON.parse(JSON.stringify(response));
+
+			rv = appointments;
+
+			return rv;
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
 		} finally {
 			if (qb) qb.release();
 		}
@@ -360,6 +384,43 @@ class AppointmentsModel {
 		}
 	}
 
+	async deleteAppointment(appointmentID) {
+		let qb;
+		try {
+			qb = await pool.get_connection();
+
+			let result = await qb.delete("appointments", {
+				a_ID: appointmentID,
+			});
+			console.log("Query Ran: " + qb.last_query());
+			return result.affectedRows;
+		} catch (error) {
+			console.log(error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async updateAppointment(appointmentID, data) {
+		let qb;
+		try {
+			qb = await pool.get_connection();
+			let result = await qb
+				.where("a_ID", appointmentID)
+				.set(data)
+				.update("appointments");
+
+			console.log("result", result);
+			console.log("Query Ran: " + qb.last_query());
+
+			return result;
+		} catch (error) {
+			console.log(error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async updateAppointmentPaymentType(appointmentId, paymentType) {
 		let qb;
 		try {
@@ -399,6 +460,48 @@ class AppointmentsModel {
 			console.log("Query Ran: " + qb.last_query());
 		} catch (error) {
 			console.log(error);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
+	async getClientAppointments(clientId) {
+		let appointments = [];
+		let rv = false;
+
+		let qb;
+
+		try {
+			qb = await pool.get_connection();
+
+			const response = await qb
+				.select([
+					"a_ID",
+					"a_date",
+					"a_start_time",
+					"a_end_time",
+					"a_client_fee",
+					"a_is_paid",
+					"a_payment_type",
+					"t_colour",
+				])
+				.join("therapists", "t_ID=a_therapist")
+				.where("a_client", clientId)
+				.from("appointments")
+				.where_not_in("a_is_referral", [1])
+				.order_by("a_date", "desc")
+				.get();
+
+			console.log("Query Ran: " + qb.last_query());
+			// console.log("db response for appointments", response);
+
+			appointments = JSON.parse(JSON.stringify(response));
+
+			rv = appointments;
+
+			return rv;
+		} catch (err) {
+			return console.error("Pool Query Error: " + err);
 		} finally {
 			if (qb) qb.release();
 		}

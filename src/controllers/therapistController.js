@@ -348,6 +348,7 @@ class TherapistController {
 				t_insurance_expiry_date: req.body.insurance_expiry,
 			};
 
+			console.log("therapist data", data);
 			const addTherapistResult = await therapistmodel.updateTherapist(
 				req.params.id,
 				data,
