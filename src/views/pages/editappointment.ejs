@@ -126,6 +126,13 @@ console.log('appointment >>',appointment);
     </div> -->
 
     <% if(locals.saveButton){ %>
-        <button  type="button" class="btn btn-primary"  id="submit-update-appointment">Save</button>
+        
+            <div class="alert alert-success ms-3 hide" id="appointment-edit-success" role="alert">
+                Appointment changes saved.
+            </div>
+            <button  type="button" class="btn btn-primary"  id="submit-update-appointment">Save</button>
+            
+        
+
     <% } %>
 </form>

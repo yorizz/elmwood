@@ -221,6 +221,11 @@ $(document).ready(function () {
 			data: $("#update-appointment-form").serialize(),
 			success: function (data) {
 				console.log("data", data);
+				console.log("data", data["cancellation_reason"]);
+				if (data["cancellation_reason"]) {
+					console.log("showhiding");
+					$("#appointment-edit-success").show(750).delay(1000).hide("750");
+				}
 			},
 			error: function (error) {
 				console.log("error", error);

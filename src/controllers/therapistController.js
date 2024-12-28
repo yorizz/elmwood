@@ -87,7 +87,7 @@ class TherapistController {
 
 						let therapist = {
 							c_ID: allClientsForTherapist[i].c_ID,
-							c_firsc_name: sessionClient.c_first_name,
+							c_first_name: sessionClient.c_first_name,
 							c_surname: sessionClient.c_surname,
 							c_phone: sessionClient.c_phone,
 							c_email: sessionClient.c_email,

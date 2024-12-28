@@ -467,6 +467,10 @@ h5.category {
 	border-width: 3px;
 }
 
+.back {
+	padding: 10px;
+}
+
 .login-button,
 .client-nav-button {
 	background-color: var(--bs-primary);

@@ -482,6 +482,7 @@ class AppointmentsModel {
 					"a_end_time",
 					"a_client_fee",
 					"a_is_paid",
+					"a_is_cancelled",
 					"a_payment_type",
 					"t_colour",
 				])

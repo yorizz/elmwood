@@ -75,7 +75,6 @@
         <div class="th">Name</div>
         <div class="th">Phone</div>
         <div class="th">Email</div>
-        <div class="th">Assigned to</div>
         <div class="th">&nbsp;</div>
     </div>
     <!-- End Table Head-->
@@ -87,7 +86,7 @@
 
         <div class="table-row <%= (client.c_is_active == 0) ? 'inactive' : '' %>">
             <div class="table-cell  align-middle ">
-                <%= client.c_first_name %> <%= client.c_surname %>
+                <a href="/client/<%=client.c_ID%>"><%= client.c_first_name %> <%= client.c_surname %></a>
             </div>
             <div class="table-cell  align-middle ">
                 <%= formatPhoneNumber(client.c_phone) %>
@@ -95,11 +94,7 @@
             <div class="table-cell  align-middle ">
                 <a href="mailto:<%= client.c_email %>"><%= client.c_email %></a>
             </div>
-            <div class="table-cell  align-middle ">
-                <% if(client.t_first_name != null){ %>
-                <%= client.t_first_name %> <%= client.t_surname %>
-                <%}%>
-            </div>
+            
             <div class="table-cell  align-middle  view-single">
                 <a
                     href="/client/<%= client.c_ID %>"
