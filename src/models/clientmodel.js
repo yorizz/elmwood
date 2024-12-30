@@ -89,6 +89,7 @@ class ClientModel {
 					"c_enquiry_date",
 					"c_low_cost_employment",
 				])
+				.where("c_is_active", 1)
 				.where_not_in("c_ID", apptmts)
 				.order_by("c_enquiry_date", "desc")
 				.get("clients");
@@ -96,7 +97,6 @@ class ClientModel {
 			console.log("Query Ran: " + qb.last_query());
 
 			clients = JSON.parse(JSON.stringify(response));
-			// console.log("waitinglist", response);
 
 			rv = clients;
 
