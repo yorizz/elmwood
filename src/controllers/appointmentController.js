@@ -166,6 +166,33 @@ class AppointmentController {
 		}
 	}
 
+	async addAppointmentForDateForClient(req, res) {
+		let therapists = req.session.allTherapists;
+		let clients = req.session.allClients;
+
+		if (req.params.date) {
+			return res.render("pages/addappointment.ejs", {
+				date: req.params.date,
+				clients: clients,
+				therapists: therapists,
+			});
+		} else {
+			return res.render("templates/template.ejs", {
+				date: new Date(),
+				name: "Appointments",
+				page: "addappointment.ejs",
+				title: "New Appointment",
+				clients: clients,
+				therapists: therapists,
+				calendar: false,
+				sidebar: true,
+				saveButton: true,
+				pathCorrection: "../../",
+				selectedClient: req.params.clientId,
+			});
+		}
+	}
+
 	async editAppointment(req, res) {
 		let appointmentID = req.params.id;
 

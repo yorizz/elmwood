@@ -1080,9 +1080,10 @@ class ClientModel {
 			"SELECT `c_ID`, `c_first_name`, `c_surname`, `c_phone`, `c_email`, `c_enquiry_date`, `c_low_cost_employment`, `cttr_therapy_type_requested` " +
 			"FROM `clients` JOIN `client_therapy_types_requests` ON `c_ID`=`cttr_client_ID` " +
 			"WHERE `c_ID` NOT IN(SELECT DISTINCT `a_client` FROM `appointments`) " +
-			"AND `cttr_therapy_type_requested`=" +
+			"AND `cttr_therapy_type_requested`= " +
 			qualification +
-			" ORDER BY `c_ID`,`cttr_therapy_type_requested`;";
+			" AND `c_is_active` = 1 " +
+			"ORDER BY `c_ID`,`cttr_therapy_type_requested`;";
 
 		console.log("sql", sql);
 

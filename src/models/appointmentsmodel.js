@@ -508,6 +508,26 @@ class AppointmentsModel {
 		}
 	}
 
+	async getClientsWithAppointments() {
+		let qb;
+
+		try {
+			qb = await pool.get_connection();
+
+			const response = await qb
+				.distinct()
+				.select("a_client")
+				.get("appointments");
+
+			console.log("Query Ran: " + qb.last_query());
+			return JSON.parse(JSON.stringify(response));
+		} catch (error) {
+			return console.error("Pool Query Error: " + err);
+		} finally {
+			if (qb) qb.release();
+		}
+	}
+
 	async payAppointmentReferral(appointmentID) {
 		let qb;
 		try {

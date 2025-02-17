@@ -6,11 +6,11 @@
     <div class="forms-inputs mb-4">
         <label for="clients" class="form-label"><i class="bi bi-person"></i> Client</label>
         <select name="clients" id="clients" class="form-select" aria-label="Client">
-            <option value="-1" selected>Select a client</option>
+            <option value="-1">Select a client</option>
             <% if(locals.clients && clients.length >= 1){ %>
             <% for(let i=0; i<clients.length; i++){ %>
                 <% let client = clients[i]; %>
-                <option value="<%= client.c_ID %>"><%= client.c_first_name + " " + client.c_surname %></option>
+                <option value="<%= client.c_ID %>"  <%=(locals.selectedClient && client.c_ID == selectedClient)?'selected':''%> ><%= client.c_first_name + " " + client.c_surname %></option>
             <% } %>
             <% } %>
         </select>

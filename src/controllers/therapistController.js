@@ -2,6 +2,7 @@ const therapistmodel = require("../models/therapistmodel");
 const qualificationsmodel = require("../models/qualificationsmodel");
 const contracttypesmodel = require("../models/contracttypesmodel");
 const accreditationsmodel = require("../models/accreditationsmodel");
+const appointmentsmodel = require("../models/appointmentsmodel");
 const helpers = require("../utils/helpers");
 const { check, validationResult } = require("express-validator");
 const path = require("path");
@@ -66,6 +67,16 @@ class TherapistController {
 			console.log(path.join(__dirname, "../public"));
 
 			let clients = [];
+			let clientsWithAppointments =
+				await appointmentsmodel.getClientsWithAppointments();
+
+			let cWA = [];
+			clientsWithAppointments.forEach((element) => {
+				cWA.push(element.a_client);
+			});
+
+			console.log("clientsWithAppointments", clientsWithAppointments);
+
 			if (!isNaN(parseInt(req.params.id))) {
 				therapist = await therapistmodel.getTherapist(req.params.id);
 
@@ -91,6 +102,7 @@ class TherapistController {
 							c_surname: sessionClient.c_surname,
 							c_phone: sessionClient.c_phone,
 							c_email: sessionClient.c_email,
+							c_is_active: allClientsForTherapist[i].c_is_active,
 						};
 
 						clients.push(therapist);
@@ -112,6 +124,7 @@ class TherapistController {
 				files: therapist.therapist_files,
 				notes: therapist.therapist_notes,
 				clients: clients,
+				clientsWithAppointments: cWA,
 			});
 		} catch (error) {
 			console.log("unknown therapist error", error);

@@ -108,6 +108,11 @@ router.get(
 	isUserAuthenticated,
 	appointmentController.addAppointmentForDate
 );
+router.get(
+	"/newappointment/:clientId",
+	isUserAuthenticated,
+	appointmentController.addAppointmentForDateForClient
+);
 
 router.get(
 	"/editappointment/:id",

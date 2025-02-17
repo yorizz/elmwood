@@ -72,6 +72,7 @@
     class="table table-responsive w-100 d-block d-md-table"
     >
     <div class="table-head">
+        <div class="th">&nbsp;</div>
         <div class="th">Name</div>
         <div class="th">Phone</div>
         <div class="th">Email</div>
@@ -80,11 +81,16 @@
     <!-- End Table Head-->
 
     <div class="table-body">
-        <% for(client of clients) { console.log("client", client);%>
+        <% for(client of clients) { console.log(">>>client", client);%>
 
 
 
         <div class="table-row <%= (client.c_is_active == 0) ? 'inactive' : '' %>">
+            <div class="table-cell align-middle">
+                <% if(clientsWithAppointments.indexOf(client.c_ID)==-1) { %>
+                    <a href="/newappointment/<%=client.c_ID%>"><i class="bi bi-calendar3"></i></a>
+                <% } %>    
+            </div>
             <div class="table-cell  align-middle ">
                 <a href="/client/<%=client.c_ID%>"><%= client.c_first_name %> <%= client.c_surname %></a>
             </div>
